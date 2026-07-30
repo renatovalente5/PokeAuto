@@ -282,16 +282,6 @@ body.menu-aberto .menu { display: flex; }
 .peca__btn:hover { background: var(--vermelho-claro); }
 .pecas__data { margin-top: 1rem; font-size: .82rem; color: var(--claro-2); }
 
-/* ================================================================ PASSOS */
-.passos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; counter-reset: p; }
-.passo { border-top: 2px solid var(--aco); padding-top: 1rem; }
-.passo::before {
-  counter-increment: p; content: '0' counter(p);
-  display: block; font-family: var(--f-mono); font-size: 1.5rem; color: var(--dourado); margin-bottom: .4rem;
-}
-.passo h3 { font-size: 1.16rem; margin-bottom: .3rem; }
-.passo p { font-size: .92rem; color: var(--legenda); }
-
 /* =================================================================== FAQ */
 .faq { max-width: 860px; }
 .faq details { border-bottom: 1px solid var(--aco); }
@@ -360,7 +350,6 @@ body.menu-aberto .menu { display: flex; }
 /* ========================================================== RESPONSIVO */
 @media (max-width: 1000px) {
   .confianca { grid-template-columns: repeat(2, 1fr); }
-  .passos { grid-template-columns: repeat(2, 1fr); }
   .rodape__topo { grid-template-columns: 1fr 1fr; }
   .svc--foto .svc__corpo { grid-template-columns: 1fr 210px; }
 }
@@ -397,7 +386,6 @@ body.menu-aberto .menu { display: flex; }
 
 @media (max-width: 620px) {
   .confianca { grid-template-columns: 1fr; }
-  .passos { grid-template-columns: 1fr; }
   .rodape__topo { grid-template-columns: 1fr; }
   .peca { grid-template-columns: 52px 1fr; row-gap: .6rem; }
   .peca__fig { width: 52px; height: 52px; }
