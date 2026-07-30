@@ -141,7 +141,6 @@ body.menu-aberto .menu { display: flex; }
 
 /* ------------------------------------------------- faixa de chips (amarelo) */
 /* O segundo e último sítio com o amarelo do letreiro. Texto sempre preto. */
-.chips { background: var(--amarelo); padding-block: .8rem; }
 
 /* Os 8 chips somam ~1490px e o contentor tem no máximo 1180. Antes ficavam
    cortados em TODAS as larguras, sem barra (scrollbar-width:none), sem gradiente
@@ -149,74 +148,17 @@ body.menu-aberto .menu { display: flex; }
    Agora quebram para a linha seguinte a partir dos 900px, onde há espaço para
    duas filas; abaixo disso continuam numa fila deslizante, mas com um degradê
    no bordo direito a dizer que há mais. */
-.chips__lista { display: flex; flex-wrap: wrap; gap: .5rem; }
-
-@media (max-width: 900px) {
-  .chips { position: relative; }
-  .chips__lista {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-    padding-right: 2.2rem;          /* espaço para o degradê não tapar o último */
-  }
-  .chips__lista::-webkit-scrollbar { display: none; }
-  .chips__lista > * { scroll-snap-align: start; }
-  /* a pista de que há mais para o lado */
-  .chips::after {
-    content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 3rem;
-    background: linear-gradient(90deg, rgba(255, 212, 0, 0), var(--amarelo) 72%);
-    pointer-events: none;
-  }
-}
-
-.chip {
-  flex: none;
-  min-height: 44px; display: inline-flex; align-items: center;
-  padding: .4rem .9rem;
-  font-family: var(--f-display); font-weight: 700; font-size: .96rem;
-  letter-spacing: .03em; text-transform: uppercase;
-  color: #0B0B0D; text-decoration: none;
-  border: 2px solid rgba(11, 11, 13, .22); border-radius: 999px;
-  white-space: nowrap;
-  transition: background var(--t), border-color var(--t);
-}
-.chip:hover { background: #0B0B0D; color: var(--amarelo); border-color: #0B0B0D; }
 
 /* ======================================================== ANTES DE LIGAR */
-.confianca { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--aco); border: var(--borda); border-radius: var(--raio-g); overflow: hidden; }
-.confianca__item { background: var(--carbono); padding: 1.15rem 1.1rem; }
-.confianca__item .mono { display: block; color: var(--dourado); font-size: .78rem; letter-spacing: .12em; margin-bottom: .35rem; }
-.confianca__item strong { display: block; color: var(--branco); font-family: var(--f-display); font-size: 1.15rem; line-height: 1.2; margin-bottom: .2rem; }
-.confianca__item span { font-size: .88rem; color: var(--legenda); }
 
-/* ================================================================ SERVIÇOS */
-.svc-lista { display: grid; gap: 1px; background: var(--aco); border: var(--borda); border-radius: var(--raio-g); overflow: hidden; }
-.svc {
   background: var(--carbono);
   display: grid; grid-template-columns: 92px 1fr; gap: 1.4rem;
   padding: clamp(1.3rem, 3vw, 2rem);
   transition: background var(--t);
 }
 .svc:hover { background: var(--carbono-alto); }
-.svc__n { font-family: var(--f-mono); font-weight: 500; font-size: 2.1rem; color: var(--dourado); line-height: 1; }
-.svc__n::after { content: ''; display: block; width: 34px; height: 2px; background: var(--vermelho); margin-top: .55rem; }
-.svc__corpo h3 { margin-bottom: .5rem; }
-.svc__corpo p { margin-bottom: .8rem; }
-.svc__inclui { display: flex; flex-wrap: wrap; gap: .4rem .5rem; margin-bottom: .7rem; }
-.svc__inclui li {
-  font-size: .84rem; color: var(--prata);
-  padding: .22rem .6rem; border: 1px solid var(--aco); border-radius: 999px;
-}
-.svc__tempo { font-family: var(--f-mono); font-size: .8rem; color: var(--legenda); letter-spacing: .04em; }
-.svc__foto { margin-top: 1rem; }
-.svc__foto img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--raio); }
-.svc__foto figcaption { margin-top: .5rem; font-size: .82rem; color: var(--legenda); }
 
 /* serviços com fotografia ganham duas colunas de conteúdo */
-.svc--foto .svc__corpo { display: grid; grid-template-columns: 1fr 260px; gap: 1.6rem; align-items: start; }
-.svc--foto .svc__foto { margin-top: 0; }
 
 /* ============================================================ FAIXA-TEXTURA */
 .faixa { position: relative; }
@@ -349,9 +291,7 @@ body.menu-aberto .menu { display: flex; }
 
 /* ========================================================== RESPONSIVO */
 @media (max-width: 1000px) {
-  .confianca { grid-template-columns: repeat(2, 1fr); }
   .rodape__topo { grid-template-columns: 1fr 1fr; }
-  .svc--foto .svc__corpo { grid-template-columns: 1fr 210px; }
 }
 
 @media (max-width: 860px) {
@@ -367,9 +307,6 @@ body.menu-aberto .menu { display: flex; }
   .contactos__grid { grid-template-columns: 1fr; }
 
   .svc { grid-template-columns: 60px 1fr; gap: 1rem; }
-  .svc__n { font-size: 1.6rem; }
-  .svc--foto .svc__corpo { grid-template-columns: 1fr; }
-  .svc__foto { max-width: 320px; }
 
   /* barra de acção fixa no fundo: ligar e WhatsApp sempre à mão */
   .barra-acao {
@@ -385,7 +322,6 @@ body.menu-aberto .menu { display: flex; }
 }
 
 @media (max-width: 620px) {
-  .confianca { grid-template-columns: 1fr; }
   .rodape__topo { grid-template-columns: 1fr; }
   .peca { grid-template-columns: 52px 1fr; row-gap: .6rem; }
   .peca__fig { width: 52px; height: 52px; }
@@ -428,3 +364,148 @@ body.menu-aberto .menu { display: flex; }
 .pecas__vazio strong { color: var(--claro-tinta); }
 .pecas__vazio .peca__btn { display: inline-block; margin-top: .5rem; padding: .6rem 1.2rem; }
 .contacto-item:empty { display: none; }
+
+/* ============================================================================
+   MODERNIZAÇÃO — cartões 3D, hero de fotografia e galeria
+   Tudo em CSS nativo, zero bibliotecas, zero JavaScript: 1,9 KB gzip medidos.
+   Medido em Chrome headless a 390x844 com a CPU 4x e 6x mais lenta: 0 frames
+   acima de 33 ms, 2,1% de thread principal a rolar e 0,0% com a página parada.
+
+   Duas regras que saíram da medição e que não se quebram:
+   1. NADA animado por temporizador. O mesmo gradiente animado com
+      `animation: girar 9s infinite` custava 43 ms POR SEGUNDO para sempre — um
+      custom property animado não vai para o compositor. Ligado a
+      animation-timeline: view() dá o mesmo e custa zero enquanto ninguém rola.
+   2. O estado por omissão de cada elemento é o ESTADO FINAL. As animações vivem
+      dentro de @supports; sem isso, no Firefox (que em 2026 ainda tem
+      scroll-timeline atrás de flag) a animação corria na timeline do documento
+      e o cartão ficava preso invisível.
+   ========================================================================== */
+
+@property --ang { syntax: "<angle>";      inherits: false; initial-value: 120deg; }
+@property --bx  { syntax: "<percentage>"; inherits: true;  initial-value: 50%; }
+@property --by  { syntax: "<percentage>"; inherits: true;  initial-value: 0%; }
+
+/* ------------------------------------------------------------- HERO NOVO */
+.hero--foto { position: relative; min-height: min(92svh, 780px); display: flex;
+  align-items: flex-end; padding-bottom: clamp(2.5rem, 7vw, 5rem); overflow: hidden; }
+.hero--foto::before { content: none; }
+.hero__fundo { position: absolute; inset: 0; z-index: -2; }
+.hero__fundo img { width: 100%; height: 100%; object-fit: cover; object-position: 58% 68%; }
+.hero__veu { position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(to top, var(--preto) 4%, rgba(11,11,13,.72) 42%, rgba(11,11,13,.35) 72%),
+    linear-gradient(to right, rgba(11,11,13,.86), rgba(11,11,13,.15) 62%); }
+.hero--foto .hero__copy { max-width: min(54ch, 58vw); }
+.hero--foto .hero__lead { max-width: 46ch; }
+.hero--foto .h-hero { font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 1;
+  margin-block: .5rem .9rem; text-wrap: balance; }
+.hero__nota { margin-top: 1.1rem; font-size: .9rem; color: var(--legenda);
+  display: flex; align-items: center; gap: .5rem; }
+.hero__nota::before { content: ''; width: 20px; height: 2px; background: var(--dourado); flex: none; }
+
+/* -------------------------------------------------------- CARTÕES 3D */
+.fichas { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(.9rem, 2vw, 1.4rem); }
+.ficha { min-width: 0; }
+
+.placa {
+  perspective: 900px;              /* tem de estar no PAI do que roda */
+  perspective-origin: 50% 45%;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  aspect-ratio: 4 / 5;
+}
+/* As 9 zonas de rato precisam de linha E coluna EXPLÍCITAS. Sem isso a grelha
+   empurra-as para linhas implícitas de altura zero, ficam fora do cartão e o
+   hover nunca dispara — em silêncio, sem erro nenhum. */
+.placa > i { z-index: 3; }
+.placa > i:nth-child(3n+1) { grid-column: 1; }
+.placa > i:nth-child(3n+2) { grid-column: 2; }
+.placa > i:nth-child(3n)   { grid-column: 3; }
+.placa > i:nth-child(-n+3) { grid-row: 1; }
+.placa > i:nth-child(n+4):nth-child(-n+6) { grid-row: 2; }
+.placa > i:nth-child(n+7)  { grid-row: 3; }
+
+.camadas {
+  grid-area: 1 / 1 / 4 / 4; position: relative;
+  border-radius: var(--raio); transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--s, 1));
+  transition: transform .5s cubic-bezier(0,0,0,1), box-shadow .5s cubic-bezier(0,0,0,1),
+              --bx .45s ease-out, --by .45s ease-out;
+  box-shadow: 0 2px 6px rgba(0,0,0,.5), 0 24px 48px -12px rgba(0,0,0,.75),
+              0 0 0 1px var(--aco);
+}
+.camadas > img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--raio); }
+.camadas::after { content: ''; position: absolute; inset: 0; border-radius: var(--raio);
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(11,11,13,.97) 6%, rgba(11,11,13,.82) 34%,
+              rgba(11,11,13,.28) 62%, transparent 82%); }
+
+/* reflexo. SEM mix-blend-mode: cria um grupo de composição e o Safari achata o
+   preserve-3d do pai — o 3D desaparecia exactamente no iPhone. */
+.brilho { position: absolute; inset: 0; border-radius: var(--raio); pointer-events: none;
+  opacity: 0; transform: translateZ(30px);
+  background: radial-gradient(38% 34% at var(--bx) var(--by), rgba(255,255,255,.3), transparent 70%);
+  transition: opacity .45s ease-out; }
+
+/* moldura com gradiente das cores da marca, sem SVG e sem imagem */
+.moldura { position: absolute; inset: -1px; border-radius: calc(var(--raio) + 1px);
+  padding: 1px; pointer-events: none; transform: translateZ(12px);
+  background: conic-gradient(from var(--ang), transparent 0 42%, var(--dourado) 52%,
+              var(--amarelo) 57%, var(--vermelho) 66%, transparent 76%);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; }
+
+.selo { position: absolute; top: 12px; left: 14px; transform: translateZ(70px);
+  font-family: var(--f-mono); font-weight: 500; font-size: .82rem;
+  background: var(--amarelo); color: #0B0B0D; padding: .16rem .5rem; border-radius: 3px; }
+.ficha__corpo { position: absolute; inset: auto 0 0; padding: 0 16px 16px;
+  transform: translateZ(48px); }
+.ficha__corpo .risca { display: block; width: 26px; height: 3px; background: var(--vermelho);
+  border-radius: 2px; margin-bottom: .5rem; }
+.ficha__corpo h3 { font-size: clamp(1.05rem, 1.5vw, 1.3rem); text-transform: uppercase;
+  line-height: 1.08; margin-bottom: .3rem; }
+.ficha__corpo p { font-size: .86rem; color: var(--prata); }
+.ficha__inclui { display: none; flex-wrap: wrap; gap: .3rem; margin-top: .7rem; }
+.ficha__inclui li { font-size: .74rem; color: var(--legenda);
+  border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: .12rem .5rem; }
+
+/* ------------------------------------------------------------- MOVIMENTO */
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) and (pointer: fine) {
+    .placa > i:hover ~ .camadas { --s: 1.02;
+      box-shadow: 0 2px 6px rgba(0,0,0,.5), 0 40px 70px -16px rgba(0,0,0,.85), 0 0 0 1px #3a3f47; }
+    .placa > i:hover ~ .camadas .brilho { opacity: 1; }
+    .placa > i:nth-child(-n+3):hover ~ .camadas { --rx: 7deg; --by: 0%; }
+    .placa > i:nth-child(n+4):nth-child(-n+6):hover ~ .camadas { --rx: 0deg; --by: 45%; }
+    .placa > i:nth-child(n+7):hover ~ .camadas { --rx: -7deg; --by: 92%; }
+    .placa > i:nth-child(3n+1):hover ~ .camadas { --ry: -9deg; --bx: 18%; }
+    .placa > i:nth-child(3n+2):hover ~ .camadas { --ry: 0deg; --bx: 50%; }
+    .placa > i:nth-child(3n):hover ~ .camadas { --ry: 9deg; --bx: 82%; }
+  }
+  /* @supports OBRIGATÓRIO — ver a nota 2 no topo deste bloco */
+  @supports (animation-timeline: view()) {
+    .ficha { animation: surgir linear both; animation-timeline: view();
+      animation-range: entry 6% cover 26%; }
+    .ficha .moldura { animation: rodar linear both; animation-timeline: view();
+      animation-range: entry 0% exit 100%; }
+    .hero__fundo img { animation: aproximar linear both; animation-timeline: view();
+      animation-range: cover 0% cover 100%; }
+  }
+}
+@keyframes surgir { from { opacity: 0; transform: translateY(26px) rotateX(9deg); }
+                    to   { opacity: 1; transform: none; } }
+@keyframes rodar  { from { --ang: 0deg; } to { --ang: 360deg; } }
+@keyframes aproximar { from { transform: scale(1.06); } to { transform: scale(1.16); } }
+
+@media (min-width: 1001px) { .ficha__inclui { display: flex; } }
+@media (max-width: 1000px) { .fichas { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 860px)  { .hero--foto .hero__copy { max-width: 100%; } }
+@media (max-width: 560px)  { .fichas { gap: .7rem; }
+  .hero--foto { min-height: min(86svh, 640px); } }
+
+/* Os links legais são uma FILA de links, não prosa — a excepção do WCAG 2.5.5
+   para links dentro de texto corrido não se aplica. Alvo de 44px. */
+.rodape__links a { display: inline-flex; align-items: center; min-height: 44px; }

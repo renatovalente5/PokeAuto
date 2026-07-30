@@ -2,11 +2,11 @@
   "head": {
     "etiqueta": "Trabalhos",
     "titulo": "Carros que saíram daqui",
-    "lead": ""
+    "lead": "Fotografias reais, tiradas na oficina."
   },
   "items": [
     {
-      "img": "assets/img/trabalhos/lavagem-espuma-oficina-1140.webp",
+      "img": "assets/img/trabalhos/lavagem-espuma-oficina-896.webp",
       "cap": "Lavagem com espuma activa na box da oficina"
     },
     {
@@ -32,14 +32,6 @@
     {
       "img": "assets/img/trabalhos/bmw-serie5-frente-840.webp",
       "cap": "BMW Série 5 depois de lavagem completa"
-    },
-    {
-      "img": "assets/img/trabalhos/faixa-jante-1800.webp",
-      "cap": "Jante e travão limpos ao detalhe"
-    },
-    {
-      "img": "assets/img/trabalhos/faixa-volante-1800.webp",
-      "cap": "Painel e volante sem pó nem marcas"
     }
   ]
 }

@@ -29,7 +29,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/barlow-400.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="assets/css/base.css?v=83ba7510" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=8076c4f5" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=f2e7e90a" />
 
   <!--pre:jsonld--><script type="application/ld+json">
 {
@@ -89,24 +89,8 @@
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Mecânica geral",
-              "description": "Manutenção e reparação mecânica de ligeiros de todas as marcas. Começamos sempre por perceber a avaria antes de propor a reparação — e explicamos o que encontrámos por palavras que se percebem."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Eletricidade auto",
-              "description": "Avarias elétricas são das que mais tempo fazem perder a quem tenta adivinhar. Fazemos a medição no sítio certo do circuito e localizamos a origem em vez de trocar peças à sorte."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Eletrónica automóvel e diagnóstico",
-              "description": "Leitura de centralinas com equipamento de diagnóstico, interpretação dos códigos de avaria e teste dos sensores. Um código lido não é um diagnóstico: é o princípio dele."
+              "name": "Mecânica e diagnóstico",
+              "description": "Diagnóstico antes de orçamento, em vez de trocar peças à sorte."
             }
           },
           {
@@ -114,39 +98,23 @@
             "itemOffered": {
               "@type": "Service",
               "name": "Revisão completa",
-              "description": "A revisão que mantém a garantia do plano de manutenção e que evita a avaria cara. Substituem-se os consumíveis e verifica-se o resto ponto por ponto."
+              "description": "Consumíveis substituídos e o resto verificado ponto por ponto."
             }
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Higienização do ar condicionado",
-              "description": "O cheiro a húmido que aparece quando se liga o ar condicionado vem da humidade acumulada no evaporador. A higienização trata o sistema e o habitáculo, com produto próprio para o efeito."
+              "name": "Lavagem completa",
+              "description": "Espuma activa e lavagem manual, na box da oficina."
             }
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Lavagem exterior",
-              "description": "Lavagem a fundo com espuma activa, feita na box da oficina. Não é a lavagem de cinco minutos do posto de combustível — é a que tira o que fica agarrado."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Lavagem interior",
-              "description": "Aspiração completa, limpeza de plásticos e tratamento dos estofos. É o serviço que mais muda a sensação de andar no carro todos os dias."
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Personalização automóvel",
-              "description": "Pequenas alterações estéticas ao gosto de cada um. Falamos primeiro sobre o que é possível fazer sem comprometer a legalidade do veículo na inspeção."
+              "name": "Interior e ar condicionado",
+              "description": "Higienização do evaporador e do habitáculo."
             }
           }
         ]
@@ -204,34 +172,10 @@
         },
         {
           "@type": "Question",
-          "name": "Posso levar as peças que foram substituídas?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Pode. Basta pedir quando deixar o carro e guardamos as peças substituídas para lhe entregar."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Aceitam peças fornecidas por mim?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Fale connosco antes de comprar. Podemos montar peças fornecidas pelo cliente em muitos casos, mas nesse caso a responsabilidade pela peça em si é de quem a forneceu — a nossa é pela montagem."
-          }
-        },
-        {
-          "@type": "Question",
           "name": "Passam fatura com o meu número de contribuinte?",
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Sim, sempre. Basta indicar o NIF no momento do pagamento."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "O carro é lavado depois da reparação?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sim. Fazemos lavagens como serviço próprio, e um carro que entra para mecânica sai lavado."
           }
         },
         {
@@ -297,8 +241,14 @@
 
   <main id="conteudo">
     <!-- ============================================================ HERO -->
-    <section class="hero" id="inicio">
-      <div class="wrap hero__grid">
+    <section class="hero hero--foto" id="inicio">
+      <div class="hero__fundo" aria-hidden="true">
+        <img src="assets/img/trabalhos/lavagem-espuma-oficina-896.webp"
+             srcset="assets/img/trabalhos/lavagem-espuma-oficina-420.webp 420w, assets/img/trabalhos/lavagem-espuma-oficina-560.webp 560w, assets/img/trabalhos/lavagem-espuma-oficina-760.webp 760w, assets/img/trabalhos/lavagem-espuma-oficina-896.webp 896w"
+             sizes="100vw" alt="" width="896" height="1120" fetchpriority="high" />
+      </div>
+      <div class="hero__veu" aria-hidden="true"></div>
+      <div class="wrap">
         <div class="hero__copy">
           <p class="etiqueta" data-site="hero.etiqueta">Oficina multimarca · São João da Madeira</p>
           <h1 class="h-hero" id="hero-titulo">O seu carro merece o <em>melhor cuidado</em></h1>
@@ -308,58 +258,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg>
               <span data-site="hero.cta_principal">Ligar agora</span>
             </a>
-            <a class="btn btn--fantasma" href="#servicos"><span data-site="hero.cta_secundario">Ver serviços</span></a>
+            <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener">WhatsApp</a>
           </div>
-        </div>
-        <figure class="hero__media">
-          <img src="assets/img/trabalhos/lavagem-espuma-oficina-896.webp"
-               srcset="assets/img/trabalhos/lavagem-espuma-oficina-420.webp 420w, assets/img/trabalhos/lavagem-espuma-oficina-560.webp 560w, assets/img/trabalhos/lavagem-espuma-oficina-760.webp 760w, assets/img/trabalhos/lavagem-espuma-oficina-896.webp 896w"
-               sizes="(max-width:860px) min(92vw, 420px), 42vw"
-               alt="Carro coberto de espuma de lavagem na box da oficina PokeAuto"
-               width="896" height="1120" fetchpriority="high" />
-          <figcaption class="hero__legenda">Lavagem com espuma activa na box da oficina</figcaption>
-        </figure>
-      </div>
-    </section>
-
-    <!-- ================================================ FAIXA DE ATALHOS -->
-    <div class="chips">
-      <div class="wrap">
-        <div class="chips__lista" id="chips-lista"><!--pre:chips-lista--><a class="chip" href="#servico-mecanica">Mecânica geral</a><a class="chip" href="#servico-eletricidade">Eletricidade auto</a><a class="chip" href="#servico-eletronica">Eletrónica automóvel e diagnóstico</a><a class="chip" href="#servico-revisao">Revisão completa</a><a class="chip" href="#servico-ar-condicionado">Higienização do ar condicionado</a><a class="chip" href="#servico-lavagem-exterior">Lavagem exterior</a><a class="chip" href="#servico-lavagem-interior">Lavagem interior</a><a class="chip" href="#servico-personalizacao">Personalização automóvel</a><!--/pre:chips-lista--></div>
-      </div>
-    </div>
-
-    <!-- ================================================== ANTES DE LIGAR -->
-    <section class="seccao" id="confianca" aria-labelledby="confianca-t">
-      <div class="wrap">
-        <div class="cabeca">
-          <p class="etiqueta">Como trabalhamos</p>
-          <h2 class="h-sec" id="confianca-t">Sem surpresas na fatura</h2>
-        </div>
-        <div class="confianca">
-          <div class="confianca__item" data-reveal>
-            <span class="mono">01</span>
-            <strong>Diagnóstico primeiro</strong>
-            <span>Percebemos a avaria antes de propor a reparação.</span>
-          </div>
-          <div class="confianca__item" data-reveal>
-            <span class="mono">02</span>
-            <strong>Preço antes de mexer</strong>
-            <span>Nenhum trabalho avança sem a sua autorização.</span>
-          </div>
-          <div class="confianca__item" data-reveal>
-            <span class="mono">03</span>
-            <strong>Peças devolvidas</strong>
-            <span>Basta pedir e guardamos as peças substituídas.</span>
-          </div>
-          <div class="confianca__item" data-reveal>
-            <span class="mono">04</span>
-            <strong>Lavagem na casa</strong>
-            <span>Fazemos lavagens como serviço próprio, na mesma oficina.</span>
-          </div>
+          <p class="hero__nota">O preço é dito antes de se mexer no carro.</p>
         </div>
       </div>
     </section>
+
+
 
     <!-- ======================================================== SERVIÇOS -->
     <section class="seccao seccao--carbono" id="servicos" aria-labelledby="servicos-t">
@@ -368,11 +274,12 @@
           <p class="etiqueta">O que fazemos</p>
           <div class="filete"></div>
           <h2 class="h-sec" id="servicos-t">Serviços</h2>
-          <p class="lead">Oficina multimarca. Do diagnóstico eletrónico à lavagem final, tudo no mesmo sítio e com o mesmo interlocutor.</p>
+          <p class="lead">Oficina multimarca. Diagnóstico antes de orçamento, e o preço dito antes de se mexer no carro.</p>
         </div>
-        <div class="svc-lista" id="servicos-lista"><!--pre:servicos-lista--><article class="svc" id="servico-mecanica" data-reveal=""><div class="svc__n" aria-hidden="true">01</div><div class="svc__corpo"><div><h3 class="h-card">Mecânica geral</h3><p>Manutenção e reparação mecânica de ligeiros de todas as marcas. Começamos sempre por perceber a avaria antes de propor a reparação — e explicamos o que encontrámos por palavras que se percebem.</p><ul class="svc__inclui"><li>Motor e distribuição</li><li>Embraiagem</li><li>Escape</li><li>Direção</li><li>Pré-inspeção</li></ul></div></div></article><article class="svc" id="servico-eletricidade" data-reveal=""><div class="svc__n" aria-hidden="true">02</div><div class="svc__corpo"><div><h3 class="h-card">Eletricidade auto</h3><p>Avarias elétricas são das que mais tempo fazem perder a quem tenta adivinhar. Fazemos a medição no sítio certo do circuito e localizamos a origem em vez de trocar peças à sorte.</p><ul class="svc__inclui"><li>Bateria e carga</li><li>Alternador e motor de arranque</li><li>Iluminação</li><li>Cablagens</li><li>Vidros e fecho centralizado</li></ul></div></div></article><article class="svc svc--foto" id="servico-eletronica" data-reveal=""><div class="svc__n" aria-hidden="true">03</div><div class="svc__corpo"><div><h3 class="h-card">Eletrónica automóvel e diagnóstico</h3><p>Leitura de centralinas com equipamento de diagnóstico, interpretação dos códigos de avaria e teste dos sensores. Um código lido não é um diagnóstico: é o princípio dele.</p><ul class="svc__inclui"><li>Leitura e apagamento de códigos</li><li>Teste de sensores e atuadores</li><li>Luz de avaria acesa</li><li>Sistemas de conforto</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/interior-mercedes-limpo-840.webp" srcset="assets/img/trabalhos/interior-mercedes-limpo-320.webp 320w, assets/img/trabalhos/interior-mercedes-limpo-480.webp 480w, assets/img/trabalhos/interior-mercedes-limpo-640.webp 640w, assets/img/trabalhos/interior-mercedes-limpo-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Posto de condução depois da intervenção" loading="lazy" width="840" height="1050"><figcaption>Posto de condução depois da intervenção</figcaption></figure></div></article><article class="svc svc--foto" id="servico-revisao" data-reveal=""><div class="svc__n" aria-hidden="true">04</div><div class="svc__corpo"><div><h3 class="h-card">Revisão completa</h3><p>A revisão que mantém a garantia do plano de manutenção e que evita a avaria cara. Substituem-se os consumíveis e verifica-se o resto ponto por ponto.</p><ul class="svc__inclui"><li>Óleo e filtros</li><li>Travões</li><li>Suspensão e pneus</li><li>Níveis e correias</li><li>Relatório do que foi verificado</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/mercedes-classe-e-frente-840.webp" srcset="assets/img/trabalhos/mercedes-classe-e-frente-320.webp 320w, assets/img/trabalhos/mercedes-classe-e-frente-480.webp 480w, assets/img/trabalhos/mercedes-classe-e-frente-640.webp 640w, assets/img/trabalhos/mercedes-classe-e-frente-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Mercedes Classe E pronto a entregar" loading="lazy" width="840" height="1050"><figcaption>Mercedes Classe E pronto a entregar</figcaption></figure></div></article><article class="svc svc--foto" id="servico-ar-condicionado" data-reveal=""><div class="svc__n" aria-hidden="true">05</div><div class="svc__corpo"><div><h3 class="h-card">Higienização do ar condicionado</h3><p>O cheiro a húmido que aparece quando se liga o ar condicionado vem da humidade acumulada no evaporador. A higienização trata o sistema e o habitáculo, com produto próprio para o efeito.</p><ul class="svc__inclui"><li>Higienização do evaporador</li><li>Desodorização do habitáculo</li><li>Verificação do filtro de habitáculo</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/interior-bmw-limpo-840.webp" srcset="assets/img/trabalhos/interior-bmw-limpo-320.webp 320w, assets/img/trabalhos/interior-bmw-limpo-480.webp 480w, assets/img/trabalhos/interior-bmw-limpo-640.webp 640w, assets/img/trabalhos/interior-bmw-limpo-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Habitáculo tratado, tablier e estofos incluídos" loading="lazy" width="840" height="1050"><figcaption>Habitáculo tratado, tablier e estofos incluídos</figcaption></figure></div></article><article class="svc svc--foto" id="servico-lavagem-exterior" data-reveal=""><div class="svc__n" aria-hidden="true">06</div><div class="svc__corpo"><div><h3 class="h-card">Lavagem exterior</h3><p>Lavagem a fundo com espuma activa, feita na box da oficina. Não é a lavagem de cinco minutos do posto de combustível — é a que tira o que fica agarrado.</p><ul class="svc__inclui"><li>Pré-lavagem com espuma activa</li><li>Lavagem manual</li><li>Jantes e pneus</li><li>Vidros</li><li>Secagem</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/mercedes-cla-frente-840.webp" srcset="assets/img/trabalhos/mercedes-cla-frente-320.webp 320w, assets/img/trabalhos/mercedes-cla-frente-480.webp 480w, assets/img/trabalhos/mercedes-cla-frente-640.webp 640w, assets/img/trabalhos/mercedes-cla-frente-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Mercedes CLA depois da lavagem exterior" loading="lazy" width="840" height="1050"><figcaption>Mercedes CLA depois da lavagem exterior</figcaption></figure></div></article><article class="svc svc--foto" id="servico-lavagem-interior" data-reveal=""><div class="svc__n" aria-hidden="true">07</div><div class="svc__corpo"><div><h3 class="h-card">Lavagem interior</h3><p>Aspiração completa, limpeza de plásticos e tratamento dos estofos. É o serviço que mais muda a sensação de andar no carro todos os dias.</p><ul class="svc__inclui"><li>Aspiração</li><li>Plásticos e tablier</li><li>Estofos</li><li>Vidros por dentro</li><li>Bagageira</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/bmw-serie5-frente-840.webp" srcset="assets/img/trabalhos/bmw-serie5-frente-320.webp 320w, assets/img/trabalhos/bmw-serie5-frente-480.webp 480w, assets/img/trabalhos/bmw-serie5-frente-640.webp 640w, assets/img/trabalhos/bmw-serie5-frente-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="BMW Série 5 depois de lavagem completa" loading="lazy" width="840" height="1050"><figcaption>BMW Série 5 depois de lavagem completa</figcaption></figure></div></article><article class="svc" id="servico-personalizacao" data-reveal=""><div class="svc__n" aria-hidden="true">08</div><div class="svc__corpo"><div><h3 class="h-card">Personalização automóvel</h3><p>Pequenas alterações estéticas ao gosto de cada um. Falamos primeiro sobre o que é possível fazer sem comprometer a legalidade do veículo na inspeção.</p><ul class="svc__inclui"><li>Detalhes exteriores</li><li>Detalhes interiores</li><li>Aconselhamento prévio</li></ul></div></div></article><!--/pre:servicos-lista--></div>
+        <div class="fichas" id="servicos-lista"><!--pre:servicos-lista--><article class="ficha" id="servico-mecanica"><span id="servico-eletricidade"></span><span id="servico-eletronica"></span><div class="placa"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><div class="camadas"><img src="assets/img/trabalhos/bmw-serie5-frente-840.webp" srcset="assets/img/trabalhos/bmw-serie5-frente-320.webp 320w, assets/img/trabalhos/bmw-serie5-frente-480.webp 480w, assets/img/trabalhos/bmw-serie5-frente-640.webp 640w, assets/img/trabalhos/bmw-serie5-frente-840.webp 840w" sizes="(max-width:1000px) 46vw, 260px" alt="BMW Série 5 entregue depois de intervenção" loading="lazy" width="840" height="1050"><span class="moldura"></span><span class="brilho"></span><span class="selo">01</span><div class="ficha__corpo"><span class="risca"></span><h3>Mecânica e diagnóstico</h3><p>Diagnóstico antes de orçamento, em vez de trocar peças à sorte.</p><ul class="ficha__inclui"><li>Motor e embraiagem</li><li>Avarias elétricas</li><li>Luz de avaria acesa</li></ul></div></div></div></article><article class="ficha" id="servico-revisao"><div class="placa"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><div class="camadas"><img src="assets/img/trabalhos/mercedes-classe-e-frente-840.webp" srcset="assets/img/trabalhos/mercedes-classe-e-frente-320.webp 320w, assets/img/trabalhos/mercedes-classe-e-frente-480.webp 480w, assets/img/trabalhos/mercedes-classe-e-frente-640.webp 640w, assets/img/trabalhos/mercedes-classe-e-frente-840.webp 840w" sizes="(max-width:1000px) 46vw, 260px" alt="Mercedes Classe E pronto a entregar" loading="lazy" width="840" height="1050"><span class="moldura"></span><span class="brilho"></span><span class="selo">02</span><div class="ficha__corpo"><span class="risca"></span><h3>Revisão completa</h3><p>Consumíveis substituídos e o resto verificado ponto por ponto.</p><ul class="ficha__inclui"><li>Óleo e filtros</li><li>Travões e pneus</li><li>Relatório do que foi visto</li></ul></div></div></div></article><article class="ficha" id="servico-lavagem"><span id="servico-lavagem-exterior"></span><span id="servico-lavagem-interior"></span><div class="placa"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><div class="camadas"><img src="assets/img/trabalhos/mercedes-cla-frente-840.webp" srcset="assets/img/trabalhos/mercedes-cla-frente-320.webp 320w, assets/img/trabalhos/mercedes-cla-frente-480.webp 480w, assets/img/trabalhos/mercedes-cla-frente-640.webp 640w, assets/img/trabalhos/mercedes-cla-frente-840.webp 840w" sizes="(max-width:1000px) 46vw, 260px" alt="Mercedes CLA depois da lavagem" loading="lazy" width="840" height="1050"><span class="moldura"></span><span class="brilho"></span><span class="selo">03</span><div class="ficha__corpo"><span class="risca"></span><h3>Lavagem completa</h3><p>Espuma activa e lavagem manual, na box da oficina.</p><ul class="ficha__inclui"><li>Exterior e jantes</li><li>Aspiração e estofos</li><li>Vidros e bagageira</li></ul></div></div></div></article><article class="ficha" id="servico-ar-condicionado"><span id="servico-personalizacao"></span><div class="placa"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><div class="camadas"><img src="assets/img/trabalhos/interior-bmw-limpo-840.webp" srcset="assets/img/trabalhos/interior-bmw-limpo-320.webp 320w, assets/img/trabalhos/interior-bmw-limpo-480.webp 480w, assets/img/trabalhos/interior-bmw-limpo-640.webp 640w, assets/img/trabalhos/interior-bmw-limpo-840.webp 840w" sizes="(max-width:1000px) 46vw, 260px" alt="Habitáculo tratado, tablier e estofos" loading="lazy" width="840" height="1050"><span class="moldura"></span><span class="brilho"></span><span class="selo">04</span><div class="ficha__corpo"><span class="risca"></span><h3>Interior e ar condicionado</h3><p>Higienização do evaporador e do habitáculo.</p><ul class="ficha__inclui"><li>Higienização do evaporador</li><li>Desodorização</li><li>Filtro de habitáculo</li></ul></div></div></div></article><!--/pre:servicos-lista--></div>
       </div>
     </section>
+
 
     <!-- =================================================== FAIXA-TEXTURA -->
     <div class="faixa" aria-hidden="true">
@@ -414,7 +321,7 @@
           <div class="filete"></div>
           <h2 class="h-sec" id="faq-t">Antes de nos ligar</h2>
         </div>
-        <div class="faq" id="faq-lista"><!--pre:faq-lista--><details><summary>Trabalham com que marcas?</summary><p>Somos uma oficina multimarca e trabalhamos com ligeiros de qualquer marca. O Regulamento (UE) 2018/858 garante às oficinas independentes o acesso à informação técnica de reparação dos fabricantes.</p></details><details><summary>Reparar aqui faz-me perder a garantia do carro?</summary><p>Não. Fazer a manutenção numa oficina independente não anula a garantia do fabricante. A garantia só pode ser posta em causa se ficar demonstrado que uma intervenção concreta causou o defeito.</p></details><details><summary>Dizem-me o preço antes de mexer no carro?</summary><p>Sim. Apresentamos o que encontrámos e o custo previsto antes de avançar. Nenhum trabalho é feito sem a sua autorização.</p></details><details><summary>Posso levar as peças que foram substituídas?</summary><p>Pode. Basta pedir quando deixar o carro e guardamos as peças substituídas para lhe entregar.</p></details><details><summary>Aceitam peças fornecidas por mim?</summary><p>Fale connosco antes de comprar. Podemos montar peças fornecidas pelo cliente em muitos casos, mas nesse caso a responsabilidade pela peça em si é de quem a forneceu — a nossa é pela montagem.</p></details><details><summary>Passam fatura com o meu número de contribuinte?</summary><p>Sim, sempre. Basta indicar o NIF no momento do pagamento.</p></details><details><summary>O carro é lavado depois da reparação?</summary><p>Sim. Fazemos lavagens como serviço próprio, e um carro que entra para mecânica sai lavado.</p></details><details><summary>Vendem peças ao balcão?</summary><p>Sim. Temos peças em stock na oficina — o que está disponível aparece na secção Balcão de peças deste site. A venda é feita na oficina; o site é meramente informativo.</p></details><!--/pre:faq-lista--></div>
+        <div class="faq" id="faq-lista"><!--pre:faq-lista--><details><summary>Trabalham com que marcas?</summary><p>Somos uma oficina multimarca e trabalhamos com ligeiros de qualquer marca. O Regulamento (UE) 2018/858 garante às oficinas independentes o acesso à informação técnica de reparação dos fabricantes.</p></details><details><summary>Reparar aqui faz-me perder a garantia do carro?</summary><p>Não. Fazer a manutenção numa oficina independente não anula a garantia do fabricante. A garantia só pode ser posta em causa se ficar demonstrado que uma intervenção concreta causou o defeito.</p></details><details><summary>Dizem-me o preço antes de mexer no carro?</summary><p>Sim. Apresentamos o que encontrámos e o custo previsto antes de avançar. Nenhum trabalho é feito sem a sua autorização.</p></details><details><summary>Passam fatura com o meu número de contribuinte?</summary><p>Sim, sempre. Basta indicar o NIF no momento do pagamento.</p></details><details><summary>Vendem peças ao balcão?</summary><p>Sim. Temos peças em stock na oficina — o que está disponível aparece na secção Balcão de peças deste site. A venda é feita na oficina; o site é meramente informativo.</p></details><!--/pre:faq-lista--></div>
       </div>
     </section>
 
@@ -509,7 +416,7 @@
           <h4>Serviços</h4>
           <!-- gerada a partir de data/servicos.json: escrita à mão ficava com links
                mortos assim que o cliente mudasse um identificador -->
-          <ul id="rodape-servicos"><!--pre:rodape-servicos--><li><a href="#servico-mecanica">Mecânica geral</a></li><li><a href="#servico-eletricidade">Eletricidade auto</a></li><li><a href="#servico-eletronica">Eletrónica automóvel e diagnóstico</a></li><li><a href="#servico-revisao">Revisão completa</a></li><li><a href="#servico-ar-condicionado">Higienização do ar condicionado</a></li><li><a href="#servico-lavagem-exterior">Lavagem exterior</a></li><!--/pre:rodape-servicos--></ul>
+          <ul id="rodape-servicos"><!--pre:rodape-servicos--><li><a href="#servico-mecanica">Mecânica e diagnóstico</a></li><li><a href="#servico-revisao">Revisão completa</a></li><li><a href="#servico-lavagem">Lavagem completa</a></li><li><a href="#servico-ar-condicionado">Interior e ar condicionado</a></li><!--/pre:rodape-servicos--></ul>
         </div>
 
         <div>
@@ -559,6 +466,6 @@
     <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener">WhatsApp</a>
   </div>
 
-  <script src="assets/js/app.js?v=91dabcdb" defer></script>
+  <script src="assets/js/app.js?v=900a4ee2" defer></script>
 </body>
 </html>

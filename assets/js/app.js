@@ -326,37 +326,34 @@
       var itens = (d && d.itens) || [];
 
       svcGrid.innerHTML = itens.map(function (s, i) {
-        var foto = '';
-        if (s.foto) {
-          var base = 'assets/img/trabalhos/' + s.foto;
-          var src = base + '-840.webp';
-          /* sizes medido: a figura ocupa ~158 CSS px no telemóvel e ~260 no
-             computador. Sem isto o browser trazia sempre o ficheiro de 840px
-             para uma caixa de 158 — eram 808 KB desperdiçados numa página. */
-          var ss = [320, 480, 640, 840].map(function (w) {
-            var f = base + '-' + w + '.webp';
-            return DIMS[f] ? f + ' ' + w + 'w' : null;
-          }).filter(Boolean).join(', ');
-          foto = '<figure class="svc__foto">' +
-            '<img src="' + esc(src) + '"' +
-            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:860px) 46vw, 260px"' : '') +
-            ' alt="' + esc(s.legenda_foto || s.titulo) + '"' +
-            ' loading="lazy"' + attrsDim(src) + ' />' +
-            (s.legenda_foto ? '<figcaption>' + esc(s.legenda_foto) + '</figcaption>' : '') +
-            '</figure>';
-        }
+        var base = 'assets/img/trabalhos/' + (s.foto || '');
+        var src = base + '-840.webp';
+        var ss = s.foto ? [320, 480, 640, 840].map(function (w) {
+          var f = base + '-' + w + '.webp';
+          return DIMS[f] ? f + ' ' + w + 'w' : null;
+        }).filter(Boolean).join(', ') : '';
         var inclui = (s.inclui || []).length
-          ? '<ul class="svc__inclui">' + s.inclui.map(function (x) {
+          ? '<ul class="ficha__inclui">' + s.inclui.map(function (x) {
               return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
           : '';
-        var tempo = s.tempo ? '<p class="svc__tempo">Tempo médio: ' + esc(s.tempo) + '</p>' : '';
-        return '<article class="svc' + (s.foto ? ' svc--foto' : '') + '" id="servico-' +
-          esc(s.id) + '" data-reveal>' +
-          '<div class="svc__n" aria-hidden="true">' + ('0' + (i + 1)).slice(-2) + '</div>' +
-          '<div class="svc__corpo"><div>' +
-          '<h3 class="h-card">' + esc(s.titulo) + '</h3>' +
-          '<p>' + esc(s.descricao) + '</p>' + inclui + tempo +
-          '</div>' + foto + '</div></article>';
+        /* âncoras antigas: os serviços que foram agrupados mantêm o id, senão
+           um link que já ande por aí deixa de ir a lado nenhum */
+        var alias = (s.alias || []).map(function (a) {
+          return '<span id="servico-' + esc(a) + '"></span>'; }).join('');
+        /* as 9 zonas de rato; em telemóvel nunca correm (hover:hover) */
+        var zonas = new Array(9).join('<i></i>') + '<i></i>';
+        return '<article class="ficha" id="servico-' + esc(s.id) + '">' + alias +
+          '<div class="placa">' + zonas +
+          '<div class="camadas">' +
+          (s.foto ? '<img src="' + esc(src) + '"' +
+            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:1000px) 46vw, 260px"' : '') +
+            ' alt="' + esc(s.legenda_foto || s.titulo) + '" loading="lazy"' + attrsDim(src) + ' />' : '') +
+          '<span class="moldura"></span><span class="brilho"></span>' +
+          '<span class="selo">' + ('0' + (i + 1)).slice(-2) + '</span>' +
+          '<div class="ficha__corpo"><span class="risca"></span>' +
+          '<h3>' + esc(s.titulo) + '</h3>' +
+          '<p>' + esc(s.descricao) + '</p>' + inclui +
+          '</div></div></div></article>';
       }).join('');
 
       /* lista de serviços do rodapé: gerada, não escrita à mão — senão ficava
@@ -368,13 +365,6 @@
         }).join('');
       }
 
-      /* chips de atalho, na faixa amarela */
-      var chips = el('chips-lista');
-      if (chips) {
-        chips.innerHTML = itens.map(function (s) {
-          return '<a class="chip" href="#servico-' + esc(s.id) + '">' + esc(s.titulo) + '</a>';
-        }).join('');
-      }
       revelar(svcGrid);
     }).catch(function () { });
   }
