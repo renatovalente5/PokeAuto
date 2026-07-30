@@ -124,7 +124,7 @@
       toggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
       fundoInerte(aberto);
       if (aberto) {
-        var p = menu.querySelector('a');
+        var p = el('menu-fechar') || menu.querySelector('a');
         if (p) p.focus({ preventScroll: true });
       }
     });
@@ -133,8 +133,8 @@
        vai para o último. O botão de fechar entra no ciclo. */
     doc.addEventListener('keydown', function (e) {
       if (e.key !== 'Tab' || !doc.body.classList.contains('menu-aberto')) return;
-      var itens = [toggle].concat([].slice.call(menu.querySelectorAll(FOCAVEIS)))
-        .filter(function (n) { return n.offsetParent !== null || n === toggle; });
+      var itens = [].slice.call(menu.querySelectorAll(FOCAVEIS))
+        .filter(function (n) { return n.offsetParent !== null; });
       if (!itens.length) return;
       var primeiro = itens[0], ultimo = itens[itens.length - 1];
       if (e.shiftKey && doc.activeElement === primeiro) { e.preventDefault(); ultimo.focus(); }
@@ -144,8 +144,15 @@
     menu.addEventListener('click', function (e) {
       if (e.target.closest('a')) fecharMenu();
     });
-    /* tocar no logótipo com o menu aberto tem de o fechar — antes ficava por
-       cima do painel e o clique não fazia nada de visível */
+    /* O painel está acima da navbar, por isso o hambúrguer fica por trás dele e
+       não se pode clicar. O fecho é um botão próprio, dentro do painel. */
+    var btFechar = el('menu-fechar');
+    if (btFechar) btFechar.addEventListener('click', function () {
+      fecharMenu();
+      if (toggle) toggle.focus({ preventScroll: true });
+    });
+
+    /* tocar no logótipo com o menu aberto tem de o fechar */
     doc.querySelectorAll('[data-fecha-menu]').forEach(function (n) {
       n.addEventListener('click', fecharMenu);
     });

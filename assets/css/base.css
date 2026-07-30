@@ -114,7 +114,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h-min) + 8px); }
 .seccao--claro { background: var(--claro); color: var(--claro-tinta); }
 .seccao--claro :where(h1, h2, h3, h4) { color: var(--claro-tinta); }
 .seccao--claro .etiqueta { color: var(--vermelho-claro); }
-.seccao--claro .meta { color: var(--claro-2); }
+/* Todo o texto secundário da faixa clara. Faltava o .lead: ficava a
+   #C9CFD6 sobre #F4F5F7 — 1,44:1, ilegível. */
+.seccao--claro :where(.meta, .lead, .custo-chamada, small) { color: var(--claro-2); }
 .seccao--carbono { background: var(--carbono); }
 
 .cabeca { max-width: 60ch; margin-bottom: clamp(1.8rem, 4vw, 2.8rem); }

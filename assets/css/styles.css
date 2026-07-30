@@ -105,22 +105,10 @@ body.menu-aberto .menu { display: flex; }
 @media (max-height: 620px) {
   .menu__link { padding: .62rem .25rem; font-size: clamp(1.15rem, 5vw, 1.5rem); }
   .menu__acoes { grid-template-columns: 1fr 1fr; margin-block: 1rem; }
-  .menu__rodape { padding-block: .7rem 1rem; }
-  .menu__rodape .mono { font-size: 1.1rem; }
+  .menu__rodape { padding-block: .7rem 0; }
+  .menu__tel .mono { font-size: 1.15rem; }
 }
 .menu__acoes .btn { width: 100%; }
-
-/* rodapé do menu: um dos DOIS únicos sítios com o amarelo do letreiro */
-.menu__rodape {
-  margin-top: auto;
-  flex: none;
-  margin-inline: calc(-1 * var(--gutter));
-  padding: 1rem var(--gutter) 1.4rem;
-  background: var(--amarelo); color: #0B0B0D;
-}
-.menu__rodape a { color: #0B0B0D; font-weight: 600; text-decoration: none; }
-.menu__rodape .mono { font-size: 1.32rem; }
-.menu__rodape small { display: block; opacity: .74; font-size: .78rem; }
 
 /* ==================================================================== HERO */
 .hero { position: relative; padding-top: calc(var(--nav-h) + clamp(1.5rem, 5vw, 3rem)); padding-bottom: var(--seccao-y); }
@@ -250,7 +238,19 @@ body.menu-aberto .menu { display: flex; }
 .faq details p { padding-bottom: 1.1rem; max-width: 70ch; }
 
 /* ============================================================== CONTACTOS */
-.contactos__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.6rem, 4vw, 3rem); align-items: start; }
+/* O mapa acompanha a altura da coluna de contactos — do topo até à linha dos
+   botões — em vez de ser um retrato alto que fazia a secção crescer sozinha. */
+.contactos__grid { display: grid; grid-template-columns: 1.05fr .95fr;
+  gap: clamp(1.6rem, 4vw, 3rem); align-items: stretch; }
+.contactos__lista { align-content: start; }
+/* O conteúdo do mapa é absoluto para não contribuir para a altura da linha:
+   quem manda na altura é a coluna dos contactos, e o mapa preenche-a. */
+.contactos__grid .mapa { position: relative; min-height: 240px; }
+.contactos__grid .mapa__facade,
+.contactos__grid .mapa iframe { position: absolute; inset: 0; height: 100%; width: 100%;
+  aspect-ratio: auto; }
+.contactos__grid .mapa__facade img { height: 100%; width: 100%; aspect-ratio: auto;
+  object-fit: cover; object-position: 50% 38%; }
 .contactos__lista { display: grid; gap: 1.1rem; }
 .contacto-item { display: grid; grid-template-columns: 26px 1fr; gap: .85rem; align-items: start; }
 .contacto-item svg { width: 22px; height: 22px; color: var(--dourado); margin-top: .18rem; }
@@ -269,9 +269,6 @@ body.menu-aberto .menu { display: flex; }
 .mapa__nota { font-size: .8rem; color: var(--legenda); max-width: 34ch; }
 .mapa iframe { display: block; width: 100%; aspect-ratio: 4 / 5; border: 0; }
 
-/* ================================================== BARRA FIXA (telemóvel) */
-/* Quem chega com o carro avariado está no telemóvel e com pressa. */
-.barra-acao { display: none; }
 
 /* ================================================================= RODAPÉ */
 .rodape { background: var(--carbono); border-top: 1px solid var(--aco); padding-block: clamp(2.4rem, 5vw, 3.4rem) 1.6rem; }
@@ -314,20 +311,17 @@ body.menu-aberto .menu { display: flex; }
   .hero__grid { grid-template-columns: 1fr; }
   .hero__media { order: -1; max-width: 420px; }
   .contactos__grid { grid-template-columns: 1fr; }
+  /* Volta ao fluxo normal, mas SEM perder o position: a sobreposição «Ver o
+     mapa» é absoluta e precisa do .mapa__facade como referência — com static
+     escapava para o primeiro antepassado posicionado, e ia parar às Peças. */
+  .contactos__grid .mapa { position: relative; min-height: 0; }
+  .contactos__grid .mapa__facade,
+  .contactos__grid .mapa iframe { position: relative; inset: auto;
+    height: auto; width: auto; aspect-ratio: 4 / 3; }
+  .contactos__grid .mapa__facade img { height: 100%; width: 100%; aspect-ratio: auto; }
 
   .svc { grid-template-columns: 60px 1fr; gap: 1rem; }
 
-  /* barra de acção fixa no fundo: ligar e WhatsApp sempre à mão */
-  .barra-acao {
-    display: grid; grid-template-columns: 1fr 1fr;
-    position: fixed; inset: auto 0 0 0; z-index: 100;
-    background: rgba(11, 11, 13, .97); border-top: 1px solid var(--aco);
-    padding: .55rem .7rem calc(.55rem + env(safe-area-inset-bottom));
-    gap: .5rem;
-  }
-  body.menu-aberto .barra-acao { display: none; }
-  .barra-acao .btn { padding: .7em 1em; font-size: 1rem; }
-  body { padding-bottom: 76px; }
 }
 
 @media (max-width: 620px) {
@@ -362,7 +356,14 @@ body.menu-aberto .menu { display: flex; }
 .doc ul li { margin-bottom: .4rem; }
 .doc .meta { margin-bottom: 1.6rem; }
 .doc a { color: var(--dourado); }
-.doc table { width: 100%; border-collapse: collapse; margin-block: .8rem 1.4rem; font-size: .92rem; }
+/* As tabelas legais têm 4 colunas e não cabem em 390px: sem isto, a largura
+   mínima da tabela esticava a viewport e o telemóvel abria a página reduzida.
+   O contentor desliza e é focável, para também funcionar só com teclado. */
+.doc .tabela { overflow-x: auto; margin-block: .8rem 1.4rem;
+  -webkit-overflow-scrolling: touch; }
+.doc .tabela:focus-visible { outline: 2px solid var(--dourado); outline-offset: 3px; }
+.doc table { width: 100%; min-width: 30rem; border-collapse: collapse; font-size: .92rem; }
+.doc table :where(td, th) { overflow-wrap: anywhere; }
 .doc th, .doc td { text-align: left; padding: .6rem .7rem; border: 1px solid var(--aco); vertical-align: top; }
 .doc th { background: var(--carbono); color: var(--branco); font-family: var(--f-display); font-weight: 600; }
 .doc__caixa { border-left: 3px solid var(--dourado); background: var(--carbono); padding: 1rem 1.1rem; border-radius: var(--raio); margin-block: 1.2rem; }
@@ -399,7 +400,8 @@ body.menu-aberto .menu { display: flex; }
 .hero--foto { position: relative; min-height: min(92svh, 780px); display: flex;
   align-items: flex-end; padding-bottom: clamp(2.5rem, 7vw, 5rem); overflow: hidden; }
 .hero--foto::before { content: none; }
-.hero__fundo { position: absolute; inset: 0; z-index: -2; }
+/* overflow: a animação de aproximação faz a foto crescer ~11% além do ecrã */
+.hero__fundo { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
 .hero__fundo img { width: 100%; height: 100%; object-fit: cover; object-position: 58% 68%; }
 .hero__veu { position: absolute; inset: 0; z-index: -1;
   background:
@@ -587,3 +589,92 @@ body.menu-aberto .menu { display: flex; }
   border: 2px solid var(--dourado);
 }
 .btn--consent:hover { background: rgba(245, 185, 33, .14); border-color: var(--dourado-luz); }
+
+/* ==================================================== MENU — TOPO E RODAPÉ */
+/* O painel está acima da navbar (z-index 130), por isso o botão do hambúrguer
+   ficava POR TRÁS dele: visível mas não clicável. O fecho tem de viver dentro
+   do painel. */
+.menu__topo { display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.2rem; }
+.menu__logo { height: 56px; width: auto; }
+.menu__fechar {
+  width: 46px; height: 46px; flex: none;
+  display: grid; place-items: center;
+  background: transparent; color: var(--branco);
+  border: 1px solid var(--aco); border-radius: var(--raio); cursor: pointer;
+}
+.menu__fechar svg { width: 22px; height: 22px; }
+.menu__fechar:hover { border-color: var(--dourado); color: var(--dourado); }
+
+/* o painel já não precisa de reservar espaço para a navbar: tem topo próprio */
+.menu { padding-top: clamp(1rem, 4vw, 1.6rem); }
+
+/* rodapé do menu: sem o painel amarelo. Uma linha de contacto sóbria, com o
+   número em destaque dourado — que é a cor de acento do site — em vez de um
+   bloco amarelo que competia com tudo o resto. */
+.menu__rodape {
+  margin-top: auto; margin-inline: 0; flex: none;
+  background: none; color: inherit;
+  border-top: 1px solid var(--aco);
+  padding: 1.1rem 0 1.4rem;
+}
+.menu__tel { display: inline-flex; align-items: center; gap: .6rem;
+  color: var(--dourado); text-decoration: none; }
+.menu__tel svg { width: 20px; height: 20px; }
+.menu__tel .mono { font-size: 1.5rem; letter-spacing: .01em; }
+.menu__rodape small { display: block; color: var(--legenda); font-size: .8rem; margin-top: .2rem; }
+
+/* ================================================ WHATSAPP FLUTUANTE */
+/* Substitui a barra fixa de dois botões, que ocupava uma faixa permanente do
+   ecrã e obrigava a um padding no body. */
+.wa-flutua {
+  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 100;
+  width: 58px; height: 58px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #25D366; color: #0B0B0D;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .12);
+  transition: transform var(--t), box-shadow var(--t);
+}
+.wa-flutua svg { width: 32px; height: 32px; }
+/* Pedido para o telemóvel, a substituir a barra fixa. No computador não faz
+   falta e ficava por cima do último link legal do rodapé. */
+@media (min-width: 861px) { .wa-flutua { display: none; } }
+.wa-flutua:hover { transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 255, 255, .2); }
+body.menu-aberto .wa-flutua { display: none; }
+/* não tapar o banner de cookies enquanto ele estiver aberto */
+body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
+
+/* ======================================================== RODAPÉ NOVO */
+.rodape__topo { display: grid; grid-template-columns: 1.5fr auto; gap: 2.5rem; align-items: start; }
+.rodape__marca { max-width: 44ch; }
+.rodape__contacto-col { justify-self: end; text-align: left; }
+.rodape__contacto-col .redes { margin-top: 1.2rem; }
+
+/* última linha: © à esquerda, links à direita */
+.rodape__barra { display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: .6rem 1.4rem; }
+/* No telemóvel o botão flutuante do WhatsApp ocupa o canto: os links legais
+   precisam de espaço por baixo para não ficarem tapados. */
+@media (max-width: 860px) { .rodape__barra { padding-bottom: 4.6rem; } }
+.rodape__barra .rodape__copy { margin: 0; order: 0; }
+.rodape__barra .rodape__links { margin: 0; justify-content: flex-end; }
+
+@media (max-width: 860px) {
+  .rodape__topo { grid-template-columns: 1fr; gap: 1.8rem; }
+  .rodape__contacto-col { justify-self: start; }
+  .rodape__barra { justify-content: flex-start; }
+  .rodape__barra .rodape__links { justify-content: flex-start; }
+}
+
+/* Alvos de toque (WCAG 2.2 SC 2.5.8): os links de telefone e Instagram são
+   linhas de texto isoladas, com 18–20px de altura. A área tocável é alargada
+   por pseudo-elemento para não alterar o espaçamento nem o desenho. */
+.contacto-item a,
+.rodape__contactos a,
+.menu__tel { position: relative; }
+.contacto-item a::after,
+.rodape__contactos a::after {
+  content: ''; position: absolute; inset: -12px -10px; border-radius: 6px;
+}
