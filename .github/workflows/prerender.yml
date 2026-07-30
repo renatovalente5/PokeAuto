@@ -1,0 +1,157 @@
+name: Pré-render para os motores de busca
+
+# O site desenha as secções em JavaScript a partir de data/*.json. O index.html
+# guarda uma cópia estática desse resultado, para os rastreadores que não correm
+# JS verem o conteúdo todo. Sempre que o cliente edita conteúdo no backoffice,
+# essa cópia tem de ser regenerada — é isso que este workflow faz.
+#
+# Também converte as fotografias novas para WebP e mede as suas dimensões, sem o
+# que o browser não reserva espaço e o loading="lazy" deixa de adiar nada.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'assets/img/**'
+      - 'assets/js/**'
+      - 'assets/css/**'
+      - '.github/scripts/**'
+  workflow_dispatch:        # permite correr à mão a partir do separador Actions
+  schedule:
+    # Ronda diária: confirma que o HTML servido continua a bater com os dados.
+    # Apanha qualquer dessincronização que tenha escapado (push perdido, execução
+    # falhada, edição directa no repositório).
+    - cron: '17 6 * * *'
+
+# Se o cliente gravar várias edições seguidas no backoffice, só interessa a última
+concurrency:
+  group: prerender
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  prerender:
+    # Anti-ciclo: o commit deste workflow não pode voltar a disparar o workflow.
+    # Só se aplica a `push` — num evento `schedule` o github.actor é o autor do
+    # último push ao repositório, que muitas vezes É o bot, e a condição antiga
+    # impedia a ronda diária de correr sempre que a última publicação tinha sido
+    # automática (ou seja, quase sempre).
+    if: github.event_name != 'push' || github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # o <lastmod> do sitemap vem do histórico do git
+
+      - name: Instalar o Pillow
+        run: python3 -m pip install --quiet --disable-pip-version-check Pillow
+
+      - name: Instalar o Chrome
+        uses: browser-actions/setup-chrome@v1
+        id: chrome
+        with:
+          chrome-version: stable
+
+      - name: Converter as fotografias novas para WebP
+        run: python3 .github/scripts/webp.py
+
+      - name: Medir as dimensões das imagens
+        run: python3 .github/scripts/dimensoes.py
+
+      - name: Gerar o HTML estático
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: python3 .github/scripts/prerender.py
+
+      - name: Carimbar a versão dos assets
+        run: python3 .github/scripts/versionar_assets.py
+
+      - name: Publicar se houve alterações
+        id: publicar
+        run: |
+          set -euo pipefail
+          ALVOS="index.html legal/ sitemap.xml sitemap-imagens.xml data/_dimensoes.json assets/img"
+          if git diff --quiet -- $ALVOS && [ -z "$(git status --porcelain -- $ALVOS)" ]; then
+            echo "Nada a fazer — o HTML já estava em dia."
+            echo "publicado=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- $ALVOS
+          git commit -m "Pré-render: atualiza o HTML estático a partir de data/*.json
+
+          Gerado automaticamente depois de uma edição no backoffice.
+          Sem este passo, os motores de busca continuariam a ver a versão anterior."
+
+          # Se entrar outro push entretanto, o push simples falhava e o HTML dos
+          # motores de busca ficava desactualizado sem ninguém saber. Rebase e
+          # três tentativas.
+          #
+          # Depois de cada rebase pergunta-se aos próprios scripts se o que está
+          # commitado ainda corresponde aos dados — cada um tem um modo
+          # --verificar que devolve 1 quando está desactualizado. A tentativa
+          # anterior comparava `HEAD@{1}`, que não é o HEAD anterior ao pull: sem
+          # colisão o reflow não escreve entrada nenhuma e HEAD@{1} passava a ser
+          # o PAI do commit do bot, o que dava a condição SEMPRE verdadeira
+          # (regenerava tudo em todos os runs); com colisão real dava sempre falsa
+          # (publicava HTML gerado a partir dos dados antigos). Perguntar aos
+          # scripts não depende de semântica de reflog e testa o que importa.
+          publicado=false
+          for tentativa in 1 2 3; do
+            if git pull --rebase --autostash origin main; then
+              if ! ( python3 .github/scripts/webp.py --verificar \
+                  && python3 .github/scripts/dimensoes.py --verificar \
+                  && CHROME_PATH="${{ steps.chrome.outputs.chrome-path }}" \
+                     python3 .github/scripts/prerender.py --verificar ); then
+                echo "O rebase trouxe dados novos — a regenerar."
+                python3 .github/scripts/webp.py
+                python3 .github/scripts/dimensoes.py
+                CHROME_PATH="${{ steps.chrome.outputs.chrome-path }}" \
+                  python3 .github/scripts/prerender.py
+                python3 .github/scripts/versionar_assets.py
+                git add -A -- $ALVOS
+                git commit --amend --no-edit || true
+              fi
+            fi
+            if git push; then publicado=true; break; fi
+            echo "Tentativa $tentativa falhou; a repetir."
+            sleep $((tentativa * 5))
+          done
+          echo "publicado=$publicado" >> "$GITHUB_OUTPUT"
+          if [ "$publicado" != "true" ]; then
+            echo "::error::Não consegui publicar depois de 3 tentativas."
+            exit 1
+          fi
+
+      # A ronda diária não deve publicar nada em silêncio: se encontrar deriva,
+      # é sinal de que alguma coisa correu mal e alguém tem de olhar.
+      - name: Avisar se a ronda diária encontrou deriva
+        if: github.event_name == 'schedule' && steps.publicar.outputs.publicado == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const titulo = 'A ronda diária encontrou o HTML dessincronizado dos dados';
+            const abertas = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'prerender',
+            });
+            if (abertas.data.some(i => i.title === titulo)) return;
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: titulo,
+              labels: ['prerender'],
+              body: [
+                'A verificação diária regenerou o HTML estático, o que significa que',
+                'estava a servir conteúdo diferente do que está em `data/*.json`.',
+                '',
+                'Já foi corrigido e publicado por esta execução — isto é só o aviso',
+                'de que houve uma edição que não disparou o workflow na altura.',
+                '',
+                `Execução: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              ].join('\n'),
+            });

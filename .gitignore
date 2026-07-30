@@ -1,0 +1,7 @@
+# Material em bruto (fotos e cartazes originais do Instagram) — não vai para o site
+_source/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
