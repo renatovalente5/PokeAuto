@@ -17,9 +17,10 @@
   <meta property="og:site_name" content="PokeAuto" />
   <meta property="og:title" content="PokeAuto — Oficina auto em São João da Madeira" />
   <meta property="og:description" content="Mecânica, eletricidade, eletrónica, revisões e lavagens na Rua da Liberdade, 53. O seu carro merece o melhor cuidado." />
-  <meta property="og:image" content="https://renatovalente5.github.io/PokeAuto/assets/img/trabalhos/lavagem-espuma-oficina-1140.webp" />
-  <meta property="og:image:width" content="1140" />
-  <meta property="og:image:height" content="1425" />
+  <meta property="og:image" content="https://renatovalente5.github.io/PokeAuto/assets/img/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="PokeAuto — oficina auto em São João da Madeira" />
   <meta property="og:url" content="https://renatovalente5.github.io/PokeAuto/" />
   <meta property="og:locale" content="pt_PT" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -28,7 +29,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/barlow-400.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="assets/css/base.css?v=83ba7510" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=b9c42ce4" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=48814862" />
 
   <!--pre:jsonld--><script type="application/ld+json">
 {
@@ -47,7 +48,7 @@
       "description": "Oficina automóvel multimarca em São João da Madeira: mecânica, eletricidade, eletrónica automóvel, revisão completa, lavagens e higienização do ar condicionado.",
       "url": "https://renatovalente5.github.io/PokeAuto/",
       "logo": "https://renatovalente5.github.io/PokeAuto/assets/img/logo-760.webp",
-      "image": "https://renatovalente5.github.io/PokeAuto/assets/img/trabalhos/lavagem-espuma-oficina-1140.webp",
+      "image": "https://renatovalente5.github.io/PokeAuto/assets/img/og.jpg",
       "telephone": "+351922022364",
       "priceRange": "€€",
       "address": {
@@ -253,8 +254,11 @@
   <!-- ============================================================ NAVBAR -->
   <header class="nav">
     <div class="nav__wrap">
-      <a class="nav__marca" href="#inicio" aria-label="PokeAuto — início">
-        <img class="nav__logo" src="assets/img/logo-760.webp" alt="PokeAuto — oficina automóvel em São João da Madeira" width="760" height="599" fetchpriority="high" />
+      <a class="nav__marca" href="#inicio" aria-label="PokeAuto — início" data-fecha-menu>
+        <img class="nav__logo" src="assets/img/logo-380.webp"
+             srcset="assets/img/logo-380.webp 380w, assets/img/logo-760.webp 760w"
+             sizes="(max-width:860px) 96px, 128px"
+             alt="PokeAuto — oficina automóvel em São João da Madeira" width="380" height="299" fetchpriority="high" />
       </a>
 
       <nav class="nav__links" aria-label="Navegação principal">
@@ -274,7 +278,7 @@
   </header>
 
   <!-- ============================================ MENU DE ECRÃ INTEIRO -->
-  <div class="menu" id="menu">
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu de navegação">
     <nav class="menu__links" aria-label="Navegação em telemóvel">
       <a class="menu__link" href="#servicos">Serviços</a>
       <a class="menu__link" href="#pecas">Peças</a>
@@ -300,7 +304,7 @@
         <div class="hero__copy">
           <p class="etiqueta" data-site="hero.etiqueta">Oficina multimarca · São João da Madeira</p>
           <h1 class="h-hero" id="hero-titulo">O seu carro merece o <em>melhor cuidado</em></h1>
-          <p class="lead hero__lead" data-site="hero.lead">Mecânica, eletricidade e eletrónica automóvel na Rua da Liberdade. Fazemos o diagnóstico, explicamos o que encontrámos e só avançamos depois de si. E o carro sai lavado.</p>
+          <p class="lead hero__lead" data-site="hero.lead">Mecânica, eletricidade e eletrónica automóvel na Rua da Liberdade. Fazemos o diagnóstico, explicamos o que encontrámos e só avançamos depois de si. Também tratamos das lavagens.</p>
           <div class="hero__acoes">
             <a class="btn btn--vermelho" href="tel:+351922022364" data-tel>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg>
@@ -310,11 +314,11 @@
           </div>
         </div>
         <figure class="hero__media">
-          <img src="assets/img/trabalhos/lavagem-espuma-oficina-1140.webp"
-               srcset="assets/img/trabalhos/lavagem-espuma-oficina-760.webp 760w, assets/img/trabalhos/lavagem-espuma-oficina-1140.webp 1140w"
+          <img src="assets/img/trabalhos/lavagem-espuma-oficina-896.webp"
+               srcset="assets/img/trabalhos/lavagem-espuma-oficina-420.webp 420w, assets/img/trabalhos/lavagem-espuma-oficina-560.webp 560w, assets/img/trabalhos/lavagem-espuma-oficina-760.webp 760w, assets/img/trabalhos/lavagem-espuma-oficina-896.webp 896w"
                sizes="(max-width:860px) min(92vw, 420px), 42vw"
                alt="Carro coberto de espuma de lavagem na box da oficina PokeAuto"
-               width="1140" height="1425" fetchpriority="high" />
+               width="896" height="1120" fetchpriority="high" />
           <figcaption class="hero__legenda">Lavagem com espuma activa na box da oficina</figcaption>
         </figure>
       </div>
@@ -352,8 +356,8 @@
           </div>
           <div class="confianca__item" data-reveal>
             <span class="mono">04</span>
-            <strong>Sai lavado</strong>
-            <span>Um carro que entra para mecânica sai limpo.</span>
+            <strong>Lavagem na casa</strong>
+            <span>Fazemos lavagens como serviço próprio, na mesma oficina.</span>
           </div>
         </div>
       </div>
@@ -368,7 +372,7 @@
           <h2 class="h-sec" id="servicos-t">Serviços</h2>
           <p class="lead">Oficina multimarca. Do diagnóstico eletrónico à lavagem final, tudo no mesmo sítio e com o mesmo interlocutor.</p>
         </div>
-        <div class="svc-lista" id="servicos-lista"><!--pre:servicos-lista--><article class="svc" id="servico-mecanica" data-reveal=""><div class="svc__n" aria-hidden="true">01</div><div class="svc__corpo"><div><h3 class="h-card">Mecânica geral</h3><p>Manutenção e reparação mecânica de ligeiros de todas as marcas. Começamos sempre por perceber a avaria antes de propor a reparação — e explicamos o que encontrámos por palavras que se percebem.</p><ul class="svc__inclui"><li>Motor e distribuição</li><li>Embraiagem</li><li>Escape</li><li>Direção</li><li>Pré-inspeção</li></ul></div></div></article><article class="svc" id="servico-eletricidade" data-reveal=""><div class="svc__n" aria-hidden="true">02</div><div class="svc__corpo"><div><h3 class="h-card">Eletricidade auto</h3><p>Avarias elétricas são das que mais tempo fazem perder a quem tenta adivinhar. Fazemos a medição no sítio certo do circuito e localizamos a origem em vez de trocar peças à sorte.</p><ul class="svc__inclui"><li>Bateria e carga</li><li>Alternador e motor de arranque</li><li>Iluminação</li><li>Cablagens</li><li>Vidros e fecho centralizado</li></ul></div></div></article><article class="svc svc--foto" id="servico-eletronica" data-reveal=""><div class="svc__n" aria-hidden="true">03</div><div class="svc__corpo"><div><h3 class="h-card">Eletrónica automóvel e diagnóstico</h3><p>Leitura de centralinas com equipamento de diagnóstico, interpretação dos códigos de avaria e teste dos sensores. Um código lido não é um diagnóstico: é o princípio dele.</p><ul class="svc__inclui"><li>Leitura e apagamento de códigos</li><li>Teste de sensores e atuadores</li><li>Luz de avaria acesa</li><li>Sistemas de conforto</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/interior-mercedes-limpo-840.webp" alt="Posto de condução depois da intervenção" loading="lazy" width="840" height="1050"><figcaption>Posto de condução depois da intervenção</figcaption></figure></div></article><article class="svc svc--foto" id="servico-revisao" data-reveal=""><div class="svc__n" aria-hidden="true">04</div><div class="svc__corpo"><div><h3 class="h-card">Revisão completa</h3><p>A revisão que mantém a garantia do plano de manutenção e que evita a avaria cara. Substituem-se os consumíveis e verifica-se o resto ponto por ponto.</p><ul class="svc__inclui"><li>Óleo e filtros</li><li>Travões</li><li>Suspensão e pneus</li><li>Níveis e correias</li><li>Relatório do que foi verificado</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/mercedes-classe-e-frente-840.webp" alt="Mercedes Classe E pronto a entregar" loading="lazy" width="840" height="1050"><figcaption>Mercedes Classe E pronto a entregar</figcaption></figure></div></article><article class="svc svc--foto" id="servico-ar-condicionado" data-reveal=""><div class="svc__n" aria-hidden="true">05</div><div class="svc__corpo"><div><h3 class="h-card">Higienização do ar condicionado</h3><p>O cheiro a húmido que aparece quando se liga o ar condicionado vem da humidade acumulada no evaporador. A higienização trata o sistema e o habitáculo, com produto próprio para o efeito.</p><ul class="svc__inclui"><li>Higienização do evaporador</li><li>Desodorização do habitáculo</li><li>Verificação do filtro de habitáculo</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/interior-bmw-limpo-840.webp" alt="Habitáculo tratado, tablier e estofos incluídos" loading="lazy" width="840" height="1050"><figcaption>Habitáculo tratado, tablier e estofos incluídos</figcaption></figure></div></article><article class="svc svc--foto" id="servico-lavagem-exterior" data-reveal=""><div class="svc__n" aria-hidden="true">06</div><div class="svc__corpo"><div><h3 class="h-card">Lavagem exterior</h3><p>Lavagem a fundo com espuma activa, feita na box da oficina. Não é a lavagem de cinco minutos do posto de combustível — é a que tira o que fica agarrado.</p><ul class="svc__inclui"><li>Pré-lavagem com espuma activa</li><li>Lavagem manual</li><li>Jantes e pneus</li><li>Vidros</li><li>Secagem</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/mercedes-cla-frente-840.webp" alt="Mercedes CLA depois da lavagem exterior" loading="lazy" width="840" height="1050"><figcaption>Mercedes CLA depois da lavagem exterior</figcaption></figure></div></article><article class="svc svc--foto" id="servico-lavagem-interior" data-reveal=""><div class="svc__n" aria-hidden="true">07</div><div class="svc__corpo"><div><h3 class="h-card">Lavagem interior</h3><p>Aspiração completa, limpeza de plásticos e tratamento dos estofos. É o serviço que mais muda a sensação de andar no carro todos os dias.</p><ul class="svc__inclui"><li>Aspiração</li><li>Plásticos e tablier</li><li>Estofos</li><li>Vidros por dentro</li><li>Bagageira</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/bmw-serie5-frente-840.webp" alt="BMW Série 5 depois de lavagem completa" loading="lazy" width="840" height="1050"><figcaption>BMW Série 5 depois de lavagem completa</figcaption></figure></div></article><article class="svc" id="servico-personalizacao" data-reveal=""><div class="svc__n" aria-hidden="true">08</div><div class="svc__corpo"><div><h3 class="h-card">Personalização automóvel</h3><p>Pequenas alterações estéticas ao gosto de cada um. Falamos primeiro sobre o que é possível fazer sem comprometer a legalidade do veículo na inspeção.</p><ul class="svc__inclui"><li>Detalhes exteriores</li><li>Detalhes interiores</li><li>Aconselhamento prévio</li></ul></div></div></article><!--/pre:servicos-lista--></div>
+        <div class="svc-lista" id="servicos-lista"><!--pre:servicos-lista--><article class="svc" id="servico-mecanica" data-reveal=""><div class="svc__n" aria-hidden="true">01</div><div class="svc__corpo"><div><h3 class="h-card">Mecânica geral</h3><p>Manutenção e reparação mecânica de ligeiros de todas as marcas. Começamos sempre por perceber a avaria antes de propor a reparação — e explicamos o que encontrámos por palavras que se percebem.</p><ul class="svc__inclui"><li>Motor e distribuição</li><li>Embraiagem</li><li>Escape</li><li>Direção</li><li>Pré-inspeção</li></ul></div></div></article><article class="svc" id="servico-eletricidade" data-reveal=""><div class="svc__n" aria-hidden="true">02</div><div class="svc__corpo"><div><h3 class="h-card">Eletricidade auto</h3><p>Avarias elétricas são das que mais tempo fazem perder a quem tenta adivinhar. Fazemos a medição no sítio certo do circuito e localizamos a origem em vez de trocar peças à sorte.</p><ul class="svc__inclui"><li>Bateria e carga</li><li>Alternador e motor de arranque</li><li>Iluminação</li><li>Cablagens</li><li>Vidros e fecho centralizado</li></ul></div></div></article><article class="svc svc--foto" id="servico-eletronica" data-reveal=""><div class="svc__n" aria-hidden="true">03</div><div class="svc__corpo"><div><h3 class="h-card">Eletrónica automóvel e diagnóstico</h3><p>Leitura de centralinas com equipamento de diagnóstico, interpretação dos códigos de avaria e teste dos sensores. Um código lido não é um diagnóstico: é o princípio dele.</p><ul class="svc__inclui"><li>Leitura e apagamento de códigos</li><li>Teste de sensores e atuadores</li><li>Luz de avaria acesa</li><li>Sistemas de conforto</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/interior-mercedes-limpo-840.webp" srcset="assets/img/trabalhos/interior-mercedes-limpo-320.webp 320w, assets/img/trabalhos/interior-mercedes-limpo-480.webp 480w, assets/img/trabalhos/interior-mercedes-limpo-640.webp 640w, assets/img/trabalhos/interior-mercedes-limpo-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Posto de condução depois da intervenção" loading="lazy" width="840" height="1050"><figcaption>Posto de condução depois da intervenção</figcaption></figure></div></article><article class="svc svc--foto" id="servico-revisao" data-reveal=""><div class="svc__n" aria-hidden="true">04</div><div class="svc__corpo"><div><h3 class="h-card">Revisão completa</h3><p>A revisão que mantém a garantia do plano de manutenção e que evita a avaria cara. Substituem-se os consumíveis e verifica-se o resto ponto por ponto.</p><ul class="svc__inclui"><li>Óleo e filtros</li><li>Travões</li><li>Suspensão e pneus</li><li>Níveis e correias</li><li>Relatório do que foi verificado</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/mercedes-classe-e-frente-840.webp" srcset="assets/img/trabalhos/mercedes-classe-e-frente-320.webp 320w, assets/img/trabalhos/mercedes-classe-e-frente-480.webp 480w, assets/img/trabalhos/mercedes-classe-e-frente-640.webp 640w, assets/img/trabalhos/mercedes-classe-e-frente-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Mercedes Classe E pronto a entregar" loading="lazy" width="840" height="1050"><figcaption>Mercedes Classe E pronto a entregar</figcaption></figure></div></article><article class="svc svc--foto" id="servico-ar-condicionado" data-reveal=""><div class="svc__n" aria-hidden="true">05</div><div class="svc__corpo"><div><h3 class="h-card">Higienização do ar condicionado</h3><p>O cheiro a húmido que aparece quando se liga o ar condicionado vem da humidade acumulada no evaporador. A higienização trata o sistema e o habitáculo, com produto próprio para o efeito.</p><ul class="svc__inclui"><li>Higienização do evaporador</li><li>Desodorização do habitáculo</li><li>Verificação do filtro de habitáculo</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/interior-bmw-limpo-840.webp" srcset="assets/img/trabalhos/interior-bmw-limpo-320.webp 320w, assets/img/trabalhos/interior-bmw-limpo-480.webp 480w, assets/img/trabalhos/interior-bmw-limpo-640.webp 640w, assets/img/trabalhos/interior-bmw-limpo-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Habitáculo tratado, tablier e estofos incluídos" loading="lazy" width="840" height="1050"><figcaption>Habitáculo tratado, tablier e estofos incluídos</figcaption></figure></div></article><article class="svc svc--foto" id="servico-lavagem-exterior" data-reveal=""><div class="svc__n" aria-hidden="true">06</div><div class="svc__corpo"><div><h3 class="h-card">Lavagem exterior</h3><p>Lavagem a fundo com espuma activa, feita na box da oficina. Não é a lavagem de cinco minutos do posto de combustível — é a que tira o que fica agarrado.</p><ul class="svc__inclui"><li>Pré-lavagem com espuma activa</li><li>Lavagem manual</li><li>Jantes e pneus</li><li>Vidros</li><li>Secagem</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/mercedes-cla-frente-840.webp" srcset="assets/img/trabalhos/mercedes-cla-frente-320.webp 320w, assets/img/trabalhos/mercedes-cla-frente-480.webp 480w, assets/img/trabalhos/mercedes-cla-frente-640.webp 640w, assets/img/trabalhos/mercedes-cla-frente-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="Mercedes CLA depois da lavagem exterior" loading="lazy" width="840" height="1050"><figcaption>Mercedes CLA depois da lavagem exterior</figcaption></figure></div></article><article class="svc svc--foto" id="servico-lavagem-interior" data-reveal=""><div class="svc__n" aria-hidden="true">07</div><div class="svc__corpo"><div><h3 class="h-card">Lavagem interior</h3><p>Aspiração completa, limpeza de plásticos e tratamento dos estofos. É o serviço que mais muda a sensação de andar no carro todos os dias.</p><ul class="svc__inclui"><li>Aspiração</li><li>Plásticos e tablier</li><li>Estofos</li><li>Vidros por dentro</li><li>Bagageira</li></ul></div><figure class="svc__foto"><img src="assets/img/trabalhos/bmw-serie5-frente-840.webp" srcset="assets/img/trabalhos/bmw-serie5-frente-320.webp 320w, assets/img/trabalhos/bmw-serie5-frente-480.webp 480w, assets/img/trabalhos/bmw-serie5-frente-640.webp 640w, assets/img/trabalhos/bmw-serie5-frente-840.webp 840w" sizes="(max-width:860px) 46vw, 260px" alt="BMW Série 5 depois de lavagem completa" loading="lazy" width="840" height="1050"><figcaption>BMW Série 5 depois de lavagem completa</figcaption></figure></div></article><article class="svc" id="servico-personalizacao" data-reveal=""><div class="svc__n" aria-hidden="true">08</div><div class="svc__corpo"><div><h3 class="h-card">Personalização automóvel</h3><p>Pequenas alterações estéticas ao gosto de cada um. Falamos primeiro sobre o que é possível fazer sem comprometer a legalidade do veículo na inspeção.</p><ul class="svc__inclui"><li>Detalhes exteriores</li><li>Detalhes interiores</li><li>Aconselhamento prévio</li></ul></div></div></article><!--/pre:servicos-lista--></div>
       </div>
     </section>
 
@@ -388,7 +392,7 @@
           <p class="etiqueta">Balcão de peças</p>
           <div class="filete"></div>
           <h2 class="h-sec" id="pecas-t">O que temos na oficina</h2>
-          <p class="lead">Peças disponíveis em stock. A lista é actualizada por nós e serve para saber o que existe antes de se deslocar.</p>
+          <p class="lead">Temos peças em stock na oficina. O que estiver aqui listado está disponível; para o que não estiver, pergunte-nos.</p>
         </div>
         <!-- Aviso fixo, não editável no backoffice: se houvesse forma de encomendar
              à distância entrava o DL 24/2014, com 14 dias de livre resolução e
@@ -415,7 +419,7 @@
           <div class="passo" data-reveal><h3>Liga ou passa por cá</h3><p>Conte-nos o que o carro está a fazer. Se der, traga-o para vermos.</p></div>
           <div class="passo" data-reveal><h3>Diagnóstico</h3><p>Vemos a origem da avaria com o equipamento próprio, não a adivinhar.</p></div>
           <div class="passo" data-reveal><h3>Aprovação</h3><p>Explicamos o que encontrámos e o custo. Só avançamos com a sua autorização.</p></div>
-          <div class="passo" data-reveal><h3>Entrega</h3><p>Reparação feita — e o carro sai lavado.</p></div>
+          <div class="passo" data-reveal><h3>Entrega</h3><p>Reparação feita e explicada. Se quiser, sai também lavado.</p></div>
         </div>
       </div>
     </section>
@@ -462,13 +466,12 @@
               </div>
             </div>
 
-            <div class="contacto-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 1.9"/></svg>
-              <div>
-                <strong>Horário</strong>
-                <ul class="meta" id="horario-lista"></ul>
-              </div>
-            </div>
+
+            <!-- Fica VAZIO quando não há horário, em vez de ser removido: o
+                 pré-render escreve o resultado de volta neste ficheiro, e apagar
+                 o bloco significava não haver bloco para voltar no dia em que o
+                 cliente preenchesse o horário. -->
+            <div class="contacto-item" id="contacto-horario"><!--pre:contacto-horario--><!--/pre:contacto-horario--></div>
 
             <div class="contacto-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
@@ -511,7 +514,7 @@
             <a class="rede" href="https://www.instagram.com/pokeauto2026" target="_blank" rel="noopener" data-ig aria-label="Instagram da PokeAuto">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
             </a>
-            <a class="rede" href="#" target="_blank" rel="noopener" data-fb aria-label="Facebook da PokeAuto">
+            <a class="rede" href="#" target="_blank" rel="noopener" data-fb hidden aria-label="Facebook da PokeAuto">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v4H8v7h4v-7h3l1-4h-4V7.5A.5.5 0 0 1 12.5 7H16V3Z"/></svg>
             </a>
             <a class="rede" href="https://wa.me/351922022364" target="_blank" rel="noopener" aria-label="WhatsApp da PokeAuto">
@@ -522,14 +525,9 @@
 
         <div>
           <h4>Serviços</h4>
-          <ul>
-            <li><a href="#servico-mecanica">Mecânica geral</a></li>
-            <li><a href="#servico-eletricidade">Eletricidade auto</a></li>
-            <li><a href="#servico-eletronica">Eletrónica e diagnóstico</a></li>
-            <li><a href="#servico-revisao">Revisão completa</a></li>
-            <li><a href="#servico-ar-condicionado">Higienização do ar condicionado</a></li>
-            <li><a href="#servico-lavagem-exterior">Lavagens</a></li>
-          </ul>
+          <!-- gerada a partir de data/servicos.json: escrita à mão ficava com links
+               mortos assim que o cliente mudasse um identificador -->
+          <ul id="rodape-servicos"><!--pre:rodape-servicos--><li><a href="#servico-mecanica">Mecânica geral</a></li><li><a href="#servico-eletricidade">Eletricidade auto</a></li><li><a href="#servico-eletronica">Eletrónica automóvel e diagnóstico</a></li><li><a href="#servico-revisao">Revisão completa</a></li><li><a href="#servico-ar-condicionado">Higienização do ar condicionado</a></li><li><a href="#servico-lavagem-exterior">Lavagem exterior</a></li><!--/pre:rodape-servicos--></ul>
         </div>
 
         <div>
@@ -548,12 +546,14 @@
            jurídica — uma sociedade tem de publicar NIPC, conservatória, matrícula
            e capital social (CSC art.171); um empresário em nome individual não. -->
       <div class="rodape__legal">
-        <p id="bloco-legal">[dados de identificação por confirmar]</p>
+        <p id="bloco-legal">[nome do titular por confirmar], Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF [por confirmar]</p>
         <p style="margin-top:.5rem">
           Em caso de litígio de consumo, o consumidor pode recorrer ao
           <strong>CICAP — Centro de Informação de Consumo e Arbitragem do Porto</strong>
           (<a class="link-d" href="https://www.cicap.pt" target="_blank" rel="noopener">cicap.pt</a>),
-          entidade de resolução alternativa de litígios competente para São João da Madeira.
+          entidade de resolução alternativa de litígios com competência territorial sobre São João da Madeira.
+          A PokeAuto não se encontra vinculada por adesão a esta ou a qualquer outra entidade de RAL,
+          o que não prejudica o direito do consumidor de a ela recorrer.
           Mais informação em <a class="link-d" href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">consumidor.gov.pt</a>.
           Autoridade de fiscalização: ASAE.
         </p>
@@ -577,6 +577,6 @@
     <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener">WhatsApp</a>
   </div>
 
-  <script src="assets/js/app.js?v=5424d2f7" defer></script>
+  <script src="assets/js/app.js?v=91dabcdb" defer></script>
 </body>
 </html>

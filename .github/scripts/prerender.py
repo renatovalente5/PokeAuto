@@ -36,7 +36,11 @@ from cdp import Chrome                                        # noqa: E402
 PAGINA = os.path.join(RAIZ, 'index.html')
 
 # Zonas que o app.js preenche e que valem indexação
-ZONAS = ['servicos-lista', 'faq-lista', 'chips-lista', 'pecas-lista']
+ZONAS = ['servicos-lista', 'faq-lista', 'chips-lista', 'pecas-lista',
+         'rodape-servicos',
+         # o item do horário: fica vazio quando não há horário, em vez de
+         # ser removido do ficheiro (senão não havia bloco para voltar)
+         'contacto-horario']
 
 
 def porta_livre():
@@ -195,6 +199,56 @@ def aplicar_site(html, site):
     return html, contas
 
 
+def montar_legal(site):
+    """O texto de identificação do DL 7/2004 art.10, na forma que a lei exige
+    para cada forma jurídica."""
+    L = site.get('legal', {}) or {}
+    c = site.get('contactos', {}) or {}
+    morada = ', '.join([x for x in [c.get('morada_linha1'), c.get('morada_linha2')] if x])
+    p = []
+    if L.get('forma_juridica') == 'sociedade':
+        p.append(L.get('nome_titular') or '[firma por confirmar]')
+        if morada:
+            p.append('Sede: ' + morada)
+        p.append('NIPC ' + (L.get('nipc') or '[por confirmar]'))
+        if L.get('conservatoria'):
+            p.append('Matriculada na Conservatória do Registo Comercial de '
+                     + L['conservatoria']
+                     + (' sob o n.º ' + L['matricula'] if L.get('matricula') else ''))
+        if L.get('capital_social'):
+            p.append('Capital social: ' + L['capital_social'])
+    else:
+        p.append((L.get('nome_titular') or '[nome do titular por confirmar]')
+                 + ', Empresário em Nome Individual, que usa a designação comercial «'
+                 + (L.get('designacao_comercial') or 'PokeAuto') + '»')
+        if morada:
+            p.append('Estabelecimento: ' + morada)
+        p.append('NIF ' + (L.get('nif') or '[por confirmar]'))
+    if c.get('email'):
+        p.append('Email: ' + c['email'])
+    return escapar(' · '.join(p))
+
+
+def aplicar_legal(html, site):
+    """Escreve o bloco de identificação em TODOS os nós com id="bloco-legal".
+
+    Tem de ser todos: cada página legal tem dois (a caixa do topo e o rodapé), e
+    um getElementById em runtime só apanhava o primeiro. E as páginas legais nem
+    sequer chegavam a correr esse código — o app.js pedia 'data/site.json' com
+    caminho relativo, que a partir de /legal/ dá 404.
+    """
+    texto = montar_legal(site)
+    n = [0]
+
+    def troca(m):
+        n[0] += 1
+        return m.group(1) + texto + m.group(3)
+
+    html = re.sub(r'(<(\w+)[^>]*\bid="bloco-legal"[^>]*>)(.*?)(</\2>)',
+                  lambda m: m.group(1) + texto + m.group(4), html, flags=re.S)
+    return html, len(re.findall(r'id="bloco-legal"', html))
+
+
 def escapar(t):
     return (t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
 
@@ -276,7 +330,7 @@ def travar(erro):
     print('=' * 70)
     print(str(erro))
     print()
-    print('O site continua a servir a versão anterior, que está correcta.')
+    print('Nada foi publicado: o site continua com a última versão que passou.')
     print('Corrige no backoffice e grava outra vez.')
     return 6
 
@@ -347,7 +401,18 @@ def escrever_sitemaps(raiz):
     # catálogos são do fornecedor e aparecem em centenas de sites — submetê-las
     # não traria tráfego e diluía o sinal.
     galeria = ler_json(os.path.join(raiz, 'data', 'trabalhos.json'), 'data/trabalhos.json')
-    itens = [i for i in galeria.get('items', []) if i.get('img')]
+    # Só entram fotos que existam mesmo em disco. Antes o sitemap submetia ao
+    # Google um ficheiro 404 e fotos que não estão em página nenhuma — entradas
+    # mortas desvalorizam o ficheiro inteiro.
+    itens = []
+    for i in galeria.get('items', []):
+        if not i.get('img'):
+            continue
+        if not os.path.exists(os.path.join(raiz, str(i['img']).lstrip('/'))):
+            print('AVISO: %s está no trabalhos.json mas não existe — fora do sitemap'
+                  % i['img'])
+            continue
+        itens.append(i)
     img_linhas = ['<?xml version="1.0" encoding="UTF-8"?>',
                   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
                   '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
@@ -418,6 +483,19 @@ def construir_jsonld(raiz):
     c = site.get('contactos', {})
     L = site.get('legal', {})
 
+    if L.get('forma_juridica') == 'sociedade':
+        faltam = [r for k, r in [('nipc', 'NIPC'), ('conservatoria', 'conservatória'),
+                                 ('matricula', 'n.º de matrícula'),
+                                 ('capital_social', 'capital social')]
+                  if not (L.get(k) or '').strip()]
+        if faltam:
+            raise ValueError(
+                'A forma jurídica está como "sociedade" mas faltam: %s. O artigo 171.º '
+                'do Código das Sociedades Comerciais obriga a publicar estes dados nos '
+                'sítios na Internet — não é opcional. Preencher no backoffice '
+                '(Geral → Dados legais) ou, se for empresário em nome individual, '
+                'mudar a forma jurídica.' % ', '.join(faltam))
+
     linha2 = (c.get('morada_linha2') or '').strip()
     m_cp = re.match(r'^(\d{4}-\d{3})\s+(\S.*)$', linha2)
     if not m_cp:
@@ -455,7 +533,7 @@ def construir_jsonld(raiz):
                         'e higienização do ar condicionado.'),
         'url': SITE + '/',
         'logo': SITE + '/assets/img/logo-760.webp',
-        'image': SITE + '/assets/img/trabalhos/lavagem-espuma-oficina-1140.webp',
+        'image': SITE + '/assets/img/og.jpg',
         'telephone': '+' + (c.get('telefone_intl') or ''),
         'priceRange': '€€',
         'address': {
@@ -606,8 +684,9 @@ def main():
 
     # contactos: o que o app.js corrige em runtime passa a estar no ficheiro
     try:
-        novo, contas = aplicar_site(novo, ler_json(
-            os.path.join(RAIZ, 'data', 'site.json'), 'data/site.json'))
+        site_dados = ler_json(os.path.join(RAIZ, 'data', 'site.json'), 'data/site.json')
+        novo, contas = aplicar_site(novo, site_dados)
+        novo, n_legal = aplicar_legal(novo, site_dados)
     except ValueError as e:
         return travar(e)
     esperado = len(re.findall(r'data-site="', novo))
@@ -652,6 +731,20 @@ def main():
 
     if mudou:
         open(PAGINA, 'w', encoding='utf-8').write(novo)
+
+    # As páginas legais também levam o bloco de identificação e os contactos.
+    # São elas que têm a caixa "Identificação (DL n.º 7/2004, art. 10.º)" — deixá-la
+    # a dizer "[por confirmar]" para sempre era o pior sítio possível para falhar.
+    import glob as _glob
+    n_legais = 0
+    for f in sorted(_glob.glob(os.path.join(RAIZ, 'legal', '*.html'))):
+        antes_txt = open(f, encoding='utf-8').read()
+        depois, _ = aplicar_legal(antes_txt, site_dados)
+        depois, _ = aplicar_site(depois, site_dados)
+        if depois != antes_txt:
+            open(f, 'w', encoding='utf-8').write(depois)
+            n_legais += 1
+    resumo.append('páginas legais: %s' % ('%d actualizadas' % n_legais if n_legais else 'já em dia'))
 
     try:
         sitemaps, n_fotos = escrever_sitemaps(RAIZ)

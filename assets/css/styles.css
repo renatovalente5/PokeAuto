@@ -69,10 +69,10 @@ body.menu-aberto .nav__toggle span::after { top: 0; transform: rotate(-45deg); }
    fundo opaco — nada de painel deslizante a meio, que deixa ver o conteúdo por
    trás e confunde. */
 .menu {
-  position: fixed; inset: 0; z-index: 110;
+  position: fixed; inset: 0; z-index: 130;   /* acima da navbar (120) */
   display: none; flex-direction: column;
   background: var(--preto);
-  padding: calc(var(--nav-h-min) + 1.5rem) var(--gutter) 0;
+  padding: calc(var(--nav-h) + 1.25rem) var(--gutter) 0;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -89,12 +89,19 @@ body.menu-aberto .menu { display: flex; }
   border-bottom: 1px solid var(--aco);
 }
 .menu__link::after { content: '›'; color: var(--dourado); font-size: 1.3em; line-height: 1; }
-.menu__acoes { display: grid; gap: .6rem; margin-block: 1.6rem; }
+.menu__acoes { display: grid; gap: .6rem; margin-block: 1.4rem; flex: none; }
+@media (max-height: 620px) {
+  .menu__link { padding: .62rem .25rem; font-size: clamp(1.15rem, 5vw, 1.5rem); }
+  .menu__acoes { grid-template-columns: 1fr 1fr; margin-block: 1rem; }
+  .menu__rodape { padding-block: .7rem 1rem; }
+  .menu__rodape .mono { font-size: 1.1rem; }
+}
 .menu__acoes .btn { width: 100%; }
 
 /* rodapé do menu: um dos DOIS únicos sítios com o amarelo do letreiro */
 .menu__rodape {
   margin-top: auto;
+  flex: none;
   margin-inline: calc(-1 * var(--gutter));
   padding: 1rem var(--gutter) 1.4rem;
   background: var(--amarelo); color: #0B0B0D;
@@ -134,17 +141,39 @@ body.menu-aberto .menu { display: flex; }
 
 /* ------------------------------------------------- faixa de chips (amarelo) */
 /* O segundo e último sítio com o amarelo do letreiro. Texto sempre preto. */
-.chips {
-  background: var(--amarelo);
-  padding-block: .8rem;
+.chips { background: var(--amarelo); padding-block: .8rem; }
+
+/* Os 8 chips somam ~1490px e o contentor tem no máximo 1180. Antes ficavam
+   cortados em TODAS as larguras, sem barra (scrollbar-width:none), sem gradiente
+   e sem forma de lá chegar — a roda vertical do rato nem sequer os desloca.
+   Agora quebram para a linha seguinte a partir dos 900px, onde há espaço para
+   duas filas; abaixo disso continuam numa fila deslizante, mas com um degradê
+   no bordo direito a dizer que há mais. */
+.chips__lista { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+@media (max-width: 900px) {
+  .chips { position: relative; }
+  .chips__lista {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-right: 2.2rem;          /* espaço para o degradê não tapar o último */
+  }
+  .chips__lista::-webkit-scrollbar { display: none; }
+  .chips__lista > * { scroll-snap-align: start; }
+  /* a pista de que há mais para o lado */
+  .chips::after {
+    content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 3rem;
+    background: linear-gradient(90deg, rgba(255, 212, 0, 0), var(--amarelo) 72%);
+    pointer-events: none;
+  }
 }
-.chips__lista {
-  display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-.chips__lista::-webkit-scrollbar { display: none; }
+
 .chip {
   flex: none;
+  min-height: 44px; display: inline-flex; align-items: center;
   padding: .4rem .9rem;
   font-family: var(--f-display); font-weight: 700; font-size: .96rem;
   letter-spacing: .03em; text-transform: uppercase;
@@ -245,7 +274,8 @@ body.menu-aberto .menu { display: flex; }
 .peca__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
 .peca__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
 .peca__btn {
-  padding: .42rem .8rem; font-size: .84rem; font-weight: 600;
+  min-height: 44px; display: inline-flex; align-items: center;
+  padding: .42rem .9rem; font-size: .84rem; font-weight: 600;
   background: var(--claro-tinta); color: #FFFFFF; text-decoration: none;
   border-radius: var(--raio); white-space: nowrap;
 }
@@ -313,7 +343,7 @@ body.menu-aberto .menu { display: flex; }
 
 .redes { display: flex; gap: .6rem; margin-top: 1rem; }
 .rede {
-  width: 42px; height: 42px; display: grid; place-items: center;
+  width: 44px; height: 44px; display: grid; place-items: center;
   border: 1px solid var(--aco); border-radius: var(--raio);
   color: var(--prata); transition: color var(--t), border-color var(--t), background var(--t);
 }
@@ -409,3 +439,4 @@ body.menu-aberto .menu { display: flex; }
 .pecas__vazio p { max-width: 52ch; margin-inline: auto; margin-bottom: .7rem; color: var(--claro-2); }
 .pecas__vazio strong { color: var(--claro-tinta); }
 .pecas__vazio .peca__btn { display: inline-block; margin-top: .5rem; padding: .6rem 1.2rem; }
+.contacto-item:empty { display: none; }

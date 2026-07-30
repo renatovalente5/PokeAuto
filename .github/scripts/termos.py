@@ -52,40 +52,79 @@ RAIZ = os.path.dirname(os.path.dirname(AQUI))
 
 # (expressão, explicação, o que fazer)
 REGRAS = [
-    (r'\b(anula\w*|remo[çc]\w*|remover|elimina\w*|desactiv\w*|desativ\w*|by-?pass)\b'
-     r'[^.]{0,40}\b(fap|dpf|egr|catalisador|cataliz\w*|adblue|scr)\b',
+    # --- emissões: qualquer forma de anular, e também os eufemismos do ramo ---
+    (r'\b(anul\w*|remo[çc]\w*|remover|retirad\w*|retirar|elimina\w*|desactiv\w*|'
+     r'desativ\w*|desligar|inibi\w*|by-?pass|delete|off\b|supress\w*|corte)\b'
+     r'[\s\S]{0,60}?\b(fap|dpf|egr|catalisador|cataliz\w*|adblue|scr|sonda\s+lambda|'
+     r'v[áa]lvula\s+egr|filtro\s+de\s+part[íi]culas)\b',
      'anulação/remoção de sistema de controlo de emissões',
      'Só se pode anunciar limpeza, regeneração ou substituição por peça homologada.'),
-    (r'\b(fap|dpf|egr|adblue)\b[^.]{0,40}\b(anula\w*|remo\w*|elimina\w*|off|delete)\b',
+    (r'\b(fap|dpf|egr|adblue|catalisador|filtro\s+de\s+part[íi]culas)\b'
+     r'[\s\S]{0,60}?\b(anul\w*|remo\w*|retirad\w*|elimina\w*|off\b|delete|'
+     r'desactiv\w*|desativ\w*|programa\w*\s+(para\s+)?fora)\b',
      'anulação/remoção de sistema de controlo de emissões',
      'Só se pode anunciar limpeza, regeneração ou substituição por peça homologada.'),
+    (r'\bdescarboniza\w*\b[\s\S]{0,40}?\b(fap|dpf|egr|motor)\b|\bstage\s*[123]\b|'
+     r'\bchip\s*tuning\b|\bremap\w*\b|\breprograma\w*\s+(de\s+)?centralina',
+     'reprogramação/potenciação de motor',
+     'Alterações às características do veículo têm de ser homologadas pelo IMT '
+     '(Código da Estrada art.114). Não anunciar sem homologação confirmada.'),
+
+    # --- pirotecnia: airbags e pré-tensores ---
     (r'\bairbag', 'airbag',
      'Airbags e pré-tensores são pirotecnia P1 (DL 135/2015): não podem ser '
      'disponibilizados ao público. Retirar do catálogo de peças.'),
-    (r'pr[ée]-?tensor', 'pré-tensor de cinto',
+    (r'pr[ée]\s*-?\s*tensor|pretensor', 'pré-tensor de cinto',
      'Mesma regra dos airbags: pirotecnia P1, não pode ser vendido ao público.'),
-    (r'sem\s+garantia', '"sem garantia"',
+
+    # --- garantia ---
+    (r'sem\s+(qualquer\s+)?garantia|n[ãa]o\s+t[eê]m?\s+garantia|'
+     r'garantia\s*[:=]?\s*(n[ãa]o|nenhuma|0\b)',
+     'negação de garantia',
      'O DL 84/2021 dá 3 anos em peças novas e 18 meses no mínimo em usadas. '
      'A frase é nula e é prática comercial desleal.'),
-    (r'\b(ecol[óo]gic\w*|amig\w*\s+do\s+ambiente|verde\b|sustent[áa]vel|'
-     r'carbono\s+neutro|neutro\s+em\s+carbono|eco-?friendly)\b',
+
+    # --- alegações ambientais (Dir. (UE) 2024/825, desde 27-09-2026) ---
+    (r'\b(ecol[óo]gic\w*|eco-?friendly|amig\w*\s+do\s+ambiente|sustent[áa]vel|'
+     r'sustent[áa]veis|carbono\s+neutro|neutr\w*\s+em\s+carbono|zero\s+emiss[õo]es|'
+     r'biodegrad[áa]vel|verde\b|100%\s*natural)\b',
      'alegação ambiental genérica',
      'A Diretiva (UE) 2024/825 proíbe estas alegações sem prova a partir de '
      '27-09-2026. Dizer o que se faz em concreto, não adjectivar.'),
-    (r'ec\.europa\.eu/(consumers/)?odr|plataforma\s+de\s+resolu[çc][ãa]o\s+de\s+lit[íi]gios\s+em\s+linha',
+
+    # --- superlativos sem prova (prática comercial enganosa, DL 57/2008) ---
+    # Só superlativos SOBRE A EMPRESA. "O seu carro merece o melhor cuidado" é
+    # uma frase sobre o carro, não uma alegação de que a oficina é a melhor —
+    # e é a frase que o próprio cliente usa.
+    (r'\b(somos|s[ãa]o)\s+(os\s+)?(melhor\w*|n[ºo°]?\s*1\b|l[íi]der\w*)|'
+     r'\b[ao]s?\s+melhor\w*\s+(oficina|mec[âa]nic\w*|servi[çc]\w*|pre[çc]\w*|'
+     r'empresa|equipa)\b|'
+     r'\bl[íi]der\s+(de\s+mercado|do\s+sector|na\s+regi[ãa]o)|'
+     r'\bos\s+mais\s+barat\w*|\bpre[çc]os?\s+imbat[íi]ve\w*|'
+     r'\bgarantia\s+vital[íi]cia|\bsatisfa[çc][ãa]o\s+garantida\b',
+     'superlativo sobre a empresa, sem prova',
+     'O DL 57/2008 trata como enganosa a alegação que não se consegue demonstrar. '
+     'Dizer o que se faz vale mais do que dizer que se é o melhor.'),
+
+    # --- entidades e links errados ---
+    (r'ec\.europa\.eu/(consumers/)?odr|plataforma\s+(europeia\s+)?de\s+resolu[çc][ãa]o\s+'
+     r'de\s+lit[íi]gios(\s+em\s+linha)?',
      'plataforma ODR europeia',
      'Foi desligada e revogada em 20-07-2025 pelo Reg. (UE) 2024/3228. '
      'A entidade correcta para São João da Madeira é o CICAP.'),
-    (r'\bpok[ée]mon\b|\bpok[ée]\s?bola\b|\bpoke\s?ball\b|nintendo|game\s?freak',
-     'referência ao universo Pokémon',
-     'O logótipo já faz o trocadilho. Escrevê-lo em texto transforma uma '
-     'paródia gráfica numa associação declarada a uma marca registada.'),
-    (r'\bCASA\b\s*[-–—]\s*Centro\s+de\s+Arbitragem|Centro\s+de\s+Arbitragem\s+do\s+Sector\s+Autom[óo]vel',
+    (r'Centro\s+de\s+Arbitragem\s+do\s+Sector\s+Autom[óo]vel|\bCASA\s*[-–—]\s*Centro',
      'CASA (Centro de Arbitragem do Sector Automóvel)',
      'Foi extinta em 10-01-2024. A entidade competente é o CICAP.'),
     (r'\bCNIACC\b', 'CNIACC',
      'É residual. São João da Madeira integra a Área Metropolitana do Porto e '
      'está expressamente coberta pelo CICAP (Despacho n.º 3077/2025).'),
+
+    # --- marca ---
+    (r'\bpok[ée]mon\b|\bpok[ée]\s?bola\b|\bpoke\s?ball\b|\bnintendo\b|'
+     r'\bgame\s?freak\b|\bpikachu\b',
+     'referência ao universo Pokémon',
+     'O logótipo já faz o trocadilho. Escrevê-lo em texto transforma uma '
+     'paródia gráfica numa associação declarada a uma marca registada.'),
 ]
 
 # Ficheiros a inspeccionar: tudo o que o cliente pode editar, mais o que sai para o ar
@@ -154,7 +193,8 @@ def main():
         print('  texto    : …%s…' % trecho)
         print('  o que faz: %s' % remedio)
     print()
-    print('O site continua a servir a versão anterior. Corrige e grava outra vez.')
+    print('Nada foi publicado: o site continua com a última versão que passou.')
+    print('Corrige no backoffice e grava outra vez.')
     return 1
 
 

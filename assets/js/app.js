@@ -19,8 +19,18 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* A raiz do site, calculada a partir do caminho do próprio script. Sem isto,
+     'data/site.json' resolvia para /legal/data/site.json nas páginas legais —
+     404 engolido pelo .catch — e o bloco de identificação legal ficava para
+     sempre a dizer "[por confirmar]", precisamente nas páginas onde a caixa se
+     intitula "Identificação (DL n.º 7/2004)". */
+  var RAIZ = (function () {
+    var e = doc.currentScript || doc.querySelector('script[src*="app.js"]');
+    var src = e ? e.getAttribute('src') : '';
+    return src.replace(/assets\/js\/app\.js.*$/, '');
+  })();
   function getJSON(url) {
-    return fetch(url, { cache: 'default' }).then(function (r) {
+    return fetch(RAIZ + url, { cache: 'default' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
     });
@@ -31,6 +41,7 @@
      width/height o browser não reserva espaço, as fotos colapsam todas dentro
      do primeiro ecrã e o loading="lazy" deixa de adiar seja o que for. */
   var DIMS = {};
+  var TELEFONE_INTL = '';
   var dimsProntas = getJSON('data/_dimensoes.json')
     .then(function (d) { DIMS = d || {}; })
     .catch(function () { });
@@ -79,21 +90,64 @@
     aplicarNav();
   }
 
+  /* O painel tapa o ecrã todo mas o resto da página continuava a existir para o
+     teclado: ao 8.º Tab o foco saltava para trás do painel preto, sem anel
+     visível e arrastando o scroll. Agora o fundo fica inerte e a tabulação dá a
+     volta dentro do painel. */
+  var FOCAVEIS = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  var fundo = [doc.querySelector('main'), doc.querySelector('.rodape'),
+               doc.querySelector('.barra-acao'), doc.querySelector('.salta-para')].filter(Boolean);
+
+  function fundoInerte(sim) {
+    fundo.forEach(function (n) {
+      if (sim) { n.setAttribute('inert', ''); n.setAttribute('aria-hidden', 'true'); }
+      else { n.removeAttribute('inert'); n.removeAttribute('aria-hidden'); }
+    });
+  }
+
   function fecharMenu() {
+    if (!doc.body.classList.contains('menu-aberto')) return;
     doc.body.classList.remove('menu-aberto');
-    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    fundoInerte(false);
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Abrir menu');
+    }
   }
   if (toggle && menu) {
     toggle.addEventListener('click', function () {
       var aberto = doc.body.classList.toggle('menu-aberto');
       toggle.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+      /* O botão não tem texto visível, portanto o aria-label é o único nome que
+         um leitor de ecrã anuncia. Deixá-lo em "Abrir menu" com o menu aberto
+         faz o nome contradizer o estado. */
+      toggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+      fundoInerte(aberto);
       if (aberto) {
         var p = menu.querySelector('a');
         if (p) p.focus({ preventScroll: true });
       }
     });
+
+    /* prender o foco: Tab no último volta ao primeiro, Shift+Tab no primeiro
+       vai para o último. O botão de fechar entra no ciclo. */
+    doc.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab' || !doc.body.classList.contains('menu-aberto')) return;
+      var itens = [toggle].concat([].slice.call(menu.querySelectorAll(FOCAVEIS)))
+        .filter(function (n) { return n.offsetParent !== null || n === toggle; });
+      if (!itens.length) return;
+      var primeiro = itens[0], ultimo = itens[itens.length - 1];
+      if (e.shiftKey && doc.activeElement === primeiro) { e.preventDefault(); ultimo.focus(); }
+      else if (!e.shiftKey && doc.activeElement === ultimo) { e.preventDefault(); primeiro.focus(); }
+      else if (itens.indexOf(doc.activeElement) === -1) { e.preventDefault(); primeiro.focus(); }
+    });
     menu.addEventListener('click', function (e) {
       if (e.target.closest('a')) fecharMenu();
+    });
+    /* tocar no logótipo com o menu aberto tem de o fechar — antes ficava por
+       cima do painel e o clique não fazia nada de visível */
+    doc.querySelectorAll('[data-fecha-menu]').forEach(function (n) {
+      n.addEventListener('click', fecharMenu);
     });
     doc.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && doc.body.classList.contains('menu-aberto')) {
@@ -131,13 +185,18 @@
   /* ============================================ CONTEÚDO EDITÁVEL (site) */
   getJSON('data/site.json').then(function (site) {
     var c = site.contactos || {};
+    TELEFONE_INTL = c.telefone_intl || '';
 
     function val(caminho) {
       return caminho.split('.').reduce(function (o, k) { return o && o[k]; }, site);
     }
+    /* Um campo apagado no backoffice TEM de desaparecer do site. Antes o
+       `if (v)` deixava lá o texto antigo, e o cliente ficava convencido de que
+       tinha apagado. Se o valor vier vazio, o nó é escondido. */
     doc.querySelectorAll('[data-site]').forEach(function (n) {
       var v = val(n.getAttribute('data-site'));
-      if (v != null && v !== '') n.textContent = v;
+      if (v == null || v === '') { n.textContent = ''; n.hidden = true; }
+      else { n.textContent = v; n.hidden = false; }
     });
 
     if (c.telefone_intl) {
@@ -158,31 +217,46 @@
     }
     /* O Facebook só existe se houver URL. Um ícone que leva a lado nenhum é
        pior do que ícone nenhum. */
-    var fb = doc.querySelectorAll('[data-fb]');
-    fb.forEach(function (a) {
-      if (c.facebook_url) a.setAttribute('href', c.facebook_url);
+    doc.querySelectorAll('[data-fb]').forEach(function (a) {
+      if (c.facebook_url) { a.setAttribute('href', c.facebook_url); a.hidden = false; }
       else a.remove();
     });
 
     /* horário: só aparece se estiver preenchido. Um horário errado é pior do
        que horário nenhum — manda gente à porta fechada. */
-    var hor = el('horario-lista');
-    if (hor) {
+    /* O item do horário é preenchido por inteiro (ícone + lista) ou fica vazio.
+       Um horário errado manda gente à porta fechada, por isso vazio é melhor do
+       que inventado — e um contentor vazio some por CSS. */
+    var horBox = el('contacto-horario');
+    if (horBox) {
       var DIAS = { Monday: 'Segunda', Tuesday: 'Terça', Wednesday: 'Quarta',
                    Thursday: 'Quinta', Friday: 'Sexta', Saturday: 'Sábado', Sunday: 'Domingo' };
+      var ORDEM = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
       var blocos = (site.horario || []).filter(function (b) {
         return b && b.dias && b.dias.length && b.abre && b.fecha;
       });
       if (!blocos.length) {
-        var caixa = hor.closest('.contacto-item');
-        if (caixa) caixa.remove();
+        horBox.innerHTML = '';
       } else {
-        hor.innerHTML = blocos.map(function (b) {
-          var ds = (typeof b.dias === 'string' ? [b.dias] : b.dias).map(function (d) { return DIAS[d] || d; });
-          var rot = ds.length > 2 ? ds[0] + ' a ' + ds[ds.length - 1] : ds.join(' e ');
+        var linhas = blocos.map(function (b) {
+          /* "Segunda a Sexta" só se os dias forem MESMO seguidos. Segunda,
+             quarta e sexta não é um intervalo. */
+          var brutos = (typeof b.dias === 'string' ? [b.dias] : b.dias).slice()
+            .sort(function (x, y) { return ORDEM.indexOf(x) - ORDEM.indexOf(y); });
+          var seguidos = brutos.every(function (d, i) {
+            return i === 0 || ORDEM.indexOf(d) === ORDEM.indexOf(brutos[i - 1]) + 1;
+          });
+          var ds = brutos.map(function (d) { return DIAS[d] || d; });
+          var rot = (seguidos && ds.length > 2) ? ds[0] + ' a ' + ds[ds.length - 1]
+                  : ds.length === 2 ? ds.join(' e ') : ds.join(', ');
           return '<li><span>' + esc(rot) + '</span> <span class="mono">' +
                  esc(b.abre) + '–' + esc(b.fecha) + '</span></li>';
         }).join('');
+        horBox.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
+          'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 1.9"/></svg>' +
+          '<div><strong>Horário</strong><ul class="meta">' + linhas + '</ul></div>';
       }
     }
 
@@ -254,9 +328,19 @@
       svcGrid.innerHTML = itens.map(function (s, i) {
         var foto = '';
         if (s.foto) {
-          var src = 'assets/img/trabalhos/' + s.foto + '-840.webp';
+          var base = 'assets/img/trabalhos/' + s.foto;
+          var src = base + '-840.webp';
+          /* sizes medido: a figura ocupa ~158 CSS px no telemóvel e ~260 no
+             computador. Sem isto o browser trazia sempre o ficheiro de 840px
+             para uma caixa de 158 — eram 808 KB desperdiçados numa página. */
+          var ss = [320, 480, 640, 840].map(function (w) {
+            var f = base + '-' + w + '.webp';
+            return DIMS[f] ? f + ' ' + w + 'w' : null;
+          }).filter(Boolean).join(', ');
           foto = '<figure class="svc__foto">' +
-            '<img src="' + esc(src) + '" alt="' + esc(s.legenda_foto || s.titulo) + '"' +
+            '<img src="' + esc(src) + '"' +
+            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:860px) 46vw, 260px"' : '') +
+            ' alt="' + esc(s.legenda_foto || s.titulo) + '"' +
             ' loading="lazy"' + attrsDim(src) + ' />' +
             (s.legenda_foto ? '<figcaption>' + esc(s.legenda_foto) + '</figcaption>' : '') +
             '</figure>';
@@ -274,6 +358,15 @@
           '<p>' + esc(s.descricao) + '</p>' + inclui + tempo +
           '</div>' + foto + '</div></article>';
       }).join('');
+
+      /* lista de serviços do rodapé: gerada, não escrita à mão — senão ficava
+         com links mortos assim que o cliente mudasse um identificador */
+      var rod = el('rodape-servicos');
+      if (rod) {
+        rod.innerHTML = itens.slice(0, 6).map(function (s) {
+          return '<li><a href="#servico-' + esc(s.id) + '">' + esc(s.titulo) + '</a></li>';
+        }).join('');
+      }
 
       /* chips de atalho, na faixa amarela */
       var chips = el('chips-lista');
@@ -322,8 +415,8 @@
           '<p>Temos peças em stock na oficina e trabalhamos com fornecedores para o ' +
           'que não houver. Diga-nos de que peça precisa e dizemos-lhe se temos e ' +
           'quanto custa.</p>' +
-          '<a class="peca__btn" href="https://wa.me/351922022364?text=' +
-          encodeURIComponent('Olá! Queria saber se têm uma peça disponível: ') +
+          '<a class="peca__btn" href="https://wa.me/' + (TELEFONE_INTL || '351922022364') +
+          '?text=' + encodeURIComponent('Olá! Queria saber se têm uma peça disponível: ') +
           '" target="_blank" rel="noopener">Perguntar por uma peça</a>' +
           '</div>';
         return;
@@ -347,12 +440,15 @@
           : '<span class="peca__preco">Sob consulta</span>';
         var msg = encodeURIComponent('Olá! Tenho interesse nesta peça: ' + p.nome +
                   (p.referencia ? ' (ref. ' + p.referencia + ')' : ''));
+        /* o número vem do backoffice, não escrito à mão — senão mudá-lo em
+           Contactos deixava estes botões todos no número antigo */
+        var wa = 'https://wa.me/' + (TELEFONE_INTL || '351922022364');
         return '<div class="peca" data-cat="' + esc(p.categoria || '') + '">' + fig +
           '<div><div class="peca__nome">' + esc(p.nome) + '</div>' +
           (p.referencia ? '<div class="peca__ref">Ref. ' + esc(p.referencia) + '</div>' : '') +
           (meta.length ? '<div class="peca__meta">' + meta.join(' · ') + '</div>' : '') +
           '</div><div class="peca__dir">' + preco +
-          '<a class="peca__btn" href="https://wa.me/351922022364?text=' + msg +
+          '<a class="peca__btn" href="' + wa + '?text=' + msg +
           '" target="_blank" rel="noopener">Perguntar</a></div></div>';
       }
 
