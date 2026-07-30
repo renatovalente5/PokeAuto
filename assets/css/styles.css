@@ -10,14 +10,26 @@
   position: fixed; inset: 0 0 auto 0; z-index: 120;
   height: var(--nav-h);
   display: flex; align-items: center;
-  background: linear-gradient(180deg, rgba(11, 11, 13, .96), rgba(11, 11, 13, .78));
-  backdrop-filter: blur(10px);
+  /* No topo a barra não tem fundo nenhum: o hero é uma fotografia e a barra
+     flutua por cima dela. Só ganha fundo quando se começa a descer, senão o
+     texto passaria por baixo do logótipo sem nada a separar. */
+  background: transparent;
   border-bottom: 1px solid transparent;
-  transition: height var(--t), background var(--t), border-color var(--t);
+  transition: height var(--t), background var(--t), border-color var(--t),
+              backdrop-filter var(--t);
 }
+/* véu subtil só por trás do logótipo e dos links, para se lerem sobre a foto
+   clara sem pintar a barra toda */
+.nav::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 11, 13, .55), transparent);
+  opacity: 1; transition: opacity var(--t);
+}
+.nav.is-scrolled::before { opacity: 0; }
 .nav.is-scrolled {
   height: var(--nav-h-min);
   background: rgba(11, 11, 13, .97);
+  backdrop-filter: blur(10px);
   border-bottom-color: var(--aco);
 }
 .nav__wrap { display: flex; align-items: center; gap: 1rem; width: min(100% - 2 * var(--gutter), var(--largura)); margin-inline: auto; }
@@ -249,16 +261,13 @@ body.menu-aberto .menu { display: flex; }
 
 /* mapa por clique: nada é pedido ao Google antes de o visitante decidir */
 .mapa { position: relative; border: var(--borda); border-radius: var(--raio-g); overflow: hidden; background: var(--carbono); }
-.mapa__facade { position: relative; display: block; width: 100%; border: 0; padding: 0; cursor: pointer; background: none; text-align: left; }
-.mapa__facade img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; opacity: .5; }
 .mapa__sobre {
   position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: .6rem;
   padding: 1.5rem; text-align: center;
   background: linear-gradient(rgba(11, 11, 13, .55), rgba(11, 11, 13, .82));
 }
-.mapa__sobre .btn { pointer-events: none; }
 .mapa__nota { font-size: .8rem; color: var(--legenda); max-width: 34ch; }
-.mapa iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; }
+.mapa iframe { display: block; width: 100%; aspect-ratio: 4 / 5; border: 0; }
 
 /* ================================================== BARRA FIXA (telemóvel) */
 /* Quem chega com o carro avariado está no telemóvel e com pressa. */
@@ -509,3 +518,72 @@ body.menu-aberto .menu { display: flex; }
 /* Os links legais são uma FILA de links, não prosa — a excepção do WCAG 2.5.5
    para links dentro de texto corrido não se aplica. Alvo de 44px. */
 .rodape__links a { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* contactos do rodapé com ícone, alinhados pela primeira linha de texto */
+.rodape__contactos { display: grid; gap: .8rem; }
+.rodape__contactos li { display: grid; grid-template-columns: 20px 1fr; gap: .7rem; align-items: start; }
+.rodape__contactos svg { width: 18px; height: 18px; color: var(--dourado); margin-top: .28rem; }
+.rodape__contactos small { display: block; font-size: .78rem; color: var(--legenda); }
+.rodape__contactos a { color: var(--branco); }
+.rodape__contactos a:hover { color: var(--dourado); }
+
+/* ================================================================ COOKIES */
+/* Não é cookie-wall: não tapa o conteúdo nem impede a navegação. Fica no fundo,
+   com Aceitar e Recusar do MESMO tamanho e peso visual — a lei exige que recusar
+   seja tão fácil como aceitar, e um botão cinzento pequeno ao lado de um botão
+   grande e colorido é um padrão enganoso. */
+.cookies {
+  position: fixed; inset: auto 0 0 0; z-index: 200;
+  padding: var(--gutter);
+  display: flex; justify-content: center;
+  animation: subir .3s cubic-bezier(0,0,0,1) both;
+}
+.cookies[hidden] { display: none; }
+@keyframes subir { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .cookies { animation: none; } }
+
+.cookies__caixa {
+  width: min(100%, 640px);
+  background: var(--carbono); border: 1px solid var(--aco);
+  border-radius: var(--raio-g); box-shadow: var(--sombra);
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+}
+.cookies__t { font-size: 1.15rem; text-transform: uppercase; margin-bottom: .45rem; }
+.cookies__d { font-size: .9rem; color: var(--prata); margin-bottom: 1rem; }
+.cookies__d strong { color: var(--branco); }
+.cookies__acoes { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.cookies__acoes .btn { width: 100%; }
+
+/* o botão que reabre as definições vive na fila dos links legais */
+.rodape__botao {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--prata); font-size: .84rem; font-family: inherit;
+  text-decoration: underline; text-underline-offset: 3px;
+  display: inline-flex; align-items: center; min-height: 44px;
+}
+.rodape__botao:hover { color: var(--dourado); }
+
+/* a fachada do mapa deixa de ser um botão e passa a ser um contentor */
+.mapa__facade { position: relative; display: block; width: 100%; }
+.mapa__facade img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; opacity: .45; }
+#mapa-aceitar { pointer-events: auto; }
+
+@media (max-width: 460px) { .cookies__acoes { grid-template-columns: 1fr; } }
+
+/* A identificação legal é obrigatória (DL 7/2004 art.10) mas a lei não exige
+   destaque — só acesso fácil e permanente. Fica discreta; o que a lei manda
+   destacar é o Livro de Reclamações, e esse tem ícone e vem primeiro. */
+.rodape__ident { font-size: .78rem; color: var(--legenda); opacity: .85; }
+.rodape__copy { margin-top: 1rem; font-size: .8rem; color: var(--legenda); }
+.rodape__links .selo-lr { color: var(--branco); font-weight: 600; }
+.rodape__links .selo-lr:hover { color: var(--dourado); }
+
+/* Aceitar e Recusar TÊM de ter o mesmo peso visual. Um botão dourado grande ao
+   lado de um contorno apagado é o padrão que o Comité Europeu de Protecção de
+   Dados trata como indução (Guidelines 03/2022) e que invalida o consentimento.
+   Mesmo tamanho, mesma cor, mesma tipografia — só a ordem os distingue. */
+.btn--consent {
+  background: transparent; color: var(--branco);
+  border: 2px solid var(--dourado);
+}
+.btn--consent:hover { background: rgba(245, 185, 33, .14); border-color: var(--dourado-luz); }

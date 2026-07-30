@@ -37,7 +37,7 @@ PAGINA = os.path.join(RAIZ, 'index.html')
 
 # Zonas que o app.js preenche e que valem indexação
 ZONAS = ['servicos-lista', 'faq-lista', 'pecas-lista',
-         'rodape-servicos',
+        
          # o item do horário: fica vazio quando não há horário, em vez de
          # ser removido do ficheiro (senão não havia bloco para voltar)
          'contacto-horario']

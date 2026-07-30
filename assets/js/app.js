@@ -261,7 +261,6 @@
     }
 
     montarLegal(site);
-    montarMapa(c);
   }).catch(function () { });
 
   /* --------------------------------------------------------- bloco legal */
@@ -295,27 +294,80 @@
     alvo.innerHTML = p.join(' · ');
   }
 
-  /* --------------------------------------------- mapa carregado por clique */
-  /* Nada é pedido ao Google antes de o visitante decidir. Sem pedido não há
-     cookie, e sem cookie não é preciso banner de consentimento. */
-  function montarMapa(c) {
-    var caixa = el('mapa');
-    if (!caixa) return;
-    var botao = caixa.querySelector('.mapa__facade');
-    if (!botao) return;
-    var morada = [c.morada_linha1, c.morada_linha2].filter(Boolean).join(', ');
-    botao.addEventListener('click', function () {
-      var url = 'https://maps.google.com/maps?q=' + encodeURIComponent(morada || 'PokeAuto São João da Madeira') +
-                '&z=16&hl=pt&output=embed';
-      var ifr = doc.createElement('iframe');
-      ifr.src = url;
-      ifr.title = 'Mapa da localização da PokeAuto na Rua da Liberdade, São João da Madeira';
-      ifr.loading = 'lazy';
-      ifr.referrerPolicy = 'no-referrer-when-downgrade';
-      caixa.innerHTML = '';
-      caixa.appendChild(ifr);
-    });
+  /* ======================================== CONSENTIMENTO E MAPA ========
+     O site não instala cookies nenhuns por si. O único caso é o mapa do Google,
+     e por isso o consentimento é pedido só para isso — não há categorias a
+     fingir nem "cookies de desempenho" que não existem.
+
+     A escolha é guardada em localStorage. Guardar a própria escolha é
+     estritamente necessário para cumprir o dever de a respeitar: sem isso o
+     banner voltava a aparecer a cada visita e o "recusar" não valia nada.
+     ==================================================================== */
+  var CHAVE = 'pokeauto-cookies';
+
+  function escolha() {
+    try { return localStorage.getItem(CHAVE); } catch (e) { return null; }
   }
+  function guardar(v) {
+    try { localStorage.setItem(CHAVE, v); } catch (e) { /* modo privado */ }
+  }
+
+  function carregarMapa() {
+    var caixa = el('mapa');
+    if (!caixa || caixa.querySelector('iframe')) return;
+    var morada = caixa.getAttribute('data-morada') || 'PokeAuto São João da Madeira';
+    var ifr = doc.createElement('iframe');
+    ifr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent(morada) +
+              '&z=16&hl=pt&output=embed';
+    ifr.title = 'Mapa da localização da PokeAuto na Rua da Liberdade, São João da Madeira';
+    ifr.loading = 'lazy';
+    ifr.referrerPolicy = 'no-referrer-when-downgrade';
+    caixa.innerHTML = '';
+    caixa.appendChild(ifr);
+  }
+
+  var painel = el('cookies');
+  var focoAnterior = null;
+
+  function mostrarPainel() {
+    if (!painel) return;
+    focoAnterior = doc.activeElement;
+    painel.hidden = false;
+    var b = el('cookies-aceitar');
+    if (b) b.focus({ preventScroll: true });
+  }
+  function fecharPainel() {
+    if (!painel) return;
+    painel.hidden = true;
+    if (focoAnterior && focoAnterior.focus) focoAnterior.focus({ preventScroll: true });
+  }
+  function decidir(v) {
+    guardar(v);
+    fecharPainel();
+    if (v === 'sim') carregarMapa();
+  }
+
+  if (painel) {
+    var e1 = el('cookies-aceitar'), e2 = el('cookies-recusar'), e3 = el('cookies-abrir');
+    if (e1) e1.addEventListener('click', function () { decidir('sim'); });
+    if (e2) e2.addEventListener('click', function () { decidir('nao'); });
+    /* Reabrir as definições tem de ser tão fácil como aceitar (RGPD art.7/3).
+       O botão está na fila dos links legais, em todas as páginas. */
+    if (e3) e3.addEventListener('click', function () { mostrarPainel(); });
+    /* Escape fecha SEM decidir: fechar não é consentir. */
+    doc.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && !painel.hidden) fecharPainel();
+    });
+
+    var j = escolha();
+    if (j === 'sim') carregarMapa();
+    else if (j !== 'nao') mostrarPainel();
+  }
+
+  /* O botão sobre a fotografia carrega o mapa e regista o consentimento — é a
+     mesma decisão, tomada no sítio onde ela interessa. */
+  var btMapa = el('mapa-aceitar');
+  if (btMapa) btMapa.addEventListener('click', function () { decidir('sim'); });
 
   /* ================================================================ SERVIÇOS */
   var svcGrid = el('servicos-lista');
@@ -356,14 +408,6 @@
           '</div></div></div></article>';
       }).join('');
 
-      /* lista de serviços do rodapé: gerada, não escrita à mão — senão ficava
-         com links mortos assim que o cliente mudasse um identificador */
-      var rod = el('rodape-servicos');
-      if (rod) {
-        rod.innerHTML = itens.slice(0, 6).map(function (s) {
-          return '<li><a href="#servico-' + esc(s.id) + '">' + esc(s.titulo) + '</a></li>';
-        }).join('');
-      }
 
       revelar(svcGrid);
     }).catch(function () { });

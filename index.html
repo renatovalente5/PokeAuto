@@ -29,7 +29,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/barlow-400.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="assets/css/base.css?v=83ba7510" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=f2e7e90a" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=812f0f3d" />
 
   <!--pre:jsonld--><script type="application/ld+json">
 {
@@ -234,7 +234,7 @@
     </div>
     <div class="menu__rodape">
       <a class="mono" href="tel:+351922022364" data-tel><span data-site="contactos.telefone">922 022 364</span></a>
-      <small data-site="contactos.custo_chamada">Chamada para a rede móvel nacional</small>
+      <small data-site="contactos.custo_chamada">(Chamada para a rede móvel nacional)</small>
       <small><span data-site="contactos.morada_linha1">Rua da Liberdade, n.º 53</span> · <span data-site="contactos.morada_linha2">3700-169 São João da Madeira</span></small>
     </div>
   </div>
@@ -331,8 +331,8 @@
         <div class="cabeca">
           <p class="etiqueta">Onde estamos</p>
           <div class="filete"></div>
-          <h2 class="h-sec" id="contactos-t">Rua da Liberdade, 53</h2>
-          <p class="lead">Em São João da Madeira, a poucos minutos de Oliveira de Azeméis e de Santa Maria da Feira.</p>
+          <h2 class="h-sec" id="contactos-t">Na Rua da Liberdade, 53</h2>
+          <p class="lead">Na zona pedonal junto à Praça Luís Ribeiro, no centro de São João da Madeira — a poucos minutos de Oliveira de Azeméis e de Santa Maria da Feira.</p>
         </div>
 
         <div class="contactos__grid">
@@ -343,7 +343,7 @@
                 <strong><a href="tel:+351922022364" data-tel><span data-site="contactos.telefone">922 022 364</span></a></strong>
                 <!-- Obrigatório por lei ao lado de cada número: DL 59/2021 art.3, alterado
                      pela Lei 14/2023. Número 9xx = rede móvel nacional. -->
-                <span class="custo-chamada" data-site="contactos.custo_chamada">Chamada para a rede móvel nacional</span>
+                <span class="custo-chamada" data-site="contactos.custo_chamada">(Chamada para a rede móvel nacional)</span>
               </div>
             </div>
 
@@ -378,14 +378,20 @@
 
           <!-- Mapa carregado só por clique: sem pedido ao Google não há cookie,
                e sem cookie não é preciso banner de consentimento. -->
-          <div class="mapa" id="mapa">
-            <button class="mapa__facade" type="button">
-              <img src="assets/img/trabalhos/fachada-oficina-860.webp" alt="Entrada da oficina PokeAuto na Rua da Liberdade, 53" loading="lazy" width="860" height="1075" />
+          <div class="mapa" id="mapa" data-morada="Rua da Liberdade 53, 3700-169 São João da Madeira">
+            <!-- O mapa é do Google e instala cookies. Só é carregado depois de o
+                 visitante aceitar; até lá fica a fotografia da entrada, que
+                 também serve para reconhecer a porta na rua. -->
+            <div class="mapa__facade">
+              <img src="assets/img/trabalhos/fachada-oficina-640.webp"
+                   srcset="assets/img/trabalhos/fachada-oficina-320.webp 320w, assets/img/trabalhos/fachada-oficina-480.webp 480w, assets/img/trabalhos/fachada-oficina-640.webp 640w"
+                   sizes="(max-width:860px) 92vw, 46vw"
+                   alt="Entrada da oficina PokeAuto na Rua da Liberdade, 53" loading="lazy" width="640" height="800" />
               <span class="mapa__sobre">
-                <span class="btn">Carregar o mapa</span>
-                <span class="mapa__nota">O mapa é do Google e só é carregado se carregar aqui. Ao fazê-lo, o Google pode instalar cookies.</span>
+                <button class="btn" type="button" id="mapa-aceitar">Ver o mapa</button>
+                <span class="mapa__nota">O mapa é do Google e instala cookies. Ao carregar aqui está a aceitá-los.</span>
               </span>
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -407,26 +413,24 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v4H8v7h4v-7h3l1-4h-4V7.5A.5.5 0 0 1 12.5 7H16V3Z"/></svg>
             </a>
             <a class="rede" href="https://wa.me/351922022364" target="_blank" rel="noopener" aria-label="WhatsApp da PokeAuto">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3.5 20.5l1.8-4.8A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.8 8.4c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .6.5l.7 1.6c.1.3 0 .5-.1.7l-.4.4c-.1.2-.3.3-.1.6a7 7 0 0 0 3 2.6c.3.1.5.1.7-.1l.5-.6c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5s0 .9-.3 1.2c-.4.4-1 .8-1.7.8-1.5 0-3.6-1.1-5.1-2.6a10 10 0 0 1-2.3-3.6c-.3-1 0-1.9.5-2.3Z"/></svg>
+              <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.1 3C8.9 3 3.1 8.8 3.1 16c0 2.3.6 4.5 1.7 6.4L3 29.4l7.2-1.9a13 13 0 0 0 5.9 1.4h.01c7.2 0 13-5.8 13-13S23.3 3 16.1 3Zm0 23.7c-1.9 0-3.7-.5-5.3-1.5l-.4-.2-4.3 1.1 1.1-4.2-.2-.4a10.8 10.8 0 1 1 9.1 5.2Zm5.9-8.1c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1a8.8 8.8 0 0 1-2.6-1.6 9.8 9.8 0 0 1-1.8-2.2c-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.6l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .7.8.3 1.6.2 2.2.1.7-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.2-.6-.4Z"/></svg>
             </a>
           </div>
         </div>
 
         <div>
-          <h4>Serviços</h4>
-          <!-- gerada a partir de data/servicos.json: escrita à mão ficava com links
-               mortos assim que o cliente mudasse um identificador -->
-          <ul id="rodape-servicos"><!--pre:rodape-servicos--><li><a href="#servico-mecanica">Mecânica e diagnóstico</a></li><li><a href="#servico-revisao">Revisão completa</a></li><li><a href="#servico-lavagem">Lavagem completa</a></li><li><a href="#servico-ar-condicionado">Interior e ar condicionado</a></li><!--/pre:rodape-servicos--></ul>
-        </div>
-
-        <div>
           <h4>Contactos</h4>
-          <ul>
-            <li><a href="tel:+351922022364" data-tel><span data-site="contactos.telefone">922 022 364</span></a><br>
-                <span class="meta" data-site="contactos.custo_chamada">Chamada para a rede móvel nacional</span></li>
-            <li><span data-site="contactos.morada_linha1">Rua da Liberdade, n.º 53</span><br>
-                <span data-site="contactos.morada_linha2">3700-169 São João da Madeira</span></li>
-            <li><a href="https://www.instagram.com/pokeauto2026" target="_blank" rel="noopener" data-ig><span data-site="contactos.instagram_handle">@pokeauto2026</span></a></li>
+          <ul class="rodape__contactos">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg>
+              <span><a href="tel:+351922022364" data-tel><span data-site="contactos.telefone">922 022 364</span></a>
+              <small data-site="contactos.custo_chamada">(Chamada para a rede móvel nacional)</small></span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 6.5-9 12-9 12s-9-5.5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span><span data-site="contactos.morada_linha1">Rua da Liberdade, n.º 53</span><br>
+              <span data-site="contactos.morada_linha2">3700-169 São João da Madeira</span></span>
+            </li>
           </ul>
         </div>
       </div>
@@ -435,27 +439,26 @@
            jurídica — uma sociedade tem de publicar NIPC, conservatória, matrícula
            e capital social (CSC art.171); um empresário em nome individual não. -->
       <div class="rodape__legal">
-        <p id="bloco-legal">[nome do titular por confirmar], Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF [por confirmar]</p>
-        <p style="margin-top:.5rem">
-          Em caso de litígio de consumo, o consumidor pode recorrer ao
+        <p class="rodape__ident" id="bloco-legal">[nome do titular por confirmar], Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF [por confirmar]</p>
+        <p>
+          Em caso de litígio de consumo, pode recorrer ao
           <strong>CICAP — Centro de Informação de Consumo e Arbitragem do Porto</strong>
           (<a class="link-d" href="https://www.cicap.pt" target="_blank" rel="noopener">cicap.pt</a>),
-          entidade de resolução alternativa de litígios com competência territorial sobre São João da Madeira.
-          A PokeAuto não se encontra vinculada por adesão a esta ou a qualquer outra entidade de RAL,
-          o que não prejudica o direito do consumidor de a ela recorrer.
-          Mais informação em <a class="link-d" href="https://www.consumidor.gov.pt" target="_blank" rel="noopener">consumidor.gov.pt</a>.
-          Autoridade de fiscalização: ASAE.
+          entidade de resolução alternativa de litígios com competência sobre São João
+          da Madeira. A PokeAuto não está vinculada por adesão, o que não prejudica o
+          seu direito de lá recorrer.
         </p>
         <div class="rodape__links">
-          <a href="legal/privacidade.html">Política de Privacidade</a>
-          <a href="legal/termos.html">Termos e Condições</a>
-          <a href="legal/cookies.html">Política de Cookies</a>
           <a class="selo-lr" href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5h13a2 2 0 0 1 2 2v13H6a2 2 0 0 1-2-2Z"/><path d="M8 9h7M8 13h5"/></svg>
             Livro de Reclamações
           </a>
+          <a href="legal/privacidade.html">Privacidade</a>
+          <a href="legal/termos.html">Termos</a>
+          <a href="legal/cookies.html">Cookies</a>
+          <button class="rodape__botao" type="button" id="cookies-abrir">Definições de cookies</button>
         </div>
-        <p style="margin-top:.9rem">© <span data-ano>2026</span> PokeAuto</p>
+        <p class="rodape__copy">&copy; <span data-ano>2026</span> PokeAuto</p>
       </div>
     </div>
   </footer>
@@ -466,6 +469,28 @@
     <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener">WhatsApp</a>
   </div>
 
-  <script src="assets/js/app.js?v=900a4ee2" defer></script>
+  <!-- ====================================================== COOKIES ======
+       Aceitar e Recusar com o MESMO destaque, nada pré-seleccionado, e não é
+       cookie-wall: quem recusa continua a ver o site inteiro. A escolha fica
+       guardada e pode ser mudada a qualquer momento pelo link do rodapé. -->
+  <div class="cookies" id="cookies" role="dialog" aria-modal="false"
+       aria-labelledby="cookies-t" aria-describedby="cookies-d" hidden>
+    <div class="cookies__caixa">
+      <h2 class="cookies__t" id="cookies-t">Cookies neste site</h2>
+      <p class="cookies__d" id="cookies-d">
+        Este site não usa cookies para funcionar nem para o analisar. A única
+        excepção é o <strong>mapa do Google</strong> na secção de contactos: se o
+        aceitar, a Google pode instalar cookies no seu dispositivo e os seus dados
+        podem ser tratados fora da União Europeia.
+        <a class="link-d" href="legal/cookies.html">Política de Cookies</a>
+      </p>
+      <div class="cookies__acoes">
+        <button class="btn btn--consent" type="button" id="cookies-recusar">Recusar</button>
+        <button class="btn btn--consent" type="button" id="cookies-aceitar">Aceitar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js?v=92bc9d45" defer></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png" />
   <link rel="stylesheet" href="../assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="../assets/css/base.css?v=83ba7510" />
-  <link rel="stylesheet" href="../assets/css/styles.css?v=f2e7e90a" />
+  <link rel="stylesheet" href="../assets/css/styles.css?v=812f0f3d" />
 </head>
 <body>
   <header class="legalhead">
@@ -56,9 +56,9 @@
           o que nos disser sobre o veículo</td><td>Responder ao pedido e, se avançar,
           preparar e executar o serviço</td><td>Diligências pré-contratuais e execução do
           contrato (art. 6.º/1/b)</td></tr>
-          <tr><td>Carregar o mapa</td><td>Endereço IP e dados do dispositivo, recolhidos pela
+          <tr><td>Aceitar o mapa</td><td>Endereço IP e dados do dispositivo, recolhidos pela
           Google</td><td>Mostrar a localização da oficina</td><td>Consentimento
-          (art. 6.º/1/a), dado ao carregar no botão</td></tr>
+          (art. 6.º/1/a), dado no aviso de cookies</td></tr>
           <tr><td>Serviço prestado na oficina</td><td>Nome, NIF, contacto e dados do veículo,
           para efeitos de factura</td><td>Facturação e cumprimento de obrigações fiscais</td>
           <td>Obrigação jurídica (art. 6.º/1/c)</td></tr>
@@ -66,14 +66,14 @@
       </table>
 
       <h2>3. O mapa e a transferência para fora da União Europeia</h2>
-      <p>O mapa da localização não é carregado automaticamente. Só é pedido à Google se
-      carregar no botão «Carregar o mapa» — até lá, o seu navegador não estabelece qualquer
+      <p>O mapa da localização não é carregado automaticamente. Só é pedido à Google depois de
+      o aceitar no aviso de cookies — até lá, o seu navegador não estabelece qualquer
       ligação a servidores da Google a partir deste site.</p>
       <p>Se optar por carregar o mapa, o serviço é prestado pela Google Ireland Limited, e os
       dados podem ser transferidos para os Estados Unidos, onde a Google LLC está certificada
       ao abrigo do <em>EU-US Data Privacy Framework</em>. A Google utiliza ainda cláusulas
-      contratuais-tipo aprovadas pela Comissão Europeia. Pode retirar o consentimento a
-      qualquer momento recarregando a página, uma vez que a escolha não é guardada.</p>
+      contratuais-tipo aprovadas pela Comissão Europeia. Pode retirar o consentimento a qualquer momento no botão «Definições de cookies», no
+      rodapé de todas as páginas.</p>
 
       <h2>4. Com quem partilhamos os dados</h2>
       <ul>
@@ -114,12 +114,36 @@
           <a href="privacidade.html">Política de Privacidade</a>
           <a href="termos.html">Termos e Condições</a>
           <a href="cookies.html">Política de Cookies</a>
+          <button class="rodape__botao" type="button" id="cookies-abrir">Definições de cookies</button>
           <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações</a>
         </div>
         <p style="margin-top:.9rem">&copy; <span data-ano>2026</span> PokeAuto</p>
       </div>
     </div>
   </footer>
-  <script src="../assets/js/app.js?v=900a4ee2" defer></script>
+
+  <!-- ====================================================== COOKIES ======
+       Aceitar e Recusar com o MESMO destaque, nada pré-seleccionado, e não é
+       cookie-wall: quem recusa continua a ver o site inteiro. A escolha fica
+       guardada e pode ser mudada a qualquer momento pelo link do rodapé. -->
+  <div class="cookies" id="cookies" role="dialog" aria-modal="false"
+       aria-labelledby="cookies-t" aria-describedby="cookies-d" hidden>
+    <div class="cookies__caixa">
+      <h2 class="cookies__t" id="cookies-t">Cookies neste site</h2>
+      <p class="cookies__d" id="cookies-d">
+        Este site não usa cookies para funcionar nem para o analisar. A única
+        excepção é o <strong>mapa do Google</strong> na secção de contactos: se o
+        aceitar, a Google pode instalar cookies no seu dispositivo e os seus dados
+        podem ser tratados fora da União Europeia.
+        <a class="link-d" href="cookies.html">Política de Cookies</a>
+      </p>
+      <div class="cookies__acoes">
+        <button class="btn btn--consent" type="button" id="cookies-recusar">Recusar</button>
+        <button class="btn btn--consent" type="button" id="cookies-aceitar">Aceitar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/app.js?v=92bc9d45" defer></script>
 </body>
 </html>
