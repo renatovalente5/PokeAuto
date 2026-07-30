@@ -1,0 +1,257 @@
+# =============================================================
+# POKEAUTO — backoffice (Pages CMS)
+# O cliente edita em pagescms.org, com a conta do GitHub dele. Cada gravação é
+# um commit; o workflow regenera o HTML que os motores de busca lêem.
+#
+# Regra: tudo o que é conteúdo está aqui. O que é obrigação legal (avisos de
+# garantia, "a venda é feita na oficina", entidade RAL) NÃO está — fica no
+# código, para não poder ser apagado sem querer.
+# =============================================================
+
+media:
+  input: assets/img
+  output: assets/img
+
+content:
+  # ---------------------------------------------------------------- GERAL
+  - name: site
+    label: Geral (topo, contactos, horário, dados legais)
+    type: file
+    path: data/site.json
+    fields:
+      - name: hero
+        label: Topo da página
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta pequena, type: string }
+          - { name: titulo, label: Título grande, type: string }
+          - name: destaque
+            label: Palavra do título a dourado
+            type: string
+            description: Escreve aqui uma expressão que exista no título acima; fica realçada a dourado.
+          - { name: lead, label: Texto de apresentação, type: text }
+          - { name: cta_principal, label: "Botão principal", type: string }
+          - { name: cta_secundario, label: "Botão secundário", type: string }
+
+      - name: contactos
+        label: Contactos (mudam em todo o site de uma vez)
+        type: object
+        fields:
+          - { name: telefone, label: "Telefone (como se lê)", type: string }
+          - name: telefone_intl
+            label: "Telefone internacional (ex.: 351922022364)"
+            type: string
+            description: Sem espaços nem +. É o que faz funcionar os botões de ligar e de WhatsApp.
+          - name: custo_chamada
+            label: Indicação do custo da chamada
+            type: string
+            description: >-
+              Obrigatório por lei ao lado de cada número (DL 59/2021). Número 9xx =
+              "Chamada para a rede móvel nacional". Não apagar.
+          - { name: email, label: Email, type: string }
+          - { name: morada_linha1, label: "Morada (rua e número)", type: string }
+          - name: morada_linha2
+            label: "Morada (código postal e localidade)"
+            type: string
+            description: 'Tem de ser código postal e depois localidade, ex.: 3700-169 São João da Madeira.'
+          - { name: instagram_url, label: Link do Instagram, type: string }
+          - { name: instagram_handle, label: "Nome do Instagram (ex.: @pokeauto2026)", type: string }
+          - name: facebook_url
+            label: Link do Facebook
+            type: string
+            description: Deixa vazio se não houver — o ícone desaparece sozinho, não fica link morto.
+          - name: maps_url
+            label: Link do Google Maps da oficina
+            type: string
+            description: No perfil de empresa do Google, botão Partilhar, copiar o link.
+
+      - name: horario
+        label: Horário de funcionamento
+        type: object
+        list: true
+        description: >-
+          Uma linha por bloco. Ex.: Segunda a Sexta, 09:00–18:00; outra linha para Sábado.
+          Os dias que não constarem ficam como fechado. Põe aqui o MESMO horário que
+          estiver no perfil de empresa do Google — se forem diferentes, o Google desconfia.
+        fields:
+          - name: dias
+            label: Dias
+            type: select
+            options:
+              multiple: true
+              values:
+                - { value: Monday, label: Segunda }
+                - { value: Tuesday, label: Terça }
+                - { value: Wednesday, label: Quarta }
+                - { value: Thursday, label: Quinta }
+                - { value: Friday, label: Sexta }
+                - { value: Saturday, label: Sábado }
+                - { value: Sunday, label: Domingo }
+          - { name: abre, label: "Abre (24h, ex.: 09:00)", type: string }
+          - { name: fecha, label: "Fecha (24h, ex.: 18:00)", type: string }
+
+      - name: legal
+        label: Dados legais (obrigatórios no rodapé)
+        type: object
+        description: >-
+          Isto não é opcional: o DL 7/2004 art.10 obriga a identificar quem é o
+          responsável pelo site. O que aparece no rodapé muda conforme a forma jurídica.
+        fields:
+          - name: forma_juridica
+            label: Forma jurídica
+            type: select
+            options:
+              values:
+                - { value: eni, label: "Empresário em Nome Individual" }
+                - { value: sociedade, label: "Sociedade (Lda / Unipessoal Lda)" }
+            description: >-
+              Se for sociedade, o Código das Sociedades Comerciais art.171 obriga a
+              publicar também NIPC, conservatória, matrícula e capital social nos
+              sítios na Internet. Não é escolha.
+          - { name: nome_titular, label: "Nome completo do titular (ou firma, se sociedade)", type: string }
+          - { name: designacao_comercial, label: Designação comercial, type: string }
+          - { name: nif, label: "NIF (empresário individual)", type: string }
+          - { name: nipc, label: "NIPC (só sociedade)", type: string }
+          - { name: conservatoria, label: "Conservatória do Registo Comercial (só sociedade)", type: string }
+          - { name: matricula, label: "N.º de matrícula (só sociedade)", type: string }
+          - { name: capital_social, label: "Capital social (só sociedade)", type: string }
+
+      - { name: rodape_frase, label: Frase do rodapé, type: text }
+
+  # ------------------------------------------------------------- SERVIÇOS
+  - name: servicos
+    label: Serviços
+    type: file
+    path: data/servicos.json
+    fields:
+      - name: head
+        label: Títulos da secção
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+      - name: itens
+        label: Lista de serviços
+        type: object
+        list: true
+        fields:
+          - name: id
+            label: "Identificador (para o link do menu)"
+            type: string
+            description: Só letras minúsculas e hífens, sem acentos. Ex.- ar-condicionado
+          - { name: titulo, label: Nome do serviço, type: string }
+          - { name: descricao, label: Descrição, type: text }
+          - name: inclui
+            label: O que inclui
+            type: string
+            list: true
+          - name: tempo
+            label: "Tempo médio (opcional)"
+            type: string
+            description: 'Ex.: cerca de 1 hora. Deixa vazio se preferires não comprometer.'
+          - name: foto
+            label: "Fotografia (opcional)"
+            type: string
+            description: >-
+              Nome do ficheiro sem extensão, de assets/img/trabalhos/.
+              Ex.- interior-bmw-limpo
+          - { name: legenda_foto, label: Legenda da fotografia, type: string }
+
+  # ------------------------------------------------------ BALCÃO DE PEÇAS
+  - name: pecas
+    label: Balcão de peças
+    type: file
+    path: data/pecas.json
+    fields:
+      - name: head
+        label: Títulos da secção
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+      - name: itens
+        label: Peças em stock
+        type: object
+        list: true
+        description: >-
+          Com a lista vazia, a secção desaparece do site em vez de ficar um espaço
+          por preencher. ATENÇÃO: airbags e pré-tensores de cinto NÃO podem ser
+          listados — são pirotecnia e a lei proíbe vendê-los ao público. A publicação
+          falha se algum aparecer aqui.
+        fields:
+          - { name: nome, label: Nome da peça, type: string }
+          - { name: referencia, label: "Referência (opcional)", type: string }
+          - name: categoria
+            label: Categoria
+            type: select
+            options:
+              values: [Travagem, Motor, Filtros, Suspensão, Elétrica, Escape, Óleos e fluidos, Acessórios, Outra]
+          - { name: compatibilidade, label: "Compatível com (opcional)", type: string }
+          - name: estado
+            label: Estado
+            type: select
+            options:
+              values:
+                - { value: nova, label: "Nova" }
+                - { value: usada, label: "Usada (com origem documentada)" }
+            description: >-
+              Peças usadas provenientes de veículos em fim de vida só podem ser
+              vendidas com documento comprovativo de origem (DL 152-D/2017 art.81 n.6).
+              Se não tiveres esse documento, não listes a peça.
+          - name: preco
+            label: "Preço (opcional)"
+            type: string
+            description: >-
+              Se puseres preço, tem de ser o valor final com IVA incluído (DL 138/90).
+              Deixa vazio para aparecer "Sob consulta" — omitir preço é legal, indicar
+              mal não é.
+          - { name: foto, label: "Fotografia (opcional)", type: image }
+
+  # ------------------------------------------------------------------ FAQ
+  - name: faq
+    label: Perguntas frequentes
+    type: file
+    path: data/faq.json
+    fields:
+      - name: head
+        label: Títulos da secção
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+      - name: itens
+        label: Perguntas
+        type: object
+        list: true
+        fields:
+          - { name: q, label: Pergunta, type: string }
+          - { name: a, label: Resposta, type: text }
+
+  # ------------------------------------------------------------ TRABALHOS
+  - name: trabalhos
+    label: Fotografias de trabalhos
+    type: file
+    path: data/trabalhos.json
+    fields:
+      - name: head
+        label: Títulos da secção
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+      - name: items
+        label: Fotografias
+        type: object
+        list: true
+        fields:
+          - { name: img, label: Imagem, type: image }
+          - name: cap
+            label: Legenda
+            type: string
+            description: >-
+              Diz o que a foto mostra em concreto (que carro, que serviço). Uma
+              legenda factual vale mais do que um adjectivo.

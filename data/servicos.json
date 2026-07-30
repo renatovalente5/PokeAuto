@@ -1,0 +1,124 @@
+{
+  "head": {
+    "etiqueta": "O que fazemos",
+    "titulo": "Serviços",
+    "lead": "Oficina multimarca. Do diagnóstico eletrónico à lavagem final, tudo no mesmo sítio e com o mesmo interlocutor."
+  },
+  "itens": [
+    {
+      "id": "mecanica",
+      "titulo": "Mecânica geral",
+      "descricao": "Manutenção e reparação mecânica de ligeiros de todas as marcas. Começamos sempre por perceber a avaria antes de propor a reparação — e explicamos o que encontrámos por palavras que se percebem.",
+      "inclui": [
+        "Motor e distribuição",
+        "Embraiagem",
+        "Escape",
+        "Direção",
+        "Pré-inspeção"
+      ],
+      "tempo": "",
+      "foto": "",
+      "legenda_foto": ""
+    },
+    {
+      "id": "eletricidade",
+      "titulo": "Eletricidade auto",
+      "descricao": "Avarias elétricas são das que mais tempo fazem perder a quem tenta adivinhar. Fazemos a medição no sítio certo do circuito e localizamos a origem em vez de trocar peças à sorte.",
+      "inclui": [
+        "Bateria e carga",
+        "Alternador e motor de arranque",
+        "Iluminação",
+        "Cablagens",
+        "Vidros e fecho centralizado"
+      ],
+      "tempo": "",
+      "foto": "",
+      "legenda_foto": ""
+    },
+    {
+      "id": "eletronica",
+      "titulo": "Eletrónica automóvel e diagnóstico",
+      "descricao": "Leitura de centralinas com equipamento de diagnóstico, interpretação dos códigos de avaria e teste dos sensores. Um código lido não é um diagnóstico: é o princípio dele.",
+      "inclui": [
+        "Leitura e apagamento de códigos",
+        "Teste de sensores e atuadores",
+        "Luz de avaria acesa",
+        "Sistemas de conforto"
+      ],
+      "tempo": "",
+      "foto": "interior-mercedes-limpo",
+      "legenda_foto": "Posto de condução depois da intervenção"
+    },
+    {
+      "id": "revisao",
+      "titulo": "Revisão completa",
+      "descricao": "A revisão que mantém a garantia do plano de manutenção e que evita a avaria cara. Substituem-se os consumíveis e verifica-se o resto ponto por ponto.",
+      "inclui": [
+        "Óleo e filtros",
+        "Travões",
+        "Suspensão e pneus",
+        "Níveis e correias",
+        "Relatório do que foi verificado"
+      ],
+      "tempo": "",
+      "foto": "mercedes-classe-e-frente",
+      "legenda_foto": "Mercedes Classe E pronto a entregar"
+    },
+    {
+      "id": "ar-condicionado",
+      "titulo": "Higienização do ar condicionado",
+      "descricao": "O cheiro a húmido que aparece quando se liga o ar condicionado vem da humidade acumulada no evaporador. A higienização trata o sistema e o habitáculo, com produto próprio para o efeito.",
+      "inclui": [
+        "Higienização do evaporador",
+        "Desodorização do habitáculo",
+        "Verificação do filtro de habitáculo"
+      ],
+      "tempo": "",
+      "foto": "interior-bmw-limpo",
+      "legenda_foto": "Habitáculo tratado, tablier e estofos incluídos"
+    },
+    {
+      "id": "lavagem-exterior",
+      "titulo": "Lavagem exterior",
+      "descricao": "Lavagem a fundo com espuma activa, feita na box da oficina. Não é a lavagem de cinco minutos do posto de combustível — é a que tira o que fica agarrado.",
+      "inclui": [
+        "Pré-lavagem com espuma activa",
+        "Lavagem manual",
+        "Jantes e pneus",
+        "Vidros",
+        "Secagem"
+      ],
+      "tempo": "",
+      "foto": "mercedes-cla-frente",
+      "legenda_foto": "Mercedes CLA depois da lavagem exterior"
+    },
+    {
+      "id": "lavagem-interior",
+      "titulo": "Lavagem interior",
+      "descricao": "Aspiração completa, limpeza de plásticos e tratamento dos estofos. É o serviço que mais muda a sensação de andar no carro todos os dias.",
+      "inclui": [
+        "Aspiração",
+        "Plásticos e tablier",
+        "Estofos",
+        "Vidros por dentro",
+        "Bagageira"
+      ],
+      "tempo": "",
+      "foto": "bmw-serie5-frente",
+      "legenda_foto": "BMW Série 5 depois de lavagem completa"
+    },
+    {
+      "id": "personalizacao",
+      "titulo": "Personalização automóvel",
+      "descricao": "Pequenas alterações estéticas ao gosto de cada um. Falamos primeiro sobre o que é possível fazer sem comprometer a legalidade do veículo na inspeção.",
+      "inclui": [
+        "Detalhes exteriores",
+        "Detalhes interiores",
+        "Aconselhamento prévio"
+      ],
+      "tempo": "",
+      "foto": "",
+      "legenda_foto": ""
+    }
+  ]
+}

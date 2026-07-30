@@ -36,10 +36,7 @@ from cdp import Chrome                                        # noqa: E402
 PAGINA = os.path.join(RAIZ, 'index.html')
 
 # Zonas que o app.js preenche e que valem indexação
-ZONAS = [
-    # preenchido à medida que as secções desenhadas em JS existirem
-    # (Fase 6: serviços e FAQ; Fase 7: balcão de peças)
-]
+ZONAS = ['servicos-lista', 'faq-lista', 'chips-lista', 'pecas-lista']
 
 
 def porta_livre():
@@ -137,7 +134,7 @@ def aplicar_site(html, site):
     conta das substituições, para o chamador poder desconfiar do silêncio.
     """
     contas = {}
-    c = site.get('contacts', {})
+    c = site.get('contactos', {})
 
     def valor(caminho):
         alvo = site
@@ -181,23 +178,19 @@ def aplicar_site(html, site):
 
         return re.sub(r'<a\b[^>]*>', uma, texto), contador[0]
 
-    if c.get('phone_intl'):
-        html, contas['data-tel'] = trocar_href(html, 'data-tel', 'tel:+' + c['phone_intl'])
-        html, n = re.subn(r'wa\.me/\d+', 'wa.me/' + c['phone_intl'], html)
+    if c.get('telefone_intl'):
+        html, contas['data-tel'] = trocar_href(html, 'data-tel', 'tel:+' + c['telefone_intl'])
+        html, n = re.subn(r'wa\.me/\d+', 'wa.me/' + c['telefone_intl'], html)
         contas['wa.me'] = n
     if c.get('email'):
         html, contas['data-mail'] = trocar_href(html, 'data-mail', 'mailto:' + c['email'])
     if c.get('instagram_url'):
         html, contas['data-ig'] = trocar_href(html, 'data-ig', c['instagram_url'])
+    if c.get('facebook_url'):
+        html, contas['data-fb'] = trocar_href(html, 'data-fb', c['facebook_url'])
 
     # a legenda da fachada do mapa (app.js:258)
-    a1, a2 = c.get('address_line1') or '', c.get('address_line2') or ''
-    if a1:
-        morada = a1 + (', ' + a2 if a2 else '')
-        html, n = re.subn(r'(<[^>]*class="[^"]*map-facade__s[^"]*"[^>]*>).*?(</\w+>)',
-                          lambda m: m.group(1) + escapar(morada) + m.group(2),
-                          html, flags=re.S)
-        contas['mapa'] = n
+    a1, a2 = c.get('morada_linha1') or '', c.get('morada_linha2') or ''
 
     return html, contas
 
@@ -210,9 +203,11 @@ def escapar(t):
 # isto em runtime (applyHead, app.js:28); aqui grava-se no ficheiro para o
 # rastreador não ficar com a versão antiga quando o cliente editar.
 CABECALHOS = [
-    # (id da secção, ficheiro em data/, chave) — preenchido na Fase 6
+    ('servicos', 'servicos.json', 'head'),
+    ('faq', 'faq.json', 'head'),
+    ('pecas', 'pecas.json', 'head'),
 ]
-CLASSES = [('eyebrow', 'eyebrow'), ('section-title', 'title'), ('section-lead', 'lead')]
+CLASSES = [('etiqueta', 'etiqueta'), ('h-sec', 'titulo'), ('lead', 'lead')]
 
 
 def aplicar_cabecalhos(html, raiz):
@@ -257,11 +252,11 @@ def aplicar_cabecalhos(html, raiz):
 SITE = 'https://renatovalente5.github.io/PokeAuto'
 
 # Constantes que não vivem no backoffice (são técnicas, o cliente não lhes mexe).
-# geo: coordenadas EXACTAS do pin do perfil de empresa do Google, extraídas do
-# link Partilhar do Maps (o par !3d!4d do URL longo, que é o pin em si e não o
-# centro do mapa). Substituíram uma geocodificação de rua que estava ~120 m ao
-# lado. Se o pin for movido no perfil, actualizar aqui.
-GEO = {'latitude': 41.3758249, 'longitude': -8.3047875}
+# geo: geocodificação da Rua da Liberdade em São João da Madeira (OpenStreetMap).
+# É a rua certa no concelho certo, com precisão de RUA. SUBSTITUIR pelas
+# coordenadas exactas do pin assim que existir perfil de empresa do Google:
+# botão Partilhar → copiar link → o par !3d!4d do URL longo é o pin.
+GEO = {'latitude': 40.8988, 'longitude': -8.4910}
 # PLACEHOLDER — o cliente ainda não deu o NIF. Sem ele o site não cumpre o
 # DL 7/2004 art.10; é bloqueio de publicação, não detalhe.
 NIF = None
@@ -408,96 +403,88 @@ def escapar_url(caminho):
 # oficina que também vende peças o tipo correcto é AutoRepair, e a venda de
 # peças declara-se à parte — refazer quando o modelo de dados existir.
 def construir_jsonld(raiz):
-    """Gera o JSON-LD a partir de data/*.json, para nunca ficar dessincronizado
-    do que o cliente edita no backoffice (telefone, morada, serviços, FAQ)."""
-    import json as _json
+    """Gera o grafo a partir de data/*.json, para nunca ficar dessincronizado do
+    que o cliente edita no backoffice.
 
-    def carregar(nome):
-        return ler_json(os.path.join(raiz, 'data', nome), 'data/' + nome)
+    Tipo: AutoRepair + AutoWash. São ambos subtipos de LocalBusiness e a oficina
+    faz mesmo as duas coisas — declarar só uma delas deixava metade do negócio
+    fora. A venda de peças NÃO é declarada como loja: é montra presencial, não
+    comércio à distância, e um AutoPartsStore prometia ao Google uma coisa que o
+    site não faz.
+    """
+    site = ler_json(os.path.join(raiz, 'data', 'site.json'), 'data/site.json')
+    servicos = ler_json(os.path.join(raiz, 'data', 'servicos.json'), 'data/servicos.json')
+    faq = ler_json(os.path.join(raiz, 'data', 'faq.json'), 'data/faq.json')
+    c = site.get('contactos', {})
+    L = site.get('legal', {})
 
-    site = carregar('site.json')
-    servicos = carregar('services.json')
-    faq = carregar('faq.json')
-    c = site.get('contacts', {})
-
-    # A linha 2 da morada é um campo de texto do backoffice. Partia-a por espaços
-    # para tirar o código postal, o que dava uma morada errada em silêncio se o
-    # cliente escrevesse outro formato. Agora exige-se o formato português e, se
-    # não bater, rebenta — uma morada errada nos dados estruturados é pior do que
-    # uma publicação que falha e avisa.
-    linha2 = (c.get('address_line2') or '').strip()
+    linha2 = (c.get('morada_linha2') or '').strip()
     m_cp = re.match(r'^(\d{4}-\d{3})\s+(\S.*)$', linha2)
     if not m_cp:
         raise ValueError(
-            'contacts.address_line2 = %r não está no formato "3700-169 São João da Madeira". '
-            'Corrigir no backoffice (Contactos → Morada linha 2).' % linha2)
+            'contactos.morada_linha2 = %r não está no formato "3700-169 São João da '
+            'Madeira". Corrigir no backoffice (Geral → Contactos).' % linha2)
     codigo_postal, localidade = m_cp.group(1), m_cp.group(2).strip()
 
-    # Horário: só entra no grafo se o cliente o tiver preenchido. Sem horário é
-    # melhor do que com horário errado — o Google mostra-o a quem pesquisa.
     horario = []
-    for i, bloco in enumerate(site.get('hours') or []):
+    for i, bloco in enumerate(site.get('horario') or []):
         if not isinstance(bloco, dict):
-            raise ValueError('hours[%d] devia ser uma linha com dias, hora de abrir e '
-                             'hora de fechar, e está %r. Corrigir no backoffice '
-                             '(Horário de funcionamento).' % (i, bloco))
-        dias = bloco.get('days') or []
+            raise ValueError('horario[%d] devia ser uma linha com dias, hora de abrir e '
+                             'hora de fechar, e está %r.' % (i, bloco))
+        dias = bloco.get('dias') or []
         if isinstance(dias, str):
             dias = [dias]
-        abre, fecha = (bloco.get('opens') or '').strip(), (bloco.get('closes') or '').strip()
+        abre, fecha = (bloco.get('abre') or '').strip(), (bloco.get('fecha') or '').strip()
         if not dias or not abre or not fecha:
             continue
         for h, nome in ((abre, 'abre'), (fecha, 'fecha')):
             if not re.match(r'^([01]\d|2[0-3]):[0-5]\d$', h):
-                raise ValueError('hours[%d].%s = %r não está no formato HH:MM (24h).' % (i, nome, h))
-        horario.append({
-            '@type': 'OpeningHoursSpecification',
-            'dayOfWeek': ['https://schema.org/' + d for d in dias],
-            'opens': abre, 'closes': fecha,
-        })
+                raise ValueError('horario[%d].%s = %r não está no formato HH:MM (24h).'
+                                 % (i, nome, h))
+        horario.append({'@type': 'OpeningHoursSpecification',
+                        'dayOfWeek': ['https://schema.org/' + d for d in dias],
+                        'opens': abre, 'closes': fecha})
 
     negocio = {
-        '@type': ['LocalBusiness', 'Store'],
-        '@id': SITE + '/#loja',
+        '@type': ['AutoRepair', 'AutoWash'],
+        '@id': SITE + '/#oficina',
         'name': 'PokeAuto',
-        # O nome oficial é o do perfil de empresa do Google, sem espaços. As
-        # variantes com espaço ficam aqui: são termos por que o cliente quer ser
-        # encontrado, e sem elas o site deixava de declarar que é a mesma entidade.
-        'alternateName': ['Poke Auto', 'PokeAuto Oficina'],
-        'description': ('Oficina automóvel em São João da Madeira: mecânica, eletricidade, '
-                        'eletrónica, revisão completa, lavagens e higienização do ar '
-                        'condicionado.'),
+        'alternateName': ['Poke Auto'],
+        'description': ('Oficina automóvel multimarca em São João da Madeira: mecânica, '
+                        'eletricidade, eletrónica automóvel, revisão completa, lavagens '
+                        'e higienização do ar condicionado.'),
         'url': SITE + '/',
-        'logo': SITE + '/assets/img/logo.webp',
-        'image': SITE + '/assets/img/og.jpg',
-        'telephone': '+' + c.get('phone_intl', ''),
-        'email': c.get('email', ''),
+        'logo': SITE + '/assets/img/logo-760.webp',
+        'image': SITE + '/assets/img/trabalhos/lavagem-espuma-oficina-1140.webp',
+        'telephone': '+' + (c.get('telefone_intl') or ''),
         'priceRange': '€€',
         'address': {
             '@type': 'PostalAddress',
-            'streetAddress': c.get('address_line1', ''),
+            'streetAddress': c.get('morada_linha1', ''),
             'postalCode': codigo_postal,
             'addressLocality': localidade,
-            'addressRegion': 'Braga',
+            'addressRegion': 'Aveiro',
             'addressCountry': 'PT',
         },
         'geo': dict({'@type': 'GeoCoordinates'}, **GEO),
         'areaServed': [{'@type': 'City', 'name': n} for n in AREA],
-        'sameAs': [u for u in [c.get('instagram_url'), c.get('maps_url'),
-                               c.get('facebook_url')] if u],
+        'sameAs': [u for u in [c.get('instagram_url'), c.get('facebook_url'),
+                               c.get('maps_url')] if u],
         'hasOfferCatalog': {
             '@type': 'OfferCatalog',
-            'name': 'Serviços de personalização e estampagem',
+            'name': 'Serviços de oficina',
             'itemListElement': [
                 {'@type': 'Offer',
-                 'itemOffered': {'@type': 'Service', 'name': s['title'],
-                                 'description': s.get('desc', '')}}
-                for s in servicos.get('services', [])
+                 'itemOffered': {'@type': 'Service', 'name': x['titulo'],
+                                 'description': x.get('descricao', '')}}
+                for x in servicos.get('itens', [])
             ],
         },
     }
-    if NIF:
-        negocio['vatID'] = NIF
+    if L.get('nif'):
+        negocio['vatID'] = 'PT' + str(L['nif']).replace('PT', '').strip()
+    if c.get('email'):
+        negocio['email'] = c['email']
     if horario:
         negocio['openingHoursSpecification'] = horario
     if c.get('maps_url'):
@@ -509,16 +496,9 @@ def construir_jsonld(raiz):
         'url': SITE + '/',
         'name': 'PokeAuto',
         'inLanguage': 'pt-PT',
-        'publisher': {'@id': SITE + '/#loja'},
-        # sem SearchAction de propósito: o site não tem pesquisa, seria falso
+        'publisher': {'@id': SITE + '/#oficina'},
     }
 
-    # A página é ao mesmo tempo WebPage e FAQPage, e leva o @id da própria URL.
-    # Antes era um nó '#faq' solto, que nada no grafo referenciava — um nó órfão
-    # é uma afirmação sobre nada. Assim fica ligado ao WebSite e à loja.
-    # (Nota: desde 7-mai-2026 o FAQPage já não produz sanfona nos resultados do
-    # Google. Mantém-se porque descreve conteúdo que existe de facto na página e
-    # é lido por outros consumidores do grafo, não à espera de rich result.)
     pagina = {
         '@type': ['WebPage', 'FAQPage'],
         '@id': SITE + '/',
@@ -526,26 +506,25 @@ def construir_jsonld(raiz):
         'name': 'PokeAuto — Oficina auto em São João da Madeira',
         'inLanguage': 'pt-PT',
         'isPartOf': {'@id': SITE + '/#site'},
-        'about': {'@id': SITE + '/#loja'},
+        'about': {'@id': SITE + '/#oficina'},
         'mainEntity': [
             {'@type': 'Question', 'name': q['q'],
              'acceptedAnswer': {'@type': 'Answer', 'text': q['a']}}
-            for q in faq.get('items', [])
+            for q in faq.get('itens', [])
         ],
     }
     if not pagina['mainEntity']:
         pagina['@type'] = 'WebPage'
         del pagina['mainEntity']
 
-    grafo = {'@context': 'https://schema.org',
-             '@graph': [negocio, website, pagina]}
-    # O <script> vem de dentro daqui de propósito: os marcadores <!--pre:...-->
-    # TÊM de ficar FORA dele. JSON não admite comentários, e um marcador dentro
-    # do bloco fazia o JSON.parse do Google falhar e ignorar o grafo inteiro.
+    import json as _json
+    grafo = {'@context': 'https://schema.org', '@graph': [negocio, website, pagina]}
+    # O <script> vem de dentro daqui de propósito: os marcadores <!--pre:...--> TÊM
+    # de ficar FORA dele. JSON não admite comentários, e um marcador lá dentro faz
+    # o JSON.parse do Google falhar e ignorar o grafo inteiro.
     return ('<script type="application/ld+json">\n'
             + _json.dumps(grafo, ensure_ascii=False, indent=2)
             + '\n  </script>')
-
 
 def main():
     verificar = '--verificar' in sys.argv
@@ -607,10 +586,16 @@ def main():
     else:
         print('AVISO: marcador de json-ld em falta')
 
+    pecas = ler_json(os.path.join(RAIZ, 'data', 'pecas.json'), 'data/pecas.json')
+    tem_pecas = bool([x for x in (pecas.get('itens') or []) if x and x.get('nome')])
+
     for z in ZONAS:
         conteudo = zonas.get(z)
         if conteudo is None:
-            print('AVISO: zona %s não veio do browser' % z)
+            # a secção de peças desaparece em runtime quando não há peças; não é
+            # avaria, é o comportamento pedido
+            if not (z == 'pecas-lista' and not tem_pecas):
+                print('AVISO: zona %s não veio do browser' % z)
             continue
         padrao = re.compile(r'(<!--pre:%s-->).*?(<!--/pre:%s-->)' % (z, z), re.S)
         if not padrao.search(novo):
@@ -631,7 +616,13 @@ def main():
     resumo.append('contactos: %s' % (', '.join('%s×%d' % (k, v) for k, v in sorted(contas.items()))
                                      or 'já em dia (%d nós data-site)' % esperado))
 
-    # etiquetas/títulos/subtítulos das 9 secções
+    # A secção de peças NÃO é removida daqui. Editar destrutivamente o index.html
+    # significava que, no dia em que o cliente acrescentasse a primeira peça, a
+    # secção já não existia no ficheiro para voltar. Em vez disso o app.js desenha
+    # um estado vazio honesto, que também é o que fica no HTML servido.
+    resumo.append('peças: %d' % (len(pecas.get('itens') or [])))
+
+    # etiquetas/títulos/subtítulos das secções
     try:
         novo, n_heads = aplicar_cabecalhos(novo, RAIZ)
     except ValueError as e:

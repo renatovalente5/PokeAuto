@@ -1,0 +1,45 @@
+{
+  "head": {
+    "etiqueta": "Trabalhos",
+    "titulo": "Carros que saíram daqui",
+    "lead": ""
+  },
+  "items": [
+    {
+      "img": "assets/img/trabalhos/lavagem-espuma-oficina-1140.webp",
+      "cap": "Lavagem com espuma activa na box da oficina"
+    },
+    {
+      "img": "assets/img/trabalhos/fachada-oficina-860.webp",
+      "cap": "A entrada da oficina na Rua da Liberdade, 53"
+    },
+    {
+      "img": "assets/img/trabalhos/interior-bmw-limpo-840.webp",
+      "cap": "Interior tratado — tablier, consola e estofos"
+    },
+    {
+      "img": "assets/img/trabalhos/interior-mercedes-limpo-840.webp",
+      "cap": "Posto de condução depois da higienização"
+    },
+    {
+      "img": "assets/img/trabalhos/mercedes-cla-frente-840.webp",
+      "cap": "Mercedes CLA depois da lavagem exterior"
+    },
+    {
+      "img": "assets/img/trabalhos/mercedes-classe-e-frente-840.webp",
+      "cap": "Mercedes Classe E entregue ao cliente"
+    },
+    {
+      "img": "assets/img/trabalhos/bmw-serie5-frente-840.webp",
+      "cap": "BMW Série 5 depois de lavagem completa"
+    },
+    {
+      "img": "assets/img/trabalhos/faixa-jante-1800.webp",
+      "cap": "Jante e travão limpos ao detalhe"
+    },
+    {
+      "img": "assets/img/trabalhos/faixa-volante-1800.webp",
+      "cap": "Painel e volante sem pó nem marcas"
+    }
+  ]
+}

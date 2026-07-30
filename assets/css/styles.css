@@ -1,0 +1,411 @@
+/* =============================================================
+   POKEAUTO — componentes
+   ============================================================= */
+
+/* ================================================================== NAVBAR */
+/* O logótipo entra grande e encolhe ao descer (pedido do cliente). A altura da
+   barra é uma variável para o resto da página poder contar com ela: sem isso as
+   âncoras das secções ficavam por baixo da barra fixa. */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 120;
+  height: var(--nav-h);
+  display: flex; align-items: center;
+  background: linear-gradient(180deg, rgba(11, 11, 13, .96), rgba(11, 11, 13, .78));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: height var(--t), background var(--t), border-color var(--t);
+}
+.nav.is-scrolled {
+  height: var(--nav-h-min);
+  background: rgba(11, 11, 13, .97);
+  border-bottom-color: var(--aco);
+}
+.nav__wrap { display: flex; align-items: center; gap: 1rem; width: min(100% - 2 * var(--gutter), var(--largura)); margin-inline: auto; }
+
+.nav__marca { display: flex; align-items: center; flex: none; text-decoration: none; }
+.nav__logo {
+  height: 84px; width: auto;
+  transition: height var(--t);
+}
+.nav.is-scrolled .nav__logo { height: 52px; }
+
+.nav__links { display: flex; align-items: center; gap: .25rem; margin-left: auto; }
+.nav__link {
+  padding: .55rem .7rem;
+  font-family: var(--f-display); font-weight: 600; font-size: 1.02rem;
+  letter-spacing: .03em; text-transform: uppercase;
+  color: var(--prata); text-decoration: none; border-radius: var(--raio);
+  transition: color var(--t), background var(--t);
+}
+.nav__link:hover, .nav__link.is-actual { color: var(--branco); background: var(--carbono-alto); }
+.nav__cta { margin-left: .6rem; }
+
+/* --- botão hambúrguer (só telemóvel) --- */
+.nav__toggle {
+  display: none;
+  margin-left: auto;
+  width: 46px; height: 46px;
+  align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--aco); border-radius: var(--raio);
+  cursor: pointer;
+}
+.nav__toggle span {
+  display: block; position: relative;
+  width: 22px; height: 2px; background: var(--branco); border-radius: 2px;
+  transition: background var(--t);
+}
+.nav__toggle span::before, .nav__toggle span::after {
+  content: ''; position: absolute; left: 0; width: 22px; height: 2px;
+  background: var(--branco); border-radius: 2px; transition: transform var(--t), top var(--t);
+}
+.nav__toggle span::before { top: -7px; }
+.nav__toggle span::after { top: 7px; }
+body.menu-aberto .nav__toggle span { background: transparent; }
+body.menu-aberto .nav__toggle span::before { top: 0; transform: rotate(45deg); }
+body.menu-aberto .nav__toggle span::after { top: 0; transform: rotate(-45deg); }
+
+/* ==================================================== MENU DE ECRÃ INTEIRO */
+/* Pedido do cliente: em telemóvel o menu ocupa o ecrã todo. Fixed + inset:0 +
+   fundo opaco — nada de painel deslizante a meio, que deixa ver o conteúdo por
+   trás e confunde. */
+.menu {
+  position: fixed; inset: 0; z-index: 110;
+  display: none; flex-direction: column;
+  background: var(--preto);
+  padding: calc(var(--nav-h-min) + 1.5rem) var(--gutter) 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body.menu-aberto { overflow: hidden; }
+body.menu-aberto .menu { display: flex; }
+
+.menu__links { display: flex; flex-direction: column; gap: .25rem; }
+.menu__link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem .25rem;
+  font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(1.5rem, 7vw, 2rem); letter-spacing: .01em; text-transform: uppercase;
+  color: var(--branco); text-decoration: none;
+  border-bottom: 1px solid var(--aco);
+}
+.menu__link::after { content: '›'; color: var(--dourado); font-size: 1.3em; line-height: 1; }
+.menu__acoes { display: grid; gap: .6rem; margin-block: 1.6rem; }
+.menu__acoes .btn { width: 100%; }
+
+/* rodapé do menu: um dos DOIS únicos sítios com o amarelo do letreiro */
+.menu__rodape {
+  margin-top: auto;
+  margin-inline: calc(-1 * var(--gutter));
+  padding: 1rem var(--gutter) 1.4rem;
+  background: var(--amarelo); color: #0B0B0D;
+}
+.menu__rodape a { color: #0B0B0D; font-weight: 600; text-decoration: none; }
+.menu__rodape .mono { font-size: 1.32rem; }
+.menu__rodape small { display: block; opacity: .74; font-size: .78rem; }
+
+/* ==================================================================== HERO */
+.hero { position: relative; padding-top: calc(var(--nav-h) + clamp(1.5rem, 5vw, 3rem)); padding-bottom: var(--seccao-y); }
+.hero::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(60% 55% at 78% 18%, rgba(225, 18, 28, .16), transparent 62%),
+    radial-gradient(45% 40% at 8% 82%, rgba(245, 185, 33, .10), transparent 60%);
+}
+.hero__grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: clamp(1.6rem, 5vw, 3.4rem); align-items: center; }
+.hero__copy { max-width: 44ch; }
+.hero .h-hero { margin-block: .6rem 1rem; }
+.hero .h-hero em { font-style: normal; color: var(--dourado); }
+.hero__lead { margin-bottom: 1.5rem; }
+.hero__acoes { display: flex; flex-wrap: wrap; gap: .7rem; }
+
+.hero__media { position: relative; }
+.hero__media img {
+  width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
+  border-radius: var(--raio-g);
+  border: 1px solid var(--aco);
+}
+.hero__legenda {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 2.4rem .9rem .8rem;
+  font-size: .82rem; color: #E8ECF0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, .86));
+  border-radius: 0 0 var(--raio-g) var(--raio-g);
+}
+
+/* ------------------------------------------------- faixa de chips (amarelo) */
+/* O segundo e último sítio com o amarelo do letreiro. Texto sempre preto. */
+.chips {
+  background: var(--amarelo);
+  padding-block: .8rem;
+}
+.chips__lista {
+  display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.chips__lista::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none;
+  padding: .4rem .9rem;
+  font-family: var(--f-display); font-weight: 700; font-size: .96rem;
+  letter-spacing: .03em; text-transform: uppercase;
+  color: #0B0B0D; text-decoration: none;
+  border: 2px solid rgba(11, 11, 13, .22); border-radius: 999px;
+  white-space: nowrap;
+  transition: background var(--t), border-color var(--t);
+}
+.chip:hover { background: #0B0B0D; color: var(--amarelo); border-color: #0B0B0D; }
+
+/* ======================================================== ANTES DE LIGAR */
+.confianca { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--aco); border: var(--borda); border-radius: var(--raio-g); overflow: hidden; }
+.confianca__item { background: var(--carbono); padding: 1.15rem 1.1rem; }
+.confianca__item .mono { display: block; color: var(--dourado); font-size: .78rem; letter-spacing: .12em; margin-bottom: .35rem; }
+.confianca__item strong { display: block; color: var(--branco); font-family: var(--f-display); font-size: 1.15rem; line-height: 1.2; margin-bottom: .2rem; }
+.confianca__item span { font-size: .88rem; color: var(--legenda); }
+
+/* ================================================================ SERVIÇOS */
+.svc-lista { display: grid; gap: 1px; background: var(--aco); border: var(--borda); border-radius: var(--raio-g); overflow: hidden; }
+.svc {
+  background: var(--carbono);
+  display: grid; grid-template-columns: 92px 1fr; gap: 1.4rem;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  transition: background var(--t);
+}
+.svc:hover { background: var(--carbono-alto); }
+.svc__n { font-family: var(--f-mono); font-weight: 500; font-size: 2.1rem; color: var(--dourado); line-height: 1; }
+.svc__n::after { content: ''; display: block; width: 34px; height: 2px; background: var(--vermelho); margin-top: .55rem; }
+.svc__corpo h3 { margin-bottom: .5rem; }
+.svc__corpo p { margin-bottom: .8rem; }
+.svc__inclui { display: flex; flex-wrap: wrap; gap: .4rem .5rem; margin-bottom: .7rem; }
+.svc__inclui li {
+  font-size: .84rem; color: var(--prata);
+  padding: .22rem .6rem; border: 1px solid var(--aco); border-radius: 999px;
+}
+.svc__tempo { font-family: var(--f-mono); font-size: .8rem; color: var(--legenda); letter-spacing: .04em; }
+.svc__foto { margin-top: 1rem; }
+.svc__foto img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--raio); }
+.svc__foto figcaption { margin-top: .5rem; font-size: .82rem; color: var(--legenda); }
+
+/* serviços com fotografia ganham duas colunas de conteúdo */
+.svc--foto .svc__corpo { display: grid; grid-template-columns: 1fr 260px; gap: 1.6rem; align-items: start; }
+.svc--foto .svc__foto { margin-top: 0; }
+
+/* ============================================================ FAIXA-TEXTURA */
+.faixa { position: relative; }
+.faixa img { width: 100%; aspect-ratio: 3 / 1; object-fit: cover; }
+.faixa__txt {
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  background: linear-gradient(90deg, rgba(11, 11, 13, .9) 18%, rgba(11, 11, 13, .18) 70%);
+}
+.faixa__txt p {
+  width: min(100% - 2 * var(--gutter), var(--largura)); margin-inline: auto;
+  max-width: 26ch;
+  font-family: var(--f-display); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(1.3rem, 3.6vw, 2.2rem); color: var(--branco); line-height: 1.1;
+}
+.faixa__txt em { font-style: normal; color: var(--dourado); }
+
+/* ================================================================== PEÇAS */
+/* Linhas, nunca grelha de cartões: com 4 peças uma grelha parece uma loja
+   vazia; uma lista parece um inventário — que é o que isto é. */
+.pecas__aviso {
+  border-left: 3px solid var(--vermelho-claro);
+  background: #FFFFFF; padding: .9rem 1.1rem; border-radius: var(--raio);
+  font-size: .9rem; color: var(--claro-2); margin-bottom: 1.4rem;
+}
+.pecas__filtros { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.2rem; }
+.filtro {
+  padding: .34rem .85rem; font-size: .88rem; font-weight: 600;
+  background: #FFFFFF; color: var(--claro-tinta);
+  border: 1px solid #D9DDE3; border-radius: 999px; cursor: pointer;
+  transition: background var(--t), border-color var(--t), color var(--t);
+}
+.filtro:hover { border-color: var(--claro-tinta); }
+.filtro.is-on { background: var(--claro-tinta); color: #FFFFFF; border-color: var(--claro-tinta); }
+
+.pecas__lista { border: 1px solid #E1E5EA; border-radius: var(--raio-g); overflow: hidden; background: #FFFFFF; }
+.peca {
+  display: grid; grid-template-columns: 64px 1fr auto; gap: 1rem; align-items: center;
+  padding: .95rem 1.1rem;
+  border-top: 1px solid #EDF0F3;
+}
+.peca:first-child { border-top: 0; }
+.peca__fig {
+  width: 64px; height: 64px; border-radius: var(--raio); overflow: hidden;
+  background: #E6E8EC; display: grid; place-items: center; flex: none;
+}
+.peca__fig img { width: 100%; height: 100%; object-fit: cover; }
+/* peça sem foto é uma linha DESENHADA, não um rectângulo cinzento vazio */
+.peca__fig--vazia { color: #9AA2AC; }
+.peca__fig--vazia svg { width: 26px; height: 26px; }
+.peca__nome { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; color: var(--claro-tinta); line-height: 1.2; }
+.peca__meta { font-size: .84rem; color: var(--claro-2); margin-top: .15rem; }
+.peca__ref { font-family: var(--f-mono); font-size: .8rem; color: var(--claro-2); }
+.peca__dir { text-align: right; display: grid; gap: .35rem; justify-items: end; }
+.peca__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
+.peca__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
+.peca__btn {
+  padding: .42rem .8rem; font-size: .84rem; font-weight: 600;
+  background: var(--claro-tinta); color: #FFFFFF; text-decoration: none;
+  border-radius: var(--raio); white-space: nowrap;
+}
+.peca__btn:hover { background: var(--vermelho-claro); }
+.pecas__data { margin-top: 1rem; font-size: .82rem; color: var(--claro-2); }
+
+/* ================================================================ PASSOS */
+.passos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; counter-reset: p; }
+.passo { border-top: 2px solid var(--aco); padding-top: 1rem; }
+.passo::before {
+  counter-increment: p; content: '0' counter(p);
+  display: block; font-family: var(--f-mono); font-size: 1.5rem; color: var(--dourado); margin-bottom: .4rem;
+}
+.passo h3 { font-size: 1.16rem; margin-bottom: .3rem; }
+.passo p { font-size: .92rem; color: var(--legenda); }
+
+/* =================================================================== FAQ */
+.faq { max-width: 860px; }
+.faq details { border-bottom: 1px solid var(--aco); }
+.faq summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1.05rem 0; cursor: pointer; list-style: none;
+  font-family: var(--f-display); font-weight: 600; font-size: 1.16rem; color: var(--branco);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; color: var(--dourado); font-size: 1.5rem; line-height: 1; flex: none; }
+.faq details[open] summary::after { content: '−'; }
+.faq details p { padding-bottom: 1.1rem; max-width: 70ch; }
+
+/* ============================================================== CONTACTOS */
+.contactos__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.6rem, 4vw, 3rem); align-items: start; }
+.contactos__lista { display: grid; gap: 1.1rem; }
+.contacto-item { display: grid; grid-template-columns: 26px 1fr; gap: .85rem; align-items: start; }
+.contacto-item svg { width: 22px; height: 22px; color: var(--dourado); margin-top: .18rem; }
+.contacto-item strong { display: block; color: var(--branco); font-size: 1.06rem; }
+.contacto-item a { color: var(--branco); text-decoration: none; }
+.contacto-item a:hover { color: var(--dourado); }
+.custo-chamada { display: block; font-size: .76rem; color: var(--legenda); }
+
+/* mapa por clique: nada é pedido ao Google antes de o visitante decidir */
+.mapa { position: relative; border: var(--borda); border-radius: var(--raio-g); overflow: hidden; background: var(--carbono); }
+.mapa__facade { position: relative; display: block; width: 100%; border: 0; padding: 0; cursor: pointer; background: none; text-align: left; }
+.mapa__facade img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; opacity: .5; }
+.mapa__sobre {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: .6rem;
+  padding: 1.5rem; text-align: center;
+  background: linear-gradient(rgba(11, 11, 13, .55), rgba(11, 11, 13, .82));
+}
+.mapa__sobre .btn { pointer-events: none; }
+.mapa__nota { font-size: .8rem; color: var(--legenda); max-width: 34ch; }
+.mapa iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; }
+
+/* ================================================== BARRA FIXA (telemóvel) */
+/* Quem chega com o carro avariado está no telemóvel e com pressa. */
+.barra-acao { display: none; }
+
+/* ================================================================= RODAPÉ */
+.rodape { background: var(--carbono); border-top: 1px solid var(--aco); padding-block: clamp(2.4rem, 5vw, 3.4rem) 1.6rem; }
+.rodape__topo { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem; }
+.rodape__logo { height: 76px; width: auto; margin-bottom: .9rem; }
+.rodape h4 { font-size: 1.06rem; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .7rem; }
+.rodape ul { display: grid; gap: .42rem; }
+.rodape a { color: var(--prata); text-decoration: none; font-size: .93rem; }
+.rodape a:hover { color: var(--dourado); }
+
+.redes { display: flex; gap: .6rem; margin-top: 1rem; }
+.rede {
+  width: 42px; height: 42px; display: grid; place-items: center;
+  border: 1px solid var(--aco); border-radius: var(--raio);
+  color: var(--prata); transition: color var(--t), border-color var(--t), background var(--t);
+}
+.rede:hover { color: var(--dourado); border-color: var(--dourado); background: var(--carbono-alto); }
+.rede svg { width: 20px; height: 20px; }
+
+.rodape__legal { margin-top: 2rem; padding-top: 1.3rem; border-top: 1px solid var(--aco); }
+.rodape__legal p { font-size: .8rem; color: var(--legenda); max-width: 90ch; }
+.rodape__links { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-top: .9rem; }
+.rodape__links a { font-size: .84rem; }
+.selo-lr { display: inline-flex; align-items: center; gap: .4rem; }
+.selo-lr svg { width: 16px; height: 16px; color: var(--dourado); }
+
+/* ========================================================== RESPONSIVO */
+@media (max-width: 1000px) {
+  .confianca { grid-template-columns: repeat(2, 1fr); }
+  .passos { grid-template-columns: repeat(2, 1fr); }
+  .rodape__topo { grid-template-columns: 1fr 1fr; }
+  .svc--foto .svc__corpo { grid-template-columns: 1fr 210px; }
+}
+
+@media (max-width: 860px) {
+  :root { --nav-h: 88px; --nav-h-min: 66px; }
+  .nav__links { display: none; }
+  .nav__cta { display: none; }
+  .nav__toggle { display: flex; }
+  .nav__logo { height: 64px; }
+  .nav.is-scrolled .nav__logo { height: 44px; }
+
+  .hero__grid { grid-template-columns: 1fr; }
+  .hero__media { order: -1; max-width: 420px; }
+  .contactos__grid { grid-template-columns: 1fr; }
+
+  .svc { grid-template-columns: 60px 1fr; gap: 1rem; }
+  .svc__n { font-size: 1.6rem; }
+  .svc--foto .svc__corpo { grid-template-columns: 1fr; }
+  .svc__foto { max-width: 320px; }
+
+  /* barra de acção fixa no fundo: ligar e WhatsApp sempre à mão */
+  .barra-acao {
+    display: grid; grid-template-columns: 1fr 1fr;
+    position: fixed; inset: auto 0 0 0; z-index: 100;
+    background: rgba(11, 11, 13, .97); border-top: 1px solid var(--aco);
+    padding: .55rem .7rem calc(.55rem + env(safe-area-inset-bottom));
+    gap: .5rem;
+  }
+  body.menu-aberto .barra-acao { display: none; }
+  .barra-acao .btn { padding: .7em 1em; font-size: 1rem; }
+  body { padding-bottom: 76px; }
+}
+
+@media (max-width: 620px) {
+  .confianca { grid-template-columns: 1fr; }
+  .passos { grid-template-columns: 1fr; }
+  .rodape__topo { grid-template-columns: 1fr; }
+  .peca { grid-template-columns: 52px 1fr; row-gap: .6rem; }
+  .peca__fig { width: 52px; height: 52px; }
+  .peca__dir { grid-column: 1 / -1; justify-items: start; text-align: left;
+               display: flex; align-items: center; gap: .9rem; }
+  .faixa img { aspect-ratio: 2 / 1; }
+  .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
+}
+
+/* Revelação suave — desligada para quem pede menos movimento */
+[data-reveal] { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--t), transform .5s var(--t); }
+[data-reveal].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+
+/* ============================================================ PÁGINAS LEGAIS */
+.legalhead { border-bottom: 1px solid var(--aco); padding-block: 1rem; background: var(--carbono); }
+.legalhead .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.legalhead img { height: 54px; width: auto; }
+.legalhead a { color: var(--prata); text-decoration: none; font-weight: 600; font-size: .92rem; }
+.legalhead a:hover { color: var(--dourado); }
+
+.doc { padding-block: clamp(2.4rem, 6vw, 4rem); }
+.doc__corpo { max-width: 74ch; }
+.doc h1 { font-size: clamp(2rem, 5vw, 2.8rem); text-transform: uppercase; margin-bottom: .4rem; }
+.doc h2 { font-size: clamp(1.25rem, 2.6vw, 1.5rem); margin-block: 2rem .6rem; }
+.doc h3 { font-size: 1.08rem; margin-block: 1.2rem .35rem; color: var(--dourado); }
+.doc p, .doc li { margin-bottom: .7rem; }
+.doc ul { list-style: disc; padding-left: 1.3rem; }
+.doc ul li { margin-bottom: .4rem; }
+.doc .meta { margin-bottom: 1.6rem; }
+.doc a { color: var(--dourado); }
+.doc table { width: 100%; border-collapse: collapse; margin-block: .8rem 1.4rem; font-size: .92rem; }
+.doc th, .doc td { text-align: left; padding: .6rem .7rem; border: 1px solid var(--aco); vertical-align: top; }
+.doc th { background: var(--carbono); color: var(--branco); font-family: var(--f-display); font-weight: 600; }
+.doc__caixa { border-left: 3px solid var(--dourado); background: var(--carbono); padding: 1rem 1.1rem; border-radius: var(--raio); margin-block: 1.2rem; }
+
+/* estado vazio do balcão de peças: um convite, não um buraco */
+.pecas__vazio { padding: 1.6rem 1.2rem; text-align: center; }
+.pecas__vazio p { max-width: 52ch; margin-inline: auto; margin-bottom: .7rem; color: var(--claro-2); }
+.pecas__vazio strong { color: var(--claro-tinta); }
+.pecas__vazio .peca__btn { display: inline-block; margin-top: .5rem; padding: .6rem 1.2rem; }

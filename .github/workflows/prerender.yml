@@ -1,4 +1,4 @@
-name: Pré-render para os motores de busca
+name: Publicar o site (guardas + pré-render)
 
 # O site desenha as secções em JavaScript a partir de data/*.json. O index.html
 # guarda uma cópia estática desse resultado, para os rastreadores que não correm
@@ -46,6 +46,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0          # o <lastmod> do sitemap vem do histórico do git
+
+      # PRIMEIRO passo, antes de tudo: se o cliente escreveu no backoffice alguma
+      # coisa que não pode ir para um site com o nome e a morada da empresa, a
+      # publicação falha aqui e o site continua a servir a versão anterior.
+      - name: Verificar termos proibidos
+        run: python3 .github/scripts/termos.py
 
       - name: Instalar o Pillow
         run: python3 -m pip install --quiet --disable-pip-version-check Pillow

@@ -1,0 +1,34 @@
+{
+  "hero": {
+    "etiqueta": "Oficina multimarca · São João da Madeira",
+    "titulo": "O seu carro merece o melhor cuidado",
+    "destaque": "melhor cuidado",
+    "lead": "Mecânica, eletricidade e eletrónica automóvel na Rua da Liberdade. Fazemos o diagnóstico, explicamos o que encontrámos e só avançamos depois de si. E o carro sai lavado.",
+    "cta_principal": "Ligar agora",
+    "cta_secundario": "Ver serviços"
+  },
+  "contactos": {
+    "telefone": "922 022 364",
+    "telefone_intl": "351922022364",
+    "custo_chamada": "Chamada para a rede móvel nacional",
+    "email": "",
+    "morada_linha1": "Rua da Liberdade, n.º 53",
+    "morada_linha2": "3700-169 São João da Madeira",
+    "instagram_url": "https://www.instagram.com/pokeauto2026",
+    "instagram_handle": "@pokeauto2026",
+    "facebook_url": "",
+    "maps_url": ""
+  },
+  "horario": [],
+  "legal": {
+    "forma_juridica": "eni",
+    "nome_titular": "",
+    "designacao_comercial": "PokeAuto",
+    "nif": "",
+    "nipc": "",
+    "conservatoria": "",
+    "matricula": "",
+    "capital_social": ""
+  },
+  "rodape_frase": "Oficina automóvel multimarca em São João da Madeira. Mecânica, eletricidade, eletrónica, revisões e lavagens."
+}

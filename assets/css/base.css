@@ -1,0 +1,167 @@
+/* =============================================================
+   POKEAUTO — fichas de design e base
+   As cores saem TODAS do logótipo, medidas pixel a pixel no ficheiro do cliente:
+   preto 46% · branco/prata 21% · vermelho 19% · cinza-aço 4% · dourado 4%.
+
+   A decisão mais importante desta folha vem de uma medição, não de gosto:
+   o vermelho do logótipo (#E1121C) dá 4,03:1 sobre o preto e 4,45:1 sobre branco
+   — falha o mínimo AA (4,5) para texto normal nos DOIS fundos. Logo o vermelho
+   nunca transporta texto pequeno: é preenchimento e display. Quem carrega o
+   acento é o dourado, que dá 11,09:1 sobre o preto de fundo.
+   ============================================================= */
+
+:root {
+  /* --- superfícies --- */
+  --preto: #0B0B0D;          /* fundo, ~80% do site */
+  --carbono: #16181C;        /* cartões, blocos, rodapé */
+  --carbono-alto: #1D2026;   /* estado hover de superfícies */
+  --aco: #22262C;            /* bordas 1px — decorativo, nunca informação */
+  --claro: #F4F5F7;          /* a secção de peças inverte, para ler como inventário */
+  --claro-tinta: #14161A;
+  --claro-2: #4A5158;
+
+  /* --- texto --- */
+  --branco: #FFFFFF;         /* títulos            19,66:1 */
+  --prata: #C9CFD6;          /* corpo              12,53:1 */
+  --legenda: #9AA2AC;        /* metadados ≥14px     7,62:1  (limite inferior) */
+
+  /* --- acentos --- */
+  --dourado: #F5B921;        /* acento nº1         11,09:1 */
+  --dourado-luz: #FFC93C;    /* hover e foco */
+  --vermelho: #E1121C;       /* SÓ preenchimento e display ≥24px */
+  --vermelho-txt: #FF3B41;   /* vermelho legível sobre escuro   5,58:1 */
+  --vermelho-claro: #B00D14; /* vermelho sobre superfície clara 7,21:1 */
+  --amarelo: #FFD400;        /* o amarelo do letreiro: dois sítios, texto sempre preto */
+
+  /* --- forma --- */
+  --raio: 4px;               /* cantos quase rectos: é uma oficina, não uma app */
+  --raio-g: 8px;
+  --borda: 1px solid var(--aco);
+  --sombra: 0 10px 30px rgba(0, 0, 0, .45);
+  --t: .22s cubic-bezier(.4, 0, .2, 1);
+
+  /* --- medidas --- */
+  --largura: 1180px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --seccao-y: clamp(3.5rem, 8vw, 6rem);
+
+  /* altura da navbar: muda no scroll (o logótipo encolhe — pedido do cliente) */
+  --nav-h: 108px;
+  --nav-h-min: 72px;
+
+  /* --- tipografia --- */
+  --f-display: 'Barlow Condensed', 'Avenir Next Condensed', 'Arial Narrow', sans-serif;
+  --f-corpo: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ------------------------------------------------------------------ reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+body {
+  margin: 0;
+  background: var(--preto);
+  color: var(--prata);
+  font-family: var(--f-corpo);
+  font-size: 1rem;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img, svg, video { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:where(h1, h2, h3, h4) { margin: 0; font-family: var(--f-display); font-weight: 700;
+  line-height: 1.06; letter-spacing: -.005em; color: var(--branco); text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* Uma âncora não pode ficar por baixo da navbar fixa */
+:target { scroll-margin-top: calc(var(--nav-h-min) + 16px); }
+section[id] { scroll-margin-top: calc(var(--nav-h-min) + 8px); }
+
+/* Foco visível a sério: anel dourado, que se vê tanto no escuro como no claro */
+:focus-visible {
+  outline: 3px solid var(--dourado-luz);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------- escala tipográfica */
+.h-hero { font-size: clamp(2.6rem, 8.5vw, 4.6rem); text-transform: uppercase; }
+.h-sec  { font-size: clamp(1.9rem, 5vw, 3rem); text-transform: uppercase; }
+.h-card { font-size: clamp(1.15rem, 2.4vw, 1.4rem); }
+
+.etiqueta {
+  font-family: var(--f-mono);
+  font-size: .74rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--dourado);
+}
+.lead { font-size: clamp(1.02rem, 2vw, 1.14rem); color: var(--prata); max-width: 62ch; }
+.meta { font-size: .875rem; color: var(--legenda); }
+.mono { font-family: var(--f-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------------ layout */
+.wrap { width: min(100% - 2 * var(--gutter), var(--largura)); margin-inline: auto; }
+.seccao { padding-block: var(--seccao-y); }
+.seccao--claro { background: var(--claro); color: var(--claro-tinta); }
+.seccao--claro :where(h1, h2, h3, h4) { color: var(--claro-tinta); }
+.seccao--claro .etiqueta { color: var(--vermelho-claro); }
+.seccao--claro .meta { color: var(--claro-2); }
+.seccao--carbono { background: var(--carbono); }
+
+.cabeca { max-width: 60ch; margin-bottom: clamp(1.8rem, 4vw, 2.8rem); }
+.cabeca .h-sec { margin-block: .35rem .6rem; }
+
+/* filete dourado curto: assina a secção sem gritar */
+.filete { width: 46px; height: 3px; background: var(--dourado); border-radius: 2px; }
+
+/* ----------------------------------------------------------------- botões */
+.btn {
+  --btn-bg: var(--dourado);
+  --btn-tinta: #0B0B0D;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  padding: .82em 1.5em;
+  background: var(--btn-bg); color: var(--btn-tinta);
+  font-family: var(--f-display); font-weight: 700; font-size: 1.06rem;
+  letter-spacing: .02em; text-transform: uppercase; text-decoration: none;
+  border: 0; border-radius: var(--raio); cursor: pointer;
+  transition: background var(--t), transform var(--t);
+}
+.btn:hover { background: var(--dourado-luz); transform: translateY(-1px); }
+.btn svg { width: 1.15em; height: 1.15em; flex: none; }
+
+/* vermelho como PREENCHIMENTO com texto branco por cima — aqui funciona,
+   porque o texto do botão é grande e a norma admite 3:1 para ≥24px/19px bold */
+.btn--vermelho { --btn-bg: var(--vermelho); --btn-tinta: #FFFFFF; }
+.btn--vermelho:hover { background: #F52630; }
+
+.btn--fantasma {
+  background: transparent; color: var(--branco);
+  border: 1px solid var(--aco);
+}
+.btn--fantasma:hover { background: var(--carbono-alto); border-color: var(--dourado); }
+
+/* ---------------------------------------------------------- links de texto */
+.link-d { color: var(--dourado); text-decoration: none; border-bottom: 1px solid transparent; }
+.link-d:hover { border-bottom-color: currentColor; }
+.seccao--claro .link-d { color: var(--vermelho-claro); }
+
+/* ------------------------------------------------------------- utilitários */
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+.salta-para {
+  position: absolute; left: -999px; top: 0; z-index: 300;
+  background: var(--dourado); color: #0B0B0D; padding: .7em 1.1em;
+  font-weight: 600; text-decoration: none;
+}
+.salta-para:focus { left: 8px; top: 8px; }

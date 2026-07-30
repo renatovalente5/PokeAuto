@@ -1,0 +1,41 @@
+{
+  "head": {
+    "etiqueta": "Perguntas frequentes",
+    "titulo": "Antes de nos ligar",
+    "lead": ""
+  },
+  "itens": [
+    {
+      "q": "Trabalham com que marcas?",
+      "a": "Somos uma oficina multimarca e trabalhamos com ligeiros de qualquer marca. O Regulamento (UE) 2018/858 garante às oficinas independentes o acesso à informação técnica de reparação dos fabricantes."
+    },
+    {
+      "q": "Reparar aqui faz-me perder a garantia do carro?",
+      "a": "Não. Fazer a manutenção numa oficina independente não anula a garantia do fabricante. A garantia só pode ser posta em causa se ficar demonstrado que uma intervenção concreta causou o defeito."
+    },
+    {
+      "q": "Dizem-me o preço antes de mexer no carro?",
+      "a": "Sim. Apresentamos o que encontrámos e o custo previsto antes de avançar. Nenhum trabalho é feito sem a sua autorização."
+    },
+    {
+      "q": "Posso levar as peças que foram substituídas?",
+      "a": "Pode. Basta pedir quando deixar o carro e guardamos as peças substituídas para lhe entregar."
+    },
+    {
+      "q": "Aceitam peças fornecidas por mim?",
+      "a": "Fale connosco antes de comprar. Podemos montar peças fornecidas pelo cliente em muitos casos, mas nesse caso a responsabilidade pela peça em si é de quem a forneceu — a nossa é pela montagem."
+    },
+    {
+      "q": "Passam fatura com o meu número de contribuinte?",
+      "a": "Sim, sempre. Basta indicar o NIF no momento do pagamento."
+    },
+    {
+      "q": "O carro é lavado depois da reparação?",
+      "a": "Sim. Fazemos lavagens como serviço próprio, e um carro que entra para mecânica sai lavado."
+    },
+    {
+      "q": "Vendem peças ao balcão?",
+      "a": "Sim. Temos peças em stock na oficina — o que está disponível aparece na secção Balcão de peças deste site. A venda é feita na oficina; o site é meramente informativo."
+    }
+  ]
+}
