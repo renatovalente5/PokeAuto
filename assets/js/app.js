@@ -442,8 +442,10 @@
     if (!caixa || caixa.querySelector('iframe')) return;
     var morada = caixa.getAttribute('data-morada') || 'PokeAuto São João da Madeira';
     var ifr = doc.createElement('iframe');
+    /* z=16 mostrava meia vila: a oficina ficava um alfinete entre restaurantes.
+       z=17 põe a rua como assunto sem perder as referências à volta. */
     ifr.src = 'https://maps.google.com/maps?q=' + encodeURIComponent(morada) +
-              '&z=16&hl=pt&output=embed';
+              '&z=17&hl=pt&output=embed';
     ifr.title = 'Mapa da localização da PokeAuto na Rua da Liberdade, São João da Madeira';
     ifr.loading = 'lazy';
     ifr.referrerPolicy = 'no-referrer-when-downgrade';

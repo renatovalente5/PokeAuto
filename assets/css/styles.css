@@ -255,6 +255,7 @@ body.menu-aberto .menu { display: flex; }
 .contactos__grid .mapa__facade,
 .contactos__grid .mapa iframe { position: absolute; inset: 0; height: 100%; width: 100%;
   aspect-ratio: auto; }
+.contactos__grid .mapa iframe { min-width: 100%; }
 .contactos__grid .mapa__facade img { height: 100%; width: 100%; aspect-ratio: auto;
   object-fit: cover; object-position: 50% 38%; }
 .contactos__lista { display: grid; gap: 1.1rem; }
@@ -321,10 +322,19 @@ body.menu-aberto .menu { display: flex; }
      mapa» é absoluta e precisa do .mapa__facade como referência — com static
      escapava para o primeiro antepassado posicionado, e ia parar às Peças. */
   .contactos__grid .mapa { position: relative; min-height: 0; }
+  /* width: auto num <iframe> NÃO é 100%: um iframe é um elemento substituído e a
+     sua largura intrínseca é 300px. Ficava uma faixa escura à direita do mapa
+     num telemóvel de 390px, e no iPhone o mapa aparecia cortado. */
   .contactos__grid .mapa__facade,
   .contactos__grid .mapa iframe { position: relative; inset: auto;
-    height: auto; width: auto; aspect-ratio: 4 / 3; }
-  .contactos__grid .mapa__facade img { height: 100%; width: 100%; aspect-ratio: auto; }
+    height: auto; width: 100%; aspect-ratio: 4 / 3; min-height: 300px; }
+  /* O Safari do iPhone dimensiona iframes pelo conteúdo e ignora a largura em
+     percentagem. O par width:1px + min-width:100% é o que o obriga. */
+  .contactos__grid .mapa iframe { width: 1px; min-width: 100%; }
+  .contactos__grid .mapa__facade img { height: 100%; width: 100%; aspect-ratio: auto;
+    /* No recorte 4:3 do telemóvel, 38% mostrava o céu e o topo do toldo. A foto
+       está ali para se reconhecer a porta na rua. */
+    object-position: 50% 54%; }
 
   .svc { grid-template-columns: 60px 1fr; gap: 1rem; }
 
