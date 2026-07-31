@@ -895,62 +895,128 @@
         if (p.categoria && cats.indexOf(p.categoria) === -1) cats.push(p.categoria);
       });
 
+      /* Categoria -> nome do ficheiro da ilustração. Sem acentos nem espaços,
+         e sem depender de o cliente escrever a categoria sempre igual. */
+      function slugCat(c) {
+        var t = String(c || '').toLowerCase()
+          .replace(/[áàâã]/g, 'a').replace(/[éê]/g, 'e').replace(/í/g, 'i')
+          .replace(/[óôõ]/g, 'o').replace(/[úü]/g, 'u').replace(/ç/g, 'c');
+        if (t.indexOf('trav') === 0) return 'travagem';
+        if (t.indexOf('motor') === 0) return 'motor';
+        if (t.indexOf('filtro') === 0) return 'filtros';
+        if (t.indexOf('susp') === 0) return 'suspensao';
+        if (t.indexOf('elet') === 0 || t.indexOf('elect') === 0) return 'eletrica';
+        if (t.indexOf('escape') === 0) return 'escape';
+        if (t.indexOf('oleo') === 0) return 'oleos';
+        if (t.indexOf('acess') === 0) return 'acessorios';
+        return 'outra';
+      }
+
       function linha(p) {
-        var fig = p.foto
-          ? '<div class="peca__fig"><img src="' + esc(String(p.foto).replace(/^\/+/, '')) +
-            '" alt="' + esc(p.nome) + '" loading="lazy" /></div>'
+        /* A fotografia do cliente vem do backoffice como caminho completo; passa
+           pelo mesmo resolvedor dos serviços, para servir a variante do tamanho
+           certo em vez do original de 4000px que saiu do telemóvel. */
+        var f = p.foto ? resolverFoto(p.foto, 'pecas', 128) : null;
+        if (!f) {
+          /* Sem fotografia, a ilustração da categoria. É um DESENHO e não uma
+             fotografia de propósito: uma foto genérica daria a entender que
+             aquela peça em concreto é aquela da imagem. */
+          var base = 'assets/img/pecas/cat-' + slugCat(p.categoria);
+          if (DIMS[base + '-128.webp']) {
+            f = { src: base + '-128.webp',
+                  srcset: base + '-128.webp 128w, ' + base + '-192.webp 192w' };
+          }
+        }
+        var fig = f
+          ? '<div class="peca__fig"><img src="' + esc(f.src) + '"' +
+            (f.srcset ? ' srcset="' + esc(f.srcset) + '" sizes="64px"' : '') +
+            ' alt="" loading="lazy" decoding="async"' + attrsDim(f.src) + ' /></div>'
           : '<div class="peca__fig peca__fig--vazia" aria-hidden="true">' + ICONE_PECA + '</div>';
         var meta = [];
         if (p.compatibilidade) meta.push(esc(p.compatibilidade));
         if (p.estado === 'usada') meta.push('Usada');
+        /* O preço por unidade de medida não é enfeite: o DL 138/90 art. 6.º
+           obriga os CATÁLOGOS que refiram preço de venda a indicá-lo também,
+           em produtos vendidos por volume ou peso. A ASAE fiscaliza. */
+        var porUnidade = p.preco_unidade
+          ? esc(p.preco_unidade) + ' · IVA incluído'
+          : 'IVA incluído';
         var preco = p.preco
-          ? '<span class="peca__preco">' + esc(p.preco) + '<small>IVA incluído</small></span>'
+          ? '<span class="peca__preco">' + esc(p.preco) + '<small>' + porUnidade + '</small></span>'
           : '<span class="peca__preco">Sob consulta</span>';
         var msg = encodeURIComponent('Olá! Tenho interesse nesta peça: ' + p.nome +
                   (p.referencia ? ' (ref. ' + p.referencia + ')' : ''));
         /* o número vem do backoffice, não escrito à mão — senão mudá-lo em
            Contactos deixava estes botões todos no número antigo */
         var wa = 'https://wa.me/' + (TELEFONE_INTL || '351922022364');
-        return '<div class="peca" data-cat="' + esc(p.categoria || '') + '">' + fig +
+        return '<li class="peca" data-cat="' + esc(p.categoria || '') + '">' + fig +
           '<div><div class="peca__nome">' + esc(p.nome) + '</div>' +
           (p.referencia ? '<div class="peca__ref">Ref. ' + esc(p.referencia) + '</div>' : '') +
           (meta.length ? '<div class="peca__meta">' + meta.join(' · ') + '</div>' : '') +
           '</div><div class="peca__dir">' + preco +
+          /* O texto visível continua «Perguntar» para não encher a linha, mas o
+             nome acessível leva o nome da peça: doze ligações iguais no rotor
+             do VoiceOver não se distinguem umas das outras. */
           '<a class="peca__btn" href="' + wa + '?text=' + msg +
-          '" target="_blank" rel="noopener">Perguntar</a></div></div>';
+          '" target="_blank" rel="noopener" aria-label="Perguntar por: ' + esc(p.nome) +
+          '">Perguntar</a></div></li>';
       }
 
-      pecasLista.innerHTML = itens.map(linha).join('');
+      /* <ul>/<li> e não doze <div>: sem isso o leitor de ecrã não anuncia
+         «lista com 12 itens» nem permite saltar de item em item. */
+      pecasLista.innerHTML = '<ul class="pecas__ul">' + itens.map(linha).join('') + '</ul>';
 
       /* filtros só a partir de 9 peças: com 4 são ruído */
       var caixaFiltros = el('pecas-filtros');
+      /* Região que anuncia, em voz, quantas peças ficaram depois de filtrar.
+         Sem esta declaração o handler lançava ReferenceError em 'use strict'
+         a cada clique — filtrava e só depois rebentava, em silêncio. */
+      var aviso = el('pecas-aviso');
       if (caixaFiltros) {
         if (itens.length < 9 || cats.length < 2) {
           caixaFiltros.remove();
         } else {
-          caixaFiltros.innerHTML = '<button class="filtro is-on" data-f="">Todas ' +
-            '<span class="mono">' + itens.length + '</span></button>' +
+          /* aria-pressed e não só a classe: o filtro activo distinguia-se apenas
+             pelo fundo, e um leitor de ecrã não tem como saber qual está ligado
+             — a lista encolhe sem explicação. */
+          caixaFiltros.setAttribute('role', 'group');
+          caixaFiltros.setAttribute('aria-label', 'Filtrar peças por categoria');
+          caixaFiltros.innerHTML =
+            '<button class="filtro is-on" type="button" aria-pressed="true" data-f="">Todas ' +
+            '<span class="mono">' + itens.length + '</span><span class="visually-hidden"> peças</span></button>' +
             cats.map(function (c) {
               var n = itens.filter(function (p) { return p.categoria === c; }).length;
-              return '<button class="filtro" data-f="' + esc(c) + '">' + esc(c) +
-                     ' <span class="mono">' + n + '</span></button>';
+              return '<button class="filtro" type="button" aria-pressed="false" data-f="' + esc(c) + '">' +
+                     esc(c) + ' <span class="mono">' + n + '</span>' +
+                     '<span class="visually-hidden"> peças</span></button>';
             }).join('');
           caixaFiltros.addEventListener('click', function (e) {
             var b = e.target.closest('.filtro');
             if (!b) return;
-            caixaFiltros.querySelectorAll('.filtro').forEach(function (x) { x.classList.remove('is-on'); });
-            b.classList.add('is-on');
-            var f = b.getAttribute('data-f');
-            pecasLista.querySelectorAll('.peca').forEach(function (l) {
-              l.style.display = (!f || l.getAttribute('data-cat') === f) ? '' : 'none';
+            caixaFiltros.querySelectorAll('.filtro').forEach(function (x) {
+              x.classList.remove('is-on');
+              x.setAttribute('aria-pressed', 'false');
             });
+            b.classList.add('is-on');
+            b.setAttribute('aria-pressed', 'true');
+            var f = b.getAttribute('data-f');
+            var visiveis = 0;
+            pecasLista.querySelectorAll('.peca').forEach(function (l) {
+              var mostrar = (!f || l.getAttribute('data-cat') === f);
+              l.style.display = mostrar ? '' : 'none';
+              if (mostrar) visiveis++;
+            });
+            /* dizer em voz alta quantas ficaram: quem não vê a lista encolher
+               não tem outra forma de saber que o filtro fez alguma coisa */
+            if (aviso) aviso.textContent = visiveis + (visiveis === 1 ? ' peça' : ' peças') +
+              (f ? ' em ' + f : '');
           });
         }
       }
     }).catch(function () { });
   }
 
-  var ICONE_PECA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+  var ICONE_PECA = '<svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" ' +
     'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
     '<circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.3M12 18.2v2.3M20.5 12h-2.3M5.8 12H3.5' +
     'M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/></svg>';

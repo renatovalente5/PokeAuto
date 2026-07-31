@@ -127,6 +127,50 @@ REGRAS = [
      'paródia gráfica numa associação declarada a uma marca registada.'),
 ]
 
+def preco_por_unidade(raiz):
+    """Trava se um produto vendido por volume ou peso anunciar preço sem o preço
+    por unidade de medida.
+
+    DL 138/90 art. 6.º: os CATÁLOGOS que refiram o preço de venda têm de indicar
+    também o preço por unidade de medida. Não é matéria de loja online — o artigo
+    nomeia catálogos, e esta secção assume-se como catálogo. Fiscaliza a ASAE.
+
+    Isenções que aqui interessam (FAQ da ASAE): embalagens até 50 ml/g ou acima
+    de 10 L/kg, e o caso em que o preço por unidade coincide com o de venda — ou
+    seja, exactamente 1 L ou 1 kg. Por isso a regra só dispara entre esses limites
+    e ignora quantidades que não são conteúdo (600 mm de escova, 60 Ah de bateria).
+    """
+    import json as _js
+    caminho = os.path.join(raiz, 'data', 'pecas.json')
+    try:
+        with open(caminho, encoding='utf-8') as f:
+            dados = _js.load(f)
+    except (IOError, ValueError):
+        return []
+    # só unidades de CONTEÚDO: litro, mililitro, quilo, grama
+    padrao = re.compile(r'(\d+(?:[.,]\d+)?)\s*(ml|l|kg|g)\b', re.I)
+    achados = []
+    for p in (dados.get('itens') or []):
+        if not p.get('preco') or p.get('preco_unidade'):
+            continue
+        m = padrao.search(str(p.get('nome', '')))
+        if not m:
+            continue
+        n = float(m.group(1).replace(',', '.'))
+        u = m.group(2).lower()
+        litros = n / 1000.0 if u in ('ml', 'g') else n
+        if litros <= 0.05 or litros > 10 or abs(litros - 1) < 0.001:
+            continue          # isento
+        achados.append((
+            'data/pecas.json', p.get('nome', ''),
+            'preço sem preço por unidade de medida',
+            '%s — %s' % (p.get('nome', ''), p.get('preco', '')),
+            'O DL 138/90 art. 6.º obriga os catálogos que indiquem preço a mostrar '
+            'também o preço por unidade (ex.: 8,30 €/L). Preencha o campo '
+            '"Preço por unidade de medida" no backoffice, ou deixe o preço vazio.'))
+    return achados
+
+
 # Ficheiros a inspeccionar: tudo o que o cliente pode editar, mais o que sai para o ar
 ALVOS_DIR = ['data', 'legal']
 ALVOS_FICH = ['index.html']
@@ -169,7 +213,7 @@ def main():
     ficheiros += [os.path.join(RAIZ, f) for f in ALVOS_FICH
                   if os.path.exists(os.path.join(RAIZ, f))]
 
-    achados = []
+    achados = preco_por_unidade(RAIZ)
     for f in ficheiros:
         rel = os.path.relpath(f, RAIZ)
         for rotulo, texto in textos_de(f):

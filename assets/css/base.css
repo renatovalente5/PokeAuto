@@ -91,6 +91,13 @@ section[id] { scroll-margin-top: calc(var(--nav-h-min) + 8px); }
   border-radius: 2px;
 }
 
+/* Nas faixas claras o anel dourado desaparece: #FFC93C sobre #FFFFFF dá 1,54:1,
+   contra os 3:1 que o SC 1.4.11 exige. E o outline-offset afasta o anel do
+   botão, por isso ele fica com fundo claro dos dois lados e não pode aproveitar
+   o contraste do próprio botão escuro. Tinta escura: 18,1:1.
+   Apanha as Peças e as Perguntas — 26 alvos focáveis ao todo. */
+.seccao--claro :focus-visible { outline-color: var(--claro-tinta); }
+
 /* ------------------------------------------------------- escala tipográfica */
 .h-hero { font-size: clamp(2.6rem, 8.5vw, 4.6rem); text-transform: uppercase; }
 .h-sec  { font-size: clamp(1.9rem, 5vw, 3rem); text-transform: uppercase; }

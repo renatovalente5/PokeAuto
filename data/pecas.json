@@ -2,7 +2,128 @@
   "head": {
     "etiqueta": "Balcão de peças",
     "titulo": "O que temos na oficina",
-    "lead": "Temos peças em stock na oficina. O que estiver aqui listado está disponível; para o que não estiver, pergunte-nos."
+    "lead": "Esta lista mostra o tipo de peças que costumamos ter à mão na oficina. Confirme connosco antes de se deslocar."
   },
-  "itens": []
+  "itens": [
+    {
+      "nome": "Pastilhas de travão dianteiras",
+      "referencia": "",
+      "categoria": "Travagem",
+      "compatibilidade": "Renault Clio IV · Captur 1.5 dCi",
+      "estado": "nova",
+      "preco": "46,90 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Discos de travão dianteiros (par)",
+      "referencia": "",
+      "categoria": "Travagem",
+      "compatibilidade": "VW Golf VI/VII · Seat Leon 5F",
+      "estado": "nova",
+      "preco": "78,00 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Filtro de óleo",
+      "referencia": "",
+      "categoria": "Filtros",
+      "compatibilidade": "Peugeot/Citroën 1.6 HDi",
+      "estado": "nova",
+      "preco": "8,50 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Filtro de habitáculo de carvão activo",
+      "referencia": "",
+      "categoria": "Filtros",
+      "compatibilidade": "VW Golf VII · Audi A3 8V",
+      "estado": "nova",
+      "preco": "14,90 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Óleo de motor 5W-30 C3 — 5 L",
+      "referencia": "",
+      "categoria": "Óleos e fluidos",
+      "compatibilidade": "Consulte o manual do seu carro para a especificação certa",
+      "estado": "nova",
+      "preco": "41,50 €",
+      "foto": "",
+      "preco_unidade": "8,30 €/L"
+    },
+    {
+      "nome": "Líquido de refrigeração — 5 L",
+      "referencia": "",
+      "categoria": "Óleos e fluidos",
+      "compatibilidade": "Pronto a usar, não diluir",
+      "estado": "nova",
+      "preco": "18,90 €",
+      "foto": "",
+      "preco_unidade": "3,78 €/L"
+    },
+    {
+      "nome": "Bateria 12 V · 60 Ah · 540 A",
+      "referencia": "",
+      "categoria": "Elétrica",
+      "compatibilidade": "Medida L2 · polo positivo à direita",
+      "estado": "nova",
+      "preco": "74,90 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Velas de ignição (jogo de 4)",
+      "referencia": "",
+      "categoria": "Motor",
+      "compatibilidade": "Motores 1.0 e 1.2 a gasolina",
+      "estado": "nova",
+      "preco": "26,00 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Kit de distribuição com bomba de água",
+      "referencia": "",
+      "categoria": "Motor",
+      "compatibilidade": "Renault 1.5 dCi K9K",
+      "estado": "nova",
+      "preco": "149,00 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Amortecedores traseiros (par)",
+      "referencia": "",
+      "categoria": "Suspensão",
+      "compatibilidade": "Opel Corsa D · Fiat Grande Punto",
+      "estado": "nova",
+      "preco": "96,00 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Silenciador traseiro",
+      "referencia": "",
+      "categoria": "Escape",
+      "compatibilidade": "Ford Focus II 1.6 TDCi",
+      "estado": "nova",
+      "preco": "62,00 €",
+      "foto": "",
+      "preco_unidade": ""
+    },
+    {
+      "nome": "Escovas limpa-vidros 600 + 400 mm",
+      "referencia": "",
+      "categoria": "Acessórios",
+      "compatibilidade": "Encaixe universal e push-button",
+      "estado": "nova",
+      "preco": "17,90 €",
+      "foto": "",
+      "preco_unidade": ""
+    }
+  ]
 }

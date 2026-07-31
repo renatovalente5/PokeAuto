@@ -274,7 +274,14 @@ content:
         fields:
           - { name: etiqueta, label: Etiqueta, type: string }
           - { name: titulo, label: Título, type: string }
-          - { name: lead, label: Subtítulo, type: text }
+          - name: lead
+            label: Subtítulo
+            type: text
+            description: >-
+              NÃO escreva que o que está listado está garantidamente disponível. A
+              lista é mantida à mão e fica desactualizada sozinha; prometer stock
+              contradiz o aviso logo abaixo e é prática comercial enganosa
+              (DL 57/2008 art. 7.º). Diga antes «o tipo de peças que costumamos ter».
       - name: itens
         label: Peças em stock
         type: object
@@ -311,10 +318,23 @@ content:
               Se puseres preço, tem de ser o valor final com IVA incluído (DL 138/90).
               Deixa vazio para aparecer "Sob consulta" — omitir preço é legal, indicar
               mal não é.
+          - name: preco_unidade
+            label: "Preço por unidade de medida"
+            type: string
+            description: >-
+              OBRIGATÓRIO por lei (DL 138/90, art. 6.º) sempre que a peça for
+              vendida por volume ou peso e tiver preço indicado — óleos, líquidos,
+              massas. Escreva no formato «8,30 €/L» ou «12,00 €/kg», já com IVA.
+              Dispensa-se se a embalagem for de exactamente 1 L ou 1 kg (aí o preço
+              por litro é igual ao de venda), se for menor que 50 ml, maior que 10 L,
+              ou se deixar o preço vazio. Se faltar, a publicação falha com aviso.
           - name: foto
             label: "Fotografia (opcional)"
             type: image
             options: { media: pecas }
+            description: >-
+              Se não puser fotografia, aparece uma ilustração da categoria da peça —
+              não fica um quadrado vazio.
 
   # ------------------------------------------------------------------ FAQ
   - name: faq
