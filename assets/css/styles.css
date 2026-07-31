@@ -246,9 +246,16 @@ body.menu-aberto .menu { display: flex; }
 /* ============================================================== CONTACTOS */
 /* O mapa acompanha a altura da coluna de contactos — do topo até à linha dos
    botões — em vez de ser um retrato alto que fazia a secção crescer sozinha. */
+/* Duas colunas e duas linhas: o cabeçalho e os contactos empilham-se à
+   esquerda, e o mapa ocupa as duas linhas à direita. Assim começa à altura do
+   título — antes o canto superior direito ficava vazio — e continua a acabar
+   exactamente na linha dos botões, que era o que estava pedido. */
 .contactos__grid { display: grid; grid-template-columns: 1.05fr .95fr;
-  gap: clamp(1.6rem, 4vw, 3rem); align-items: stretch; }
-.contactos__lista { align-content: start; }
+  grid-template-rows: auto 1fr;
+  gap: clamp(1.2rem, 3vw, 2rem) clamp(1.6rem, 4vw, 3rem); align-items: stretch; }
+.contactos__grid > .cabeca { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+.contactos__lista { grid-column: 1; grid-row: 2; align-content: start; }
+.contactos__grid .mapa { grid-column: 2; grid-row: 1 / 3; }
 /* O conteúdo do mapa é absoluto para não contribuir para a altura da linha:
    quem manda na altura é a coluna dos contactos, e o mapa preenche-a. */
 .contactos__grid .mapa { position: relative; min-height: 240px; }
@@ -317,7 +324,10 @@ body.menu-aberto .menu { display: flex; }
 
   .hero__grid { grid-template-columns: 1fr; }
   .hero__media { order: -1; max-width: 420px; }
-  .contactos__grid { grid-template-columns: 1fr; }
+  .contactos__grid { grid-template-columns: 1fr; grid-template-rows: none; }
+  .contactos__grid > .cabeca,
+  .contactos__lista,
+  .contactos__grid .mapa { grid-column: auto; grid-row: auto; }
   /* Volta ao fluxo normal, mas SEM perder o position: a sobreposição «Ver o
      mapa» é absoluta e precisa do .mapa__facade como referência — com static
      escapava para o primeiro antepassado posicionado, e ia parar às Peças. */
