@@ -10,7 +10,7 @@ Site: **https://renatovalente5.github.io/PokeAuto/**
 
 ## 1. Entrar no painel
 
-1. Vá a **https://pagescms.org** e entre com a conta do **GitHub**.
+1. Vá a **https://app.pagescms.org** e entre com a conta do **GitHub**.
 2. Autorize o acesso ao repositório **PokeAuto**.
 3. Escolha o repositório e já está.
 

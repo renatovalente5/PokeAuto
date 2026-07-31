@@ -693,6 +693,78 @@
     folha.addEventListener('click', function (e) {
       if (e.target === folha && fundoNoBackdrop) fecharFolha();
     });
+
+    /* ---------------------------------------- ARRASTAR PARA BAIXO A FECHAR
+
+       No telemóvel a folha sobe de baixo, e num telemóvel o que se faz a uma
+       folha que subiu de baixo é empurrá-la para baixo outra vez. O X continua
+       lá para quem não conhece o gesto e para quem usa teclado.
+
+       Onde se pode agarrar: na faixa do topo sempre, e em qualquer ponto do
+       conteúdo desde que ele já esteja no início — senão o gesto de rolar para
+       cima dentro do painel fechava a folha sem querer. */
+    var caixa = folha.querySelector('.folha__caixa');
+    var soTelemovel = window.matchMedia('(max-width: 47.999rem)');
+    var arr = null;
+
+    function podeArrastar(e) {
+      if (!soTelemovel.matches || e.button) return false;
+      if (e.target.closest('.folha__pega')) return true;
+      /* dentro dos controlos do carrossel o gesto é horizontal, não é nosso */
+      if (e.target.closest('.carrossel__pista, .folha__x, a, button')) return false;
+      return folhaCorpo.scrollTop <= 0;
+    }
+
+    caixa.addEventListener('pointerdown', function (e) {
+      if (!podeArrastar(e)) return;
+      arr = { y0: e.clientY, dy: 0, id: e.pointerId, activo: false,
+              ultimoY: e.clientY, ultimoT: Date.now(), vel: 0 };
+    });
+
+    caixa.addEventListener('pointermove', function (e) {
+      if (!arr || e.pointerId !== arr.id) return;
+      var dy = e.clientY - arr.y0;
+      /* Só se assume o gesto depois de 6px para baixo: abaixo disso ainda pode
+         ser um toque, e roubar o evento faria os links deixarem de funcionar. */
+      if (!arr.activo) {
+        if (dy < 6) { if (dy < -6) arr = null; return; }
+        arr.activo = true;
+        folha.classList.add('a-arrastar');
+        try { caixa.setPointerCapture(arr.id); } catch (er) { }
+      }
+      /* Velocidade medida no último trecho, não desde o início do gesto: um
+         arrasto lento que acaba num piparote tem de fechar, e a média desde o
+         princípio esconderia exactamente isso. */
+      var agora = Date.now(), dt = agora - arr.ultimoT;
+      if (dt > 0) {
+        var v = (e.clientY - arr.ultimoY) / dt;
+        arr.vel = arr.vel ? arr.vel * 0.4 + v * 0.6 : v;   /* suaviza o ruído do dedo */
+        arr.ultimoY = e.clientY; arr.ultimoT = agora;
+      }
+      arr.dy = Math.max(0, dy);
+      folha.style.translate = '0 ' + arr.dy + 'px';
+      /* o fundo clareia à medida que a folha sai, para o gesto ter resposta */
+      folha.style.setProperty('--fundo-op', String(Math.max(0, 1 - arr.dy / 420)));
+      e.preventDefault();
+    });
+
+    function largar(e) {
+      if (!arr || (e && e.pointerId !== arr.id)) return;
+      var d = arr.dy, vel = arr.vel, activo = arr.activo, parado = Date.now() - arr.ultimoT;
+      arr = null;
+      folha.classList.remove('a-arrastar');
+      folha.style.translate = '';
+      folha.style.removeProperty('--fundo-op');
+      if (!activo) return;
+      /* Fecha se foi longe, ou se foi curto mas ainda em movimento — um
+         piparote conta. Se o dedo ficou parado mais de 120ms antes de largar,
+         já não é piparote nenhum e só a distância decide. */
+      var altura = caixa.getBoundingClientRect().height || 1;
+      var piparote = parado < 120 && vel > 0.35 && d > 30;
+      if (d > Math.min(120, altura * 0.28) || piparote) fecharFolha();
+    }
+    caixa.addEventListener('pointerup', largar);
+    caixa.addEventListener('pointercancel', largar);
   }
 
   /* --------------------------------------------------------- CARROSSEL

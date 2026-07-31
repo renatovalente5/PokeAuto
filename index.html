@@ -29,7 +29,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/barlow-400.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="assets/css/base.css?v=ad8a27ed" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=0834ebff" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=6d6545b6" />
   <!-- Sem JavaScript o detalhe de cada serviço abre no lugar, com <details>.
        Com JavaScript passa para a folha; por isso está escondido por omissão. -->
   <noscript><style>.ficha__det{display:block}.ficha__mais{display:none}.ficha{cursor:auto}.carrossel__pista{grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;scroll-snap-type:none}.carrossel__seta,.carrossel__pontos{display:none}</style></noscript>
@@ -233,22 +233,10 @@
     </div>
 
     <nav class="menu__links" aria-label="Navegação em telemóvel">
-      <a class="menu__link" href="#servicos">
-        <span class="menu__icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0 5 5l-9.4 9.4a2.5 2.5 0 0 1-3.5-3.5Z"/><path d="M18 2.5 21.5 6l-2 2L16 4.5Z"/></svg></span>
-        <span class="menu__txt"><strong>Serviços</strong><small>Mecânica, revisões e lavagens</small></span>
-      </a>
-      <a class="menu__link" href="#pecas">
-        <span class="menu__icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg></span>
-        <span class="menu__txt"><strong>Peças</strong><small>O que temos ao balcão</small></span>
-      </a>
-      <a class="menu__link" href="#contactos">
-        <span class="menu__icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 6.5-9 12-9 12s-9-5.5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
-        <span class="menu__txt"><strong>Contactos</strong><small>Onde estamos e como falar connosco</small></span>
-      </a>
-      <a class="menu__link" href="#faq">
-        <span class="menu__icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.9-2.8 2.9"/><path d="M12 17.2h.01"/></svg></span>
-        <span class="menu__txt"><strong>Perguntas</strong><small>Antes de nos ligar</small></span>
-      </a>
+      <a class="menu__link" href="#servicos">Serviços</a>
+      <a class="menu__link" href="#pecas">Peças</a>
+      <a class="menu__link" href="#contactos">Contactos</a>
+      <a class="menu__link" href="#faq">Perguntas</a>
     </nav>
     <div class="menu__acoes">
       <a class="btn btn--vermelho" href="tel:+351922022364" data-tel>Ligar agora</a>
@@ -422,7 +410,9 @@
        duplicaria o texto para o Google e o peso da página. -->
   <dialog class="folha" id="folha">
     <div class="folha__caixa">
-      <span class="folha__puxador" aria-hidden="true"></span>
+      <!-- Zona de agarrar. É maior do que a barrinha que se vê: 4px de altura
+           não se acerta com o polegar. Fica por baixo do X no empilhamento. -->
+      <span class="folha__pega" aria-hidden="true"><span class="folha__puxador"></span></span>
       <button class="folha__x" type="button" id="folha-fechar" aria-label="Fechar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
@@ -494,7 +484,7 @@
             <button class="rodape__botao" type="button" id="cookies-abrir">Definições de cookies</button>
             <!-- Backoffice. rel="nofollow" para o Google não gastar orçamento de
                  rastreio num ecrã de sessão que nunca vai poder abrir. -->
-            <a class="rodape__gestao" href="https://pagescms.org/renatovalente5/PokeAuto"
+            <a class="rodape__gestao" href="https://app.pagescms.org/renatovalente5/pokeauto/main"
                target="_blank" rel="noopener nofollow">Gestão</a>
           </div>
         </div>
@@ -531,6 +521,6 @@
     </div>
   </div>
 
-  <script src="assets/js/app.js?v=8359f822" defer></script>
+  <script src="assets/js/app.js?v=89edb03b" defer></script>
 </body>
 </html>

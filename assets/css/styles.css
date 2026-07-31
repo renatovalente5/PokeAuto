@@ -737,7 +737,9 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 /* --- a folha ------------------------------------------------------------ */
 .folha { padding: 0; border: 0; background: transparent; color: var(--branco);
   max-block-size: none; }
-.folha::backdrop { background: rgba(6, 6, 8, .82); }
+/* A opacidade do fundo é uma variável para o arrasto a poder baixar em
+   tempo real: o fundo clareia à medida que a folha sai do ecrã. */
+.folha::backdrop { background: rgba(6, 6, 8, .82); opacity: var(--fundo-op, 1); }
 .folha__caixa { position: relative; background: var(--carbono);
   border: 1px solid var(--aco); }
 .folha__corpo { overflow-y: auto; overscroll-behavior: contain;
@@ -749,7 +751,7 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
   color: var(--branco); cursor: pointer; }
 .folha__x svg { width: 19px; height: 19px; }
 .folha__x:hover { background: var(--vermelho); border-color: var(--vermelho); }
-.folha__puxador { display: none; }
+.folha__pega, .folha__puxador { display: none; }
 
 .folha__tit { font-family: var(--f-display); font-weight: 700;
   font-size: clamp(1.4rem, 5vw, 1.9rem); text-transform: uppercase;
@@ -839,10 +841,22 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
   .folha__caixa { border-radius: 1.15rem 1.15rem 0 0; border-bottom: 0;
     max-height: 88svh; display: flex; flex-direction: column; }
   .folha__corpo { padding-top: 1.6rem; }
+  .folha__x { top: 1.05rem; z-index: 3; }
+  /* A faixa de agarrar apanha o gesto em toda a largura e cobre o cabeçalho
+     inteiro — é aí que a mão vai. Tem de ter touch-action: none, senão o
+     browser reclama o gesto para o scroll e o arrasto nunca chega ao
+     JavaScript. Medido: com 40px só, arrastar a partir do título não fazia
+     nada. O X fica por cima (z-index 3) e continua a receber o toque. */
+  .folha__pega { display: block; position: absolute; inset: 0 0 auto 0; height: 76px;
+    z-index: 1; touch-action: none; cursor: grab; }
+  .folha__pega:active { cursor: grabbing; }
   .folha__puxador { display: block; position: absolute; top: .55rem; left: 50%;
     translate: -50% 0; width: 38px; height: 4px; border-radius: 999px;
-    background: rgba(255,255,255,.26); }
-  .folha__x { top: 1.05rem; }
+    background: rgba(255,255,255,.26); transition: background .2s, width .2s; }
+  .folha.a-arrastar .folha__puxador { background: rgba(255,255,255,.5); width: 52px; }
+  /* Enquanto o dedo está em cima, o movimento tem de seguir o dedo sem atraso. */
+  .folha.a-arrastar { transition: none; }
+  .folha.a-arrastar::backdrop { transition: none; }
   .folha { translate: 0 100%;
     transition: translate .3s cubic-bezier(.32,.72,0,1),
                 display .3s allow-discrete, overlay .3s allow-discrete; }
@@ -881,37 +895,18 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .nav__logo { transition: none; } }
 
-/* --- menu de ecrã inteiro: cada secção com o seu ícone ------------------ */
-/* A seta «›» repetida quatro vezes não dizia nada: era o mesmo símbolo a
-   apontar para sítios diferentes. Um ícone por secção e uma linha de contexto
-   dizem para onde se vai antes de lá se chegar. */
-/* O justify-content: space-between existia para empurrar a seta para a
-   direita. Sem seta, empurrava o texto — ícone à esquerda e nome à
-   direita, com um vazio no meio. */
-.menu__link { display: flex; align-items: center; justify-content: flex-start;
-  gap: .95rem; text-align: left; }
+/* --- menu de ecrã inteiro ----------------------------------------------- */
+/* Só os nomes das secções. A seta «›» que aqui esteve não dizia nada — era o
+   mesmo símbolo a apontar para quatro sítios diferentes — e os ícones e as
+   descrições que a substituíram enchiam o ecrã sem acrescentar informação:
+   quem abre um menu de quatro opções já sabe o que quer. */
+.menu__link { justify-content: flex-start; text-align: left; }
 .menu__link::after { content: none; }
-.menu__icone { flex: none; width: 46px; height: 46px; display: grid; place-items: center;
-  border: 1px solid var(--aco); border-radius: 12px; color: var(--dourado);
-  background: rgba(255,255,255,.03);
-  transition: background var(--t), border-color var(--t), color var(--t); }
-.menu__icone svg { width: 22px; height: 22px; }
-.menu__txt { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
-.menu__txt strong { font-family: var(--f-display); font-weight: 700;
-  font-size: clamp(1.3rem, 6vw, 1.7rem); text-transform: uppercase; line-height: 1.04; }
-.menu__txt small { font-family: var(--f-corpo); font-weight: 400; font-size: .8rem;
-  letter-spacing: 0; text-transform: none; color: var(--legenda); }
-.menu__link:active .menu__icone,
-.menu__link:focus-visible .menu__icone { background: var(--vermelho);
-  border-color: var(--vermelho); color: var(--branco); }
+.menu__link { transition: color var(--t), padding-left var(--t); }
+.menu__link:active,
+.menu__link:focus-visible { color: var(--dourado); }
 @media (hover: hover) {
-  .menu__link:hover .menu__icone { background: var(--vermelho);
-    border-color: var(--vermelho); color: var(--branco); }
-}
-@media (max-height: 620px) {
-  .menu__icone { width: 38px; height: 38px; border-radius: 10px; }
-  .menu__icone svg { width: 18px; height: 18px; }
-  .menu__txt small { display: none; }
+  .menu__link:hover { color: var(--dourado); padding-left: .75rem; }
 }
 
 /* --- menu no rodapé ----------------------------------------------------- */
