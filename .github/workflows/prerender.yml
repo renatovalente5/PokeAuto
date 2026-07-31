@@ -65,6 +65,9 @@ jobs:
       - name: Converter as fotografias novas para WebP
         run: python3 .github/scripts/webp.py
 
+      - name: Cartão de partilha (WhatsApp e Facebook)
+        run: python3 .github/scripts/og.py
+
       - name: Medir as dimensões das imagens
         run: python3 .github/scripts/dimensoes.py
 
@@ -111,11 +114,13 @@ jobs:
           for tentativa in 1 2 3; do
             if git pull --rebase --autostash origin main; then
               if ! ( python3 .github/scripts/webp.py --verificar \
+                  && python3 .github/scripts/og.py --verificar \
                   && python3 .github/scripts/dimensoes.py --verificar \
                   && CHROME_PATH="${{ steps.chrome.outputs.chrome-path }}" \
                      python3 .github/scripts/prerender.py --verificar ); then
                 echo "O rebase trouxe dados novos — a regenerar."
                 python3 .github/scripts/webp.py
+                python3 .github/scripts/og.py
                 python3 .github/scripts/dimensoes.py
                 CHROME_PATH="${{ steps.chrome.outputs.chrome-path }}" \
                   python3 .github/scripts/prerender.py

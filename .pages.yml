@@ -53,6 +53,24 @@ content:
               Até cerca de 155 caracteres. Diga o que faz e onde. Não é um slogan,
               é uma frase informativa.
 
+      - name: og
+        label: "Imagem de partilha (WhatsApp, Facebook)"
+        type: object
+        description: >-
+          O cartão que aparece quando alguém partilha o link do site numa
+          conversa. É gerado sozinho a partir do que puser aqui.
+        fields:
+          - { name: titulo, label: Título no cartão, type: string }
+          - name: subtitulo
+            label: Linha de serviços
+            type: string
+            description: 'Separe com «·». Ex.: Mecânica · Eletricidade · Revisões'
+          - name: foto
+            label: Fotografia de fundo do cartão
+            type: image
+            options: { media: fotos }
+            description: Aparece escurecida por trás do texto. Um grande plano funciona melhor.
+
       - name: hero
         label: Topo da página
         type: object

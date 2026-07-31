@@ -8,3 +8,6 @@ Thumbs.db
 
 # configuração local do ambiente de desenvolvimento
 .claude/
+
+# temporário do gerador do cartão de partilha
+_og.html

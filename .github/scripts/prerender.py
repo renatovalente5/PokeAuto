@@ -257,6 +257,21 @@ def aplicar_legal(html, site):
     return html, len(re.findall(r'id="bloco-legal"', html))
 
 
+def versao_og():
+    """?v= do cartão de partilha, para o JSON-LD apontar para o mesmo ficheiro
+    que os metadados do Open Graph.
+
+    O `json` é importado aqui dentro porque este módulo não o importa no topo —
+    o `except` engolia o NameError e devolvia vazio em silêncio."""
+    import json as _j
+    try:
+        with open(os.path.join(RAIZ, 'assets', 'img', '.og.json'), encoding='utf-8') as f:
+            m = _j.load(f).get('assinatura')
+        return ('?v=' + m) if m else ''
+    except (IOError, ValueError, KeyError):
+        return ''
+
+
 def escapar(t):
     return (t.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
 
@@ -575,7 +590,8 @@ def construir_jsonld(raiz):
                         'e higienização do ar condicionado.'),
         'url': SITE + '/',
         'logo': SITE + '/assets/img/logo-760.webp',
-        'image': SITE + '/assets/img/og.jpg',
+        # mesma versão que o og:image, para o Google não guardar duas
+        'image': SITE + '/assets/img/og.jpg' + versao_og(),
         'telephone': '+' + (c.get('telefone_intl') or ''),
         'priceRange': '€€',
         'address': {

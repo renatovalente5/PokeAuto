@@ -3,6 +3,11 @@
     "titulo": "Oficina auto em São João da Madeira | PokeAuto",
     "descricao": "Oficina multimarca em São João da Madeira: mecânica, eletricidade, eletrónica automóvel, revisão completa, lavagens e higienização do ar condicionado. Rua da Liberdade, 53."
   },
+  "og": {
+    "titulo": "Oficina auto em São João da Madeira",
+    "subtitulo": "Mecânica · Eletricidade · Eletrónica · Revisões · Lavagens",
+    "foto": "faixa-jante"
+  },
   "hero": {
     "etiqueta": "Oficina multimarca · São João da Madeira",
     "titulo": "O seu carro merece o melhor cuidado",
