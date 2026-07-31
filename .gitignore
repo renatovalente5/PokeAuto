@@ -5,3 +5,6 @@ _source/
 .DS_Store
 Thumbs.db
 *.log
+
+# configuração local do ambiente de desenvolvimento
+.claude/

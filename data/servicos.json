@@ -20,7 +20,18 @@
       "alias": [
         "eletricidade",
         "eletronica"
-      ]
+      ],
+      "fotos": [
+        {
+          "nome": "bmw-serie5-frente",
+          "legenda": "BMW Série 5 depois de intervenção na oficina"
+        },
+        {
+          "nome": "posto-conducao",
+          "legenda": "Painel de instrumentos — ponto de partida do diagnóstico"
+        }
+      ],
+      "detalhe": ""
     },
     {
       "id": "revisao",
@@ -34,7 +45,18 @@
       "tempo": "",
       "foto": "mercedes-classe-e-frente",
       "legenda_foto": "Mercedes Classe E pronto a entregar",
-      "alias": []
+      "alias": [],
+      "fotos": [
+        {
+          "nome": "mercedes-classe-e-frente",
+          "legenda": "Mercedes Classe E pronto a entregar"
+        },
+        {
+          "nome": "faixa-jante",
+          "legenda": "Jante e travão à vista, na verificação de travões e pneus"
+        }
+      ],
+      "detalhe": ""
     },
     {
       "id": "lavagem",
@@ -51,7 +73,18 @@
       "alias": [
         "lavagem-exterior",
         "lavagem-interior"
-      ]
+      ],
+      "fotos": [
+        {
+          "nome": "mercedes-cla-frente",
+          "legenda": "Mercedes CLA depois da lavagem exterior"
+        },
+        {
+          "nome": "lavagem-espuma-oficina",
+          "legenda": "Espuma activa na box da oficina"
+        }
+      ],
+      "detalhe": ""
     },
     {
       "id": "ar-condicionado",
@@ -67,7 +100,18 @@
       "legenda_foto": "Habitáculo tratado, tablier e estofos",
       "alias": [
         "personalizacao"
-      ]
+      ],
+      "fotos": [
+        {
+          "nome": "interior-bmw-limpo",
+          "legenda": "Habitáculo tratado — tablier, consola e estofos"
+        },
+        {
+          "nome": "interior-mercedes-limpo",
+          "legenda": "Posto de condução depois da higienização"
+        }
+      ],
+      "detalhe": ""
     }
   ]
 }

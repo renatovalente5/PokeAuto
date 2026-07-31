@@ -233,7 +233,13 @@ body.menu-aberto .menu { display: flex; }
   font-family: var(--f-display); font-weight: 600; font-size: 1.16rem; color: var(--branco);
 }
 .faq summary::-webkit-details-marker { display: none; }
+/* Numa faixa clara o dourado cai para 2,2:1. O vermelho escuro da marca
+   é o único acento que aguenta fundo claro. */
 .faq summary::after { content: '+'; color: var(--dourado); font-size: 1.5rem; line-height: 1; flex: none; }
+.seccao--claro .faq summary::after { color: var(--vermelho-claro); }
+.seccao--claro .faq summary { color: var(--claro-tinta); }
+.seccao--claro .faq details p { color: var(--claro-2); }
+.seccao--claro .faq details { border-bottom-color: rgba(20,22,26,.16); }
 .faq details[open] summary::after { content: '−'; }
 .faq details p { padding-bottom: 1.1rem; max-width: 70ch; }
 
@@ -402,7 +408,9 @@ body.menu-aberto .menu { display: flex; }
 .hero--foto::before { content: none; }
 /* overflow: a animação de aproximação faz a foto crescer ~11% além do ecrã */
 .hero__fundo { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
-.hero__fundo img { width: 100%; height: 100%; object-fit: cover; object-position: 58% 68%; }
+/* 3:2 paisagem: o volante fica ligeiramente à direita, a deixar o lado
+   esquerdo — onde assenta o texto — na zona escura do painel. */
+.hero__fundo img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 52%; }
 .hero__veu { position: absolute; inset: 0; z-index: -1;
   background:
     linear-gradient(to top, var(--preto) 4%, rgba(11,11,13,.72) 42%, rgba(11,11,13,.35) 72%),
@@ -476,12 +484,8 @@ body.menu-aberto .menu { display: flex; }
   transform: translateZ(48px); }
 .ficha__corpo .risca { display: block; width: 26px; height: 3px; background: var(--vermelho);
   border-radius: 2px; margin-bottom: .5rem; }
-.ficha__corpo h3 { font-size: clamp(1.05rem, 1.5vw, 1.3rem); text-transform: uppercase;
-  line-height: 1.08; margin-bottom: .3rem; }
-.ficha__corpo p { font-size: .86rem; color: var(--prata); }
-.ficha__inclui { display: none; flex-wrap: wrap; gap: .3rem; margin-top: .7rem; }
-.ficha__inclui li { font-size: .74rem; color: var(--legenda);
-  border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: .12rem .5rem; }
+.ficha__corpo h3 { font-size: clamp(1.15rem, 1.7vw, 1.45rem); text-transform: uppercase;
+  line-height: 1.06; margin-bottom: .3rem; }
 
 /* ------------------------------------------------------------- MOVIMENTO */
 @media (prefers-reduced-motion: no-preference) {
@@ -511,7 +515,8 @@ body.menu-aberto .menu { display: flex; }
 @keyframes rodar  { from { --ang: 0deg; } to { --ang: 360deg; } }
 @keyframes aproximar { from { transform: scale(1.06); } to { transform: scale(1.16); } }
 
-@media (min-width: 1001px) { .ficha__inclui { display: flex; } }
+/* Os chips do «inclui» passaram para o painel de detalhe. Repeti-los no
+   cartão só empurrava o «Ver detalhe» para baixo do bordo. */
 @media (max-width: 1000px) { .fichas { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 860px)  { .hero--foto .hero__copy { max-width: 100%; } }
 @media (max-width: 560px)  { .fichas { gap: .7rem; }
@@ -647,7 +652,14 @@ body.menu-aberto .wa-flutua { display: none; }
 body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 
 /* ======================================================== RODAPÉ NOVO */
-.rodape__topo { display: grid; grid-template-columns: 1.5fr auto; gap: 2.5rem; align-items: start; }
+.rodape__topo { display: grid; grid-template-columns: 1.35fr auto auto; gap: 2.5rem;
+  align-items: start; }
+.rodape__menu { justify-self: center; }
+@media (min-width: 861px) and (max-width: 1080px) {
+  .rodape__topo { grid-template-columns: 1fr 1fr; }
+  .rodape__marca { grid-column: 1 / -1; }
+  .rodape__menu { justify-self: start; }
+}
 .rodape__marca { max-width: 44ch; }
 .rodape__contacto-col { justify-self: end; text-align: left; }
 .rodape__contacto-col .redes { margin-top: 1.2rem; }
@@ -664,6 +676,7 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 @media (max-width: 860px) {
   .rodape__topo { grid-template-columns: 1fr; gap: 1.8rem; }
   .rodape__contacto-col { justify-self: start; }
+  .rodape__menu { justify-self: start; }
   .rodape__barra { justify-content: flex-start; }
   .rodape__barra .rodape__links { justify-content: flex-start; }
 }
@@ -678,3 +691,250 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 .rodape__contactos a::after {
   content: ''; position: absolute; inset: -12px -10px; border-radius: 6px;
 }
+
+/* ==================================================== FOLHA DE DETALHE ====
+   Cards clicáveis. O detalhe vive num <details> dentro do HTML servido (logo,
+   indexável e funcional sem JavaScript) e é MOVIDO para um <dialog> partilhado
+   quando há JavaScript: folha que sobe de baixo no telemóvel, caixa centrada
+   no computador. Mesmo nó, duas personalidades — só muda a media query.
+   ------------------------------------------------------------------------ */
+
+/* O <details> é o caminho sem JavaScript. Fica escondido por omissão para não
+   piscar antes de o app.js assumir; o <noscript> e a classe .sem-folha
+   devolvem-no a quem precisa dele. */
+.ficha__det { display: none; }
+.sem-folha .ficha__det { display: block; margin-top: .7rem; }
+.sem-folha .ficha__mais { display: none; }
+.sem-folha .ficha { cursor: auto; }
+.ficha__det > summary { cursor: pointer; padding: .5rem .2rem; font-weight: 600;
+  color: var(--dourado); }
+.sem-folha .ficha__det-corpo { padding: .6rem .2rem 0; }
+
+/* --- o cartão passa a ser um alvo --------------------------------------- */
+.ficha { cursor: pointer; }
+/* As 9 zonas de rato ficam por cima do cartão (z-index 3) e engoliriam o toque.
+   No computador são precisas para a inclinação e o clique borbulha na mesma;
+   no telemóvel não fazem nada e só estorvam. */
+@media (hover: none) { .placa > i { pointer-events: none; } }
+/* Sem sobreposição esticada de propósito: o clique é apanhado por delegação no
+   .ficha, e um pseudo-elemento a cobrir o cartão ficaria por cima das zonas de
+   rato e partia a inclinação 3D no terço de baixo. */
+.ficha__abrir { color: inherit; text-decoration: none; }
+.ficha__mais { display: inline-flex; align-items: center; gap: .34rem;
+  margin-top: .6rem; font-family: var(--f-mono); font-size: .72rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--dourado); }
+.ficha__mais::after { content: '›'; font-size: 1.25em; line-height: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) and (pointer: fine) {
+    .ficha__mais { transition: gap .3s cubic-bezier(0,0,0,1); }
+    .placa:hover .ficha__mais { gap: .62rem; }
+  }
+}
+.ficha__abrir:focus-visible { outline: none; }
+.ficha:has(.ficha__abrir:focus-visible) .camadas { outline: 2px solid var(--dourado);
+  outline-offset: 3px; }
+
+/* --- a folha ------------------------------------------------------------ */
+.folha { padding: 0; border: 0; background: transparent; color: var(--branco);
+  max-block-size: none; }
+.folha::backdrop { background: rgba(6, 6, 8, .82); }
+.folha__caixa { position: relative; background: var(--carbono);
+  border: 1px solid var(--aco); }
+.folha__corpo { overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 1.3rem var(--gutter) max(1.3rem, env(safe-area-inset-bottom)); }
+.folha__x { position: absolute; top: .6rem; right: .6rem; z-index: 2;
+  width: 44px; height: 44px; display: grid; place-items: center;
+  background: rgba(11,11,13,.66); border: 1px solid var(--aco); border-radius: 50%;
+  color: var(--branco); cursor: pointer; }
+.folha__x svg { width: 19px; height: 19px; }
+.folha__x:hover { background: var(--vermelho); border-color: var(--vermelho); }
+.folha__puxador { display: none; }
+
+.folha__tit { font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(1.4rem, 5vw, 1.9rem); text-transform: uppercase;
+  line-height: 1.05; padding-right: 3rem; }
+.folha__tit:focus { outline: none; }
+.folha__desc { color: var(--prata); margin-top: .5rem; }
+.folha__texto { color: var(--prata); margin-top: .7rem; }
+.folha__tempo { font-family: var(--f-mono); font-size: .82rem; color: var(--legenda);
+  margin-top: .6rem; }
+.folha__inclui { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
+.folha__inclui li { font-size: .8rem; color: var(--branco);
+  border: 1px solid rgba(255,255,255,.16); border-radius: 999px;
+  padding: .26rem .7rem; background: rgba(255,255,255,.03); }
+/* ------------------------------------------------------------ CARROSSEL
+   A pista é um scroller com scroll-snap: arrasta-se com o dedo, navega-se com
+   as setas do teclado, e funciona sem uma linha de JavaScript. As setas e os
+   pontos são um atalho por cima — sem JavaScript ficam escondidos e as
+   fotografias empilham-se. */
+.carrossel { position: relative; margin-top: 1.3rem; }
+.carrossel__pista {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 100%;
+  gap: .8rem; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  border-radius: var(--raio);
+}
+.carrossel__pista::-webkit-scrollbar { display: none; }
+.carrossel__pista:focus-visible { outline: 2px solid var(--dourado); outline-offset: 3px; }
+.folha__foto { margin: 0; scroll-snap-align: start; min-width: 0; }
+/* As fotografias têm proporções diferentes (4:5, 3:2, 3:1). Uniformiza-se o
+   recorte para o carrossel não saltar de altura entre uma e outra. */
+.folha__foto img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--raio); display: block; background: var(--carvao); }
+/* No computador a folha tem 46rem de largura: a 4:3 a fotografia ficava com meio
+   ecrã de altura e empurrava tudo o resto para fora da vista. */
+@media (min-width: 48rem) { .folha__foto img { aspect-ratio: 16 / 10; } }
+.folha__foto figcaption { font-size: .78rem; color: var(--legenda); margin-top: .45rem;
+  min-height: 2.2em; }
+
+.carrossel__seta {
+  position: absolute; top: calc(50% - 1.4rem); translate: 0 -50%;
+  width: 42px; height: 42px; display: grid; place-items: center;
+  background: rgba(11,11,13,.72); border: 1px solid var(--aco); border-radius: 50%;
+  color: var(--branco); cursor: pointer;
+  transition: opacity .2s ease-out, background .2s ease-out;
+}
+.carrossel__seta svg { width: 20px; height: 20px; }
+.carrossel__seta--ant { left: .5rem; }
+.carrossel__seta--seg { right: .5rem; }
+.carrossel__seta:hover:not(:disabled) { background: var(--vermelho); border-color: var(--vermelho); }
+.carrossel__seta:disabled { opacity: 0; pointer-events: none; }
+/* Num ecrã de toque o gesto é o vocabulário certo; as setas só tapavam foto. */
+@media (hover: none) { .carrossel__seta { display: none; } }
+
+.carrossel__pontos { display: flex; justify-content: center; gap: .45rem; margin-top: .7rem; }
+.carrossel__ponto {
+  width: 34px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer;
+  display: grid; place-items: center;
+}
+.carrossel__ponto::before {
+  content: ''; width: 100%; height: 3px; border-radius: 999px;
+  background: rgba(255,255,255,.22); transition: background .25s ease-out;
+}
+.carrossel__ponto[aria-current]::before { background: var(--dourado); }
+.carrossel__ponto:focus-visible { outline: 2px solid var(--dourado); outline-offset: 2px;
+  border-radius: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .carrossel__pista { scroll-behavior: auto; }
+  .carrossel__seta { transition: none; }
+}
+
+/* Sem JavaScript não há quem mexa na pista: as fotografias empilham-se e os
+   atalhos desaparecem, em vez de ficarem botões mortos. */
+.sem-folha .carrossel__pista { grid-auto-flow: row; grid-auto-columns: auto;
+  overflow: visible; scroll-snap-type: none; }
+.sem-folha .carrossel__seta, .sem-folha .carrossel__pontos { display: none; }
+
+/* O scroll de fundo trava-se no <html>. NÃO se usa body{position:fixed}: este
+   site tem animation-timeline: view() nos cards e no hero, e trocar o contentor
+   de scroll faz essas linhas de tempo re-resolverem — a página saltava ao
+   fechar a folha. */
+.folha-aberta { overflow: hidden; }
+
+/* --- telemóvel: folha que sobe de baixo -------------------------------- */
+@media (max-width: 47.999rem) {
+  .folha { margin: auto auto 0; width: 100%; max-width: none; }
+  .folha__caixa { border-radius: 1.15rem 1.15rem 0 0; border-bottom: 0;
+    max-height: 88svh; display: flex; flex-direction: column; }
+  .folha__corpo { padding-top: 1.6rem; }
+  .folha__puxador { display: block; position: absolute; top: .55rem; left: 50%;
+    translate: -50% 0; width: 38px; height: 4px; border-radius: 999px;
+    background: rgba(255,255,255,.26); }
+  .folha__x { top: 1.05rem; }
+  .folha { translate: 0 100%;
+    transition: translate .3s cubic-bezier(.32,.72,0,1),
+                display .3s allow-discrete, overlay .3s allow-discrete; }
+  .folha[open] { translate: 0 0; }
+  @starting-style { .folha[open] { translate: 0 100%; } }
+}
+
+/* --- computador: caixa centrada ---------------------------------------- */
+@media (min-width: 48rem) {
+  .folha { margin: auto; width: min(46rem, 92vw); }
+  .folha__caixa { border-radius: var(--raio-g); max-height: 86svh;
+    display: flex; flex-direction: column; }
+  .folha__fotos { grid-template-columns: 1fr 1fr; }
+  .folha__foto--larga { grid-column: 1 / -1; }
+  .folha { opacity: 0; scale: .97;
+    transition: opacity .22s ease-out, scale .22s cubic-bezier(0,0,0,1),
+                display .22s allow-discrete, overlay .22s allow-discrete; }
+  .folha[open] { opacity: 1; scale: 1; }
+  @starting-style { .folha[open] { opacity: 0; scale: .97; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folha { transition: none; translate: none; opacity: 1; scale: 1; }
+}
+
+/* ============================================ AJUSTES DE NAVEGAÇÃO ======= */
+
+/* O logótipo desce um pouco enquanto a barra está transparente: sem fundo
+   atrás, ganha ar e deixa de parecer colado ao bordo do ecrã. Ao descer na
+   página volta ao sítio, junto com o encolhimento que já existia. */
+.nav__logo { translate: 0 14px; transition: height var(--t), translate var(--t); }
+.nav.is-scrolled .nav__logo { translate: 0 0; }
+@media (max-width: 860px) {
+  .nav__logo { translate: 0 10px; }
+  .nav.is-scrolled .nav__logo { translate: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) { .nav__logo { transition: none; } }
+
+/* --- menu de ecrã inteiro: cada secção com o seu ícone ------------------ */
+/* A seta «›» repetida quatro vezes não dizia nada: era o mesmo símbolo a
+   apontar para sítios diferentes. Um ícone por secção e uma linha de contexto
+   dizem para onde se vai antes de lá se chegar. */
+/* O justify-content: space-between existia para empurrar a seta para a
+   direita. Sem seta, empurrava o texto — ícone à esquerda e nome à
+   direita, com um vazio no meio. */
+.menu__link { display: flex; align-items: center; justify-content: flex-start;
+  gap: .95rem; text-align: left; }
+.menu__link::after { content: none; }
+.menu__icone { flex: none; width: 46px; height: 46px; display: grid; place-items: center;
+  border: 1px solid var(--aco); border-radius: 12px; color: var(--dourado);
+  background: rgba(255,255,255,.03);
+  transition: background var(--t), border-color var(--t), color var(--t); }
+.menu__icone svg { width: 22px; height: 22px; }
+.menu__txt { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.menu__txt strong { font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(1.3rem, 6vw, 1.7rem); text-transform: uppercase; line-height: 1.04; }
+.menu__txt small { font-family: var(--f-corpo); font-weight: 400; font-size: .8rem;
+  letter-spacing: 0; text-transform: none; color: var(--legenda); }
+.menu__link:active .menu__icone,
+.menu__link:focus-visible .menu__icone { background: var(--vermelho);
+  border-color: var(--vermelho); color: var(--branco); }
+@media (hover: hover) {
+  .menu__link:hover .menu__icone { background: var(--vermelho);
+    border-color: var(--vermelho); color: var(--branco); }
+}
+@media (max-height: 620px) {
+  .menu__icone { width: 38px; height: 38px; border-radius: 10px; }
+  .menu__icone svg { width: 18px; height: 18px; }
+  .menu__txt small { display: none; }
+}
+
+/* --- menu no rodapé ----------------------------------------------------- */
+.rodape__menu h4 { font-family: var(--f-display); font-weight: 700; font-size: .95rem;
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: .8rem; }
+.rodape__menu ul { display: grid; gap: .45rem; }
+.rodape__menu a { color: var(--prata); text-decoration: none; font-size: .92rem;
+  transition: color var(--t); }
+.rodape__menu a:hover { color: var(--dourado); }
+
+/* --- botão flutuante do WhatsApp: só depois de se começar a descer ------- */
+.wa-flutua { opacity: 0; visibility: hidden; translate: 0 12px;
+  transition: opacity .28s ease-out, translate .28s cubic-bezier(0,0,0,1),
+              visibility 0s linear .28s, transform .2s ease-out; }
+.desceu .wa-flutua { opacity: 1; visibility: visible; translate: 0 0;
+  transition-delay: 0s, 0s, 0s, 0s; }
+@media (prefers-reduced-motion: reduce) {
+  .wa-flutua { transition: opacity .01s, visibility 0s; translate: none; }
+}
+
+/* Link para o backoffice. Fica no fim da linha legal, discreto: é para o dono
+   da oficina, não para os visitantes. */
+.rodape__gestao { color: var(--legenda); text-decoration: none;
+  border: 1px solid var(--aco); border-radius: 999px; padding: .12rem .6rem;
+  font-size: .82rem; transition: color var(--t), border-color var(--t); }
+.rodape__gestao:hover { color: var(--dourado); border-color: var(--dourado); }

@@ -37,7 +37,15 @@ PAGINA = os.path.join(RAIZ, 'index.html')
 
 # Zonas que o app.js preenche e que valem indexação
 ZONAS = ['servicos-lista', 'faq-lista', 'pecas-lista',
-        
+
+         # topo da página: título com realce e fotografia, ambos editáveis no
+         # backoffice. Sem congelar isto, quem chega com o JavaScript ainda por
+         # correr vê o título antigo — e é o H1, o texto que mais pesa em SEO.
+         'hero-titulo', 'hero-foto',
+
+         # faixa de textura entre os Serviços e as Peças
+         'faixa',
+
          # o item do horário: fica vazio quando não há horário, em vez de
          # ser removido do ficheiro (senão não havia bloco para voltar)
          'contacto-horario']
@@ -260,8 +268,42 @@ CABECALHOS = [
     ('servicos', 'servicos.json', 'head'),
     ('faq', 'faq.json', 'head'),
     ('pecas', 'pecas.json', 'head'),
+    ('contactos', 'site.json', 'contactos_head'),
 ]
 CLASSES = [('etiqueta', 'etiqueta'), ('h-sec', 'titulo'), ('lead', 'lead')]
+
+
+def aplicar_seo(html, raiz):
+    """<title> e meta description a partir do data/site.json.
+
+    São os dois textos que aparecem no resultado do Google — o que faz alguém
+    clicar ou passar à frente. Estavam escritos à mão no HTML, portanto o
+    cliente não lhes podia tocar, que é precisamente o contrário do que se quer
+    num sítio que ele gere sozinho."""
+    site = ler_json(os.path.join(raiz, 'data', 'site.json'), 'data/site.json') or {}
+    seo = site.get('seo') or {}
+    trocas = 0
+    t = str(seo.get('titulo') or '').strip()
+    if t:
+        novo_html, n = re.subn(r'(<title>).*?(</title>)',
+                               lambda m: m.group(1) + escapar(t) + m.group(2), html, count=1, flags=re.S)
+        if n and novo_html != html:
+            html, trocas = novo_html, trocas + 1
+    d = str(seo.get('descricao') or '').strip()
+    if d:
+        for padrao in [r'(<meta name="description" content=")[^"]*(")',
+                       r'(<meta property="og:description" content=")[^"]*(")',
+                       r'(<meta name="twitter:description" content=")[^"]*(")']:
+            novo_html, n = re.subn(padrao, lambda m: m.group(1) + escapar(d) + m.group(2),
+                                   html, count=1)
+            if n and novo_html != html:
+                html, trocas = novo_html, trocas + 1
+    if t:
+        novo_html, n = re.subn(r'(<meta property="og:title" content=")[^"]*(")',
+                               lambda m: m.group(1) + escapar(t) + m.group(2), html, count=1)
+        if n and novo_html != html:
+            html, trocas = novo_html, trocas + 1
+    return html, trocas
 
 
 def aplicar_cabecalhos(html, raiz):
@@ -700,6 +742,10 @@ def main():
     # secção já não existia no ficheiro para voltar. Em vez disso o app.js desenha
     # um estado vazio honesto, que também é o que fica no HTML servido.
     resumo.append('peças: %d' % (len(pecas.get('itens') or [])))
+
+    # título e descrição da página — o que aparece no Google
+    novo, n_seo = aplicar_seo(novo, RAIZ)
+    resumo.append('título/descrição: %s' % ('%d actualizados' % n_seo if n_seo else 'já em dia'))
 
     # etiquetas/títulos/subtítulos das secções
     try:

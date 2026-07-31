@@ -8,17 +8,51 @@
 # código, para não poder ser apagado sem querer.
 # =============================================================
 
+# A biblioteca aponta para a pasta que o webp.py processa. Tudo o que o cliente
+# carregar aqui ganha automaticamente variantes de 320 a 1800 px e fica com as
+# dimensões registadas — ele não precisa de saber nada disto.
 media:
-  input: assets/img
-  output: assets/img
+  - name: fotos
+    label: Fotografias
+    input: assets/img/trabalhos
+    output: assets/img/trabalhos
+    extensions: [jpg, jpeg, png, webp]
+    categories: [image]
+  - name: pecas
+    label: Fotografias de peças
+    input: assets/img/pecas
+    output: assets/img/pecas
+    extensions: [jpg, jpeg, png, webp]
+    categories: [image]
 
 content:
   # ---------------------------------------------------------------- GERAL
   - name: site
-    label: Geral (topo, contactos, horário, dados legais)
+    label: "Geral — topo da página, contactos, horário e dados legais"
     type: file
     path: data/site.json
     fields:
+      - name: seo
+        label: "Título e descrição no Google"
+        type: object
+        description: >-
+          São os dois textos que aparecem no resultado de pesquisa. É o que faz
+          alguém clicar ou passar à frente.
+        fields:
+          - name: titulo
+            label: Título da página
+            type: string
+            description: >-
+              Até cerca de 60 caracteres, senão o Google corta. Comece pelo que a
+              pessoa procura ("Oficina auto em São João da Madeira") e deixe o
+              nome da empresa para o fim.
+          - name: descricao
+            label: Descrição
+            type: text
+            description: >-
+              Até cerca de 155 caracteres. Diga o que faz e onde. Não é um slogan,
+              é uma frase informativa.
+
       - name: hero
         label: Topo da página
         type: object
@@ -32,6 +66,17 @@ content:
           - { name: lead, label: Texto de apresentação, type: text }
           - { name: cta_principal, label: "Botão principal", type: string }
           - { name: cta_secundario, label: "Botão secundário", type: string }
+          - name: nota
+            label: Frase pequena por baixo dos botões
+            type: string
+          - name: foto
+            label: Fotografia de fundo
+            type: image
+            options: { media: fotos }
+            description: >-
+              É a primeira coisa que se vê. Escolha uma horizontal e com boa luz;
+              o texto assenta no lado esquerdo, por isso funciona melhor se essa
+              parte da fotografia for escura.
 
       - name: contactos
         label: Contactos (mudam em todo o site de uma vez)
@@ -116,6 +161,29 @@ content:
           - { name: matricula, label: "N.º de matrícula (só sociedade)", type: string }
           - { name: capital_social, label: "Capital social (só sociedade)", type: string }
 
+      - name: contactos_head
+        label: "Títulos da secção «Onde estamos»"
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+
+      - name: faixa
+        label: Faixa larga entre os Serviços e as Peças
+        type: object
+        fields:
+          - { name: texto, label: Frase, type: string }
+          - name: destaque
+            label: Parte da frase a itálico
+            type: string
+            description: Escreva uma expressão que exista na frase acima.
+          - name: foto
+            label: Fotografia da faixa
+            type: image
+            options: { media: fotos }
+            description: Aparece muito larga e baixa. Um grande plano funciona melhor do que um carro inteiro.
+
       - { name: rodape_frase, label: Frase do rodapé, type: text }
 
   # ------------------------------------------------------------- SERVIÇOS
@@ -151,12 +219,30 @@ content:
             type: string
             description: 'Ex.: cerca de 1 hora. Deixa vazio se preferires não comprometer.'
           - name: foto
-            label: "Fotografia (opcional)"
-            type: string
+            label: "Fotografia de capa (opcional)"
+            type: image
+            options: { media: fotos }
+            description: É a que aparece no cartão, antes de se clicar.
+          - { name: legenda_foto, label: Legenda da fotografia de capa, type: string }
+          - name: detalhe
+            label: "Texto do detalhe (opcional)"
+            type: text
             description: >-
-              Nome do ficheiro sem extensão, de assets/img/trabalhos/.
-              Ex.- interior-bmw-limpo
-          - { name: legenda_foto, label: Legenda da fotografia, type: string }
+              Aparece quando se abre o serviço. Escreva como fala ao balcão.
+              Se deixar vazio, o detalhe mostra só a descrição e o que inclui.
+          - name: fotos
+            label: "Fotografias do detalhe (carrossel)"
+            type: object
+            list: true
+            description: >-
+              As fotografias que passam no carrossel quando se abre o serviço.
+              Duas ou três chegam. Se deixar vazio, aparece só a de capa.
+            fields:
+              - name: nome
+                label: Fotografia
+                type: image
+                options: { media: fotos }
+              - { name: legenda, label: Legenda, type: string }
 
   # ------------------------------------------------------ BALCÃO DE PEÇAS
   - name: pecas
@@ -207,7 +293,10 @@ content:
               Se puseres preço, tem de ser o valor final com IVA incluído (DL 138/90).
               Deixa vazio para aparecer "Sob consulta" — omitir preço é legal, indicar
               mal não é.
-          - { name: foto, label: "Fotografia (opcional)", type: image }
+          - name: foto
+            label: "Fotografia (opcional)"
+            type: image
+            options: { media: pecas }
 
   # ------------------------------------------------------------------ FAQ
   - name: faq
@@ -231,24 +320,30 @@ content:
           - { name: a, label: Resposta, type: text }
 
   # ------------------------------------------------------------ TRABALHOS
+  # Esta secção já não aparece no site: as fotografias vivem nos Serviços. O que
+  # esta lista faz hoje é alimentar o sitemap de imagens, que é como o Google
+  # encontra as fotografias para a pesquisa de imagens.
   - name: trabalhos
-    label: Fotografias de trabalhos
+    label: "Fotografias para o Google Imagens"
     type: file
     path: data/trabalhos.json
     fields:
       - name: head
-        label: Títulos da secção
+        label: "Títulos (não aparecem no site)"
         type: object
         fields:
           - { name: etiqueta, label: Etiqueta, type: string }
           - { name: titulo, label: Título, type: string }
           - { name: lead, label: Subtítulo, type: text }
       - name: items
-        label: Fotografias
+        label: "Fotografias a submeter ao Google Imagens"
         type: object
         list: true
         fields:
-          - { name: img, label: Imagem, type: image }
+          - name: img
+            label: Imagem
+            type: image
+            options: { media: fotos }
           - name: cap
             label: Legenda
             type: string

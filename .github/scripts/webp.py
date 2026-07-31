@@ -1,22 +1,40 @@
 # -*- coding: utf-8 -*-
 """
-Variantes WebP das fotografias → assets/img/<pasta>/webp/
-=========================================================
-As fotos da galeria e dos catálogos são JPEG saídos do telemóvel: 31 ficheiros em
-assets/img/trabalhos/ pesam 5,2 MB. Medido numa primeira carga a 1280px, um iPad
-descarregava 1,6 MB só de galeria. Em WebP a mesma imagem pesa tipicamente 1/3.
+Variantes responsivas das fotografias que o cliente carrega no backoffice
+=========================================================================
+O cliente carrega fotografias no Pages CMS. O que chega é o que sai do
+telemóvel: 3000 a 4000 px de largura e vários MB. Servir isso a quem vê a
+imagem num cartão de 260 px é desperdiçar 95% do que se descarregou.
 
-Medido: a galeria mostra cada foto entre 160 e 356 px de CSS, ou seja 320 a 1068
-px de aparelho. Por isso NÃO se gera variante à resolução original — poupava só
-16-31% e nunca é o tamanho pedido. Geram-se duas larguras pequenas, que é onde
-está o ganho a sério (442 KB → 146 KB na foto mais pesada).
+Este script pega em cada original e gera as variantes WebP que o `srcset` do
+site usa, COM O MESMO NOME BASE e NA MESMA PASTA:
 
-O que este script faz, e o que NÃO faz:
-  - gera, para cada foto, variantes WebP de 480 e 760 px de largura
-  - grava-as numa subpasta webp/ ao lado do original, para não destruir nada
-  - NÃO apaga nem substitui os JPEG: continuam a ser a origem do backoffice e a
-    imagem que o lightbox abre em grande
-  - é idempotente: só reconverte se o original for mais recente do que a variante
+    assets/img/trabalhos/porsche.jpg
+        -> assets/img/trabalhos/porsche-320.webp
+        -> assets/img/trabalhos/porsche-480.webp
+        -> assets/img/trabalhos/porsche-640.webp
+        -> assets/img/trabalhos/porsche-840.webp
+
+É essa a convenção que o resolverFoto() do assets/js/app.js espera. A versão
+anterior deste ficheiro tinha vindo de outro projecto e escrevia para uma
+subpasta webp/ com outras larguras: uma fotografia carregada pelo cliente
+gerava variantes que o site nunca ia procurar, e a foto simplesmente não
+aparecia. Não dava erro nenhum — só não aparecia.
+
+Regras:
+  - o original NÃO é apagado: é a fonte para regenerar e o que o backoffice mostra
+  - ficheiros que já são variantes (terminam em -<número>.webp) são ignorados,
+    senão gerava variantes de variantes até ao infinito
+  - só se gera uma largura se o original for pelo menos 10% maior; ampliar não
+    acrescenta detalhe nenhum, só bytes
+  - além das larguras normais gera-se sempre uma ao tamanho do original
+    (limitada a MAX_LARGURA): com descritores `w` no srcset o `src` deixa de ser
+    candidato, e sem essa variante nenhum ecrã grande chegaria à resolução real
+  - idempotente por HASH DE CONTEÚDO, não por data. Num runner do GitHub o
+    actions/checkout reescreve tudo por ordem alfabética, portanto o original
+    fica sempre com data anterior à variante e uma comparação de datas nunca
+    dispara — uma foto substituída com o mesmo nome serviria a variante antiga
+    para sempre, e mostrava fotos diferentes conforme o ecrã.
 
 Corre antes do dimensoes.py e do prerender.py, no mesmo workflow.
 
@@ -25,6 +43,7 @@ Uso:  python3 .github/scripts/webp.py [--verificar] [--qualidade 82]
 import hashlib
 import json
 import os
+import re
 import sys
 
 from PIL import Image
@@ -33,35 +52,42 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(os.path.dirname(AQUI))
 IMGS = os.path.join(RAIZ, 'assets', 'img')
 
-# só as pastas de fotografia; logos e ícones ficam de fora (já são pequenos e
-# alguns precisam de transparência exacta)
-# Só as pastas cujas imagens são emitidas com srcset — ver srcsetWebp() em
-# assets/js/app.js. 'pecas' entra porque é o cliente que vai lá carregar fotos
-# tiradas com o telemóvel, que chegam com 4000px e vários MB.
+# Só as pastas cujas imagens são emitidas com srcset. Logótipos e ícones ficam
+# de fora: já são pequenos e alguns precisam de transparência exacta.
 PASTAS = ['trabalhos', 'pecas']
-ORIGEM_EXT = ('.jpg', '.jpeg', '.png')
-LARGURAS = [480, 760]
+ORIGEM_EXT = ('.jpg', '.jpeg', '.png', '.webp')
+
+# As larguras que o site pede. 320-840 cobrem os cartões e o carrossel; 1280 e
+# 1800 existem para a fotografia do topo, que é servida a 100vw.
+LARGURAS = [320, 480, 640, 840, 1280, 1800]
+MAX_LARGURA = 1800
 QUALIDADE = 82
 
-# Onde fica o registo do que já foi convertido, e a partir de quê
+# Uma variante é qualquer ficheiro que termine em -<número>.webp
+E_VARIANTE = re.compile(r'-\d+\.webp$', re.I)
+
 MANIFESTO = os.path.join(IMGS, '.webp.json')
 
 
-def variantes(caminho, larg_original):
-    """Que ficheiros WebP devem existir para este original.
+def qualidade_para(largura):
+    """Quanto maior a imagem, mais se pode comprimir sem se dar por isso."""
+    if largura <= 640:
+        return QUALIDADE
+    if largura <= 1280:
+        return 76
+    return 72
 
-    Larguras pequenas para os ecrãs pequenos, MAIS uma à largura do original.
-    Essa última é o tecto: com descritores `w` no srcset, o atributo src deixa de
-    ser candidato, portanto sem ela nenhum ecrã conseguia chegar à resolução do
-    ficheiro original — as fotos ficavam limitadas a 760 px (ou a 480 px nas
-    quatro cujo original tem menos de 836 px). Nunca é escolhida sem ser
-    precisa, e em WebP pesa cerca de 1/3 do JPEG equivalente."""
+
+def variantes(caminho, larg_original):
+    """Que ficheiros WebP devem existir para este original."""
     base = os.path.splitext(os.path.basename(caminho))[0]
-    pasta = os.path.join(os.path.dirname(caminho), 'webp')
-    larguras = [w for w in LARGURAS if larg_original > w * 1.1]
-    if larg_original not in larguras:
-        larguras.append(larg_original)
-    return [(os.path.join(pasta, '%s-%d.webp' % (base, w)), w) for w in sorted(larguras)]
+    pasta = os.path.dirname(caminho)
+    larguras = [w for w in LARGURAS if larg_original >= w * 1.1]
+    tecto = min(larg_original, MAX_LARGURA)
+    if tecto not in larguras:
+        larguras.append(tecto)
+    return [(os.path.join(pasta, '%s-%d.webp' % (base, w)), w)
+            for w in sorted(set(larguras))]
 
 
 def digerir(caminho):
@@ -73,27 +99,34 @@ def digerir(caminho):
 
 
 def carregar_manifesto():
-    if os.path.exists(MANIFESTO):
-        try:
-            with open(MANIFESTO, encoding='utf-8') as f:
-                return json.load(f)
-        except ValueError:
-            pass
-    return {}
+    try:
+        with open(MANIFESTO, encoding='utf-8') as f:
+            return json.load(f)
+    except (IOError, ValueError):
+        return {}
+
+
+def originais(pasta):
+    """Os ficheiros que são fonte, não variantes geradas."""
+    saida = []
+    for f in sorted(os.listdir(pasta)):
+        caminho = os.path.join(pasta, f)
+        if not os.path.isfile(caminho):
+            continue
+        if not f.lower().endswith(ORIGEM_EXT):
+            continue
+        if E_VARIANTE.search(f):
+            continue
+        saida.append(caminho)
+    return saida
 
 
 def main():
     verificar = '--verificar' in sys.argv
-    qualidade = QUALIDADE
+    qual_base = QUALIDADE
     if '--qualidade' in sys.argv:
-        qualidade = int(sys.argv[sys.argv.index('--qualidade') + 1])
+        qual_base = int(sys.argv[sys.argv.index('--qualidade') + 1])
 
-    # Antes comparavam-se datas de modificação. Num runner isso é inerte: o
-    # actions/checkout escreve tudo de novo e por ordem alfabética, logo
-    # ".../foto.jpg" fica SEMPRE com mtime anterior a ".../webp/foto-480.webp" e a
-    # condição nunca era verdadeira. Uma foto substituída com o mesmo nome pelo
-    # backoffice continuaria a servir a variante antiga para sempre — e, pior,
-    # mostrava fotos diferentes conforme o ecrã. Agora compara-se o conteúdo.
     manifesto = carregar_manifesto()
     novo_manifesto = {}
     por_fazer, feitos, apagados = [], 0, []
@@ -104,15 +137,17 @@ def main():
         if not os.path.isdir(pasta):
             continue
         esperados = set()
-        for f in sorted(os.listdir(pasta)):
-            origem = os.path.join(pasta, f)
-            if not os.path.isfile(origem) or not f.lower().endswith(ORIGEM_EXT):
-                continue
+        for origem in originais(pasta):
             rel = os.path.relpath(origem, RAIZ).replace(os.sep, '/')
             sha = digerir(origem)
             novo_manifesto[rel] = sha
             mudou = manifesto.get(rel) != sha
-            with Image.open(origem) as im:
+            try:
+                im = Image.open(origem)
+            except Exception as e:            # ficheiro corrompido a meio do upload
+                print('  ! %s ignorado: %s' % (rel, e))
+                continue
+            with im:
                 larg = im.size[0]
                 for destino, alvo in variantes(origem, larg):
                     esperados.add(os.path.basename(destino))
@@ -121,44 +156,52 @@ def main():
                     por_fazer.append(os.path.relpath(destino, RAIZ))
                     if verificar:
                         continue
-                    os.makedirs(os.path.dirname(destino), exist_ok=True)
                     copia = im.convert('RGB')
                     if copia.size[0] > alvo:
                         h = round(copia.size[1] * alvo / copia.size[0])
                         copia = copia.resize((alvo, h), Image.LANCZOS)
-                    copia.save(destino, 'WEBP', quality=qualidade, method=6)
+                    q = min(qual_base, qualidade_para(alvo))
+                    copia.save(destino, 'WEBP', quality=q, method=6)
                     feitos += 1
                     antes += os.path.getsize(origem)
                     depois += os.path.getsize(destino)
 
-        # variantes cujo original desapareceu: sem isto o repositório só cresce
-        pasta_webp = os.path.join(pasta, 'webp')
-        if os.path.isdir(pasta_webp):
-            for f in sorted(os.listdir(pasta_webp)):
-                if f.endswith('.webp') and f not in esperados:
-                    apagados.append(os.path.relpath(os.path.join(pasta_webp, f), RAIZ))
-                    if not verificar:
-                        os.remove(os.path.join(pasta_webp, f))
+        # Variantes cujo original desapareceu: sem isto o repositório só cresce.
+        # Só se apaga o que tem um nome-base COM original conhecido — as
+        # fotografias que vieram com o site não têm original no repositório e
+        # não podem ser apagadas por engano.
+        bases_com_original = set(
+            os.path.splitext(os.path.basename(p))[0] for p in originais(pasta))
+        for f in sorted(os.listdir(pasta)):
+            if not E_VARIANTE.search(f):
+                continue
+            base = E_VARIANTE.sub('', f)
+            if base in bases_com_original and f not in esperados:
+                apagados.append(os.path.relpath(os.path.join(pasta, f), RAIZ))
+                if not verificar:
+                    os.remove(os.path.join(pasta, f))
 
     if verificar:
-        print('variantes WebP a gerar: %d | órfãs a apagar: %d'
-              % (len(por_fazer), len(apagados)))
-        for p in (por_fazer + apagados)[:10]:
-            print('  ', p)
-        return 1 if (por_fazer or apagados) else 0
+        if por_fazer or apagados:
+            print('webp: por gerar %d, por apagar %d' % (len(por_fazer), len(apagados)))
+            for p in (por_fazer + apagados)[:12]:
+                print('   ' + p)
+            return 1
+        print('webp: em dia.')
+        return 0
 
+    manifesto.update(novo_manifesto)
     with open(MANIFESTO, 'w', encoding='utf-8') as f:
-        json.dump(novo_manifesto, f, ensure_ascii=False, indent=1, sort_keys=True)
+        json.dump(manifesto, f, ensure_ascii=False, indent=1, sort_keys=True)
         f.write('\n')
 
-    if feitos or apagados:
-        print('%d variantes WebP geradas, %d órfãs apagadas (qualidade %d)'
-              % (feitos, len(apagados), qualidade))
-        if feitos:
-            print('  originais somados: %.1f MB  →  variantes: %.1f MB'
-                  % (antes / 1e6, depois / 1e6))
+    if feitos:
+        print('webp: %d variantes geradas (%.1f MB de originais → %.1f MB)'
+              % (feitos, antes / 1048576.0, depois / 1048576.0))
     else:
-        print('variantes WebP já estavam em dia')
+        print('webp: nada a fazer.')
+    if apagados:
+        print('webp: %d variantes órfãs apagadas' % len(apagados))
     return 0
 
 

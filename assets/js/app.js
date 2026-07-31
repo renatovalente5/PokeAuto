@@ -50,6 +50,65 @@
     return d ? ' width="' + d[0] + '" height="' + d[1] + '"' : '';
   }
 
+  /* ------------------------------------------------------- FOTOGRAFIAS
+
+     O backoffice guarda o que o cliente escolheu na biblioteca de imagens —
+     um caminho completo, com extensão, e às vezes já com largura no nome:
+
+         assets/img/trabalhos/porsche.jpg
+         assets/img/trabalhos/porsche-840.webp
+         porsche                                (o formato antigo, à mão)
+
+     O site precisa do NOME BASE para poder montar o srcset a partir das
+     variantes que o webp.py gerou. Isto normaliza os três casos. Sem esta
+     função, uma fotografia carregada pelo cliente aparecia partida — e o
+     backoffice deixava de ser autónomo na prática. */
+  var LARGURAS_FOTO = [320, 400, 420, 480, 560, 640, 760, 840, 960, 1280, 1800];
+
+  function baseDaFoto(valor) {
+    var v = String(valor || '').trim();
+    if (!v) return '';
+    v = v.split('?')[0].split('/').pop();          /* tira a pasta */
+    v = v.replace(/\.(webp|jpe?g|png|avif)$/i, ''); /* tira a extensão */
+    v = v.replace(/-\d{2,4}$/, '');                 /* tira a largura, se lá estiver */
+    return v;
+  }
+
+  /* Devolve {src, srcset, larguras} para um valor do backoffice, ou null se
+     não houver nenhuma variante gerada para aquele nome. */
+  function resolverFoto(valor, pasta, minimo) {
+    var base = baseDaFoto(valor);
+    if (!base) return null;
+    var raiz = 'assets/img/' + (pasta || 'trabalhos') + '/' + base;
+    var disp = LARGURAS_FOTO.filter(function (w) { return DIMS[raiz + '-' + w + '.webp']; });
+    if (!disp.length) {
+      /* Sem variantes ainda (o workflow pode não ter corrido): serve-se o
+         original tal como veio, que é melhor do que uma imagem partida. */
+      var cru = String(valor || '').trim();
+      if (cru && cru.indexOf('/') !== -1) return { src: cru, srcset: '', larguras: [] };
+      return null;
+    }
+    /* O `src` é só o recurso de recurso — com srcset+sizes o browser escolhe da
+       lista. Mesmo assim, numa imagem servida a 100vw uma miniatura de 640 como
+       fallback dava uma primeira pintura desfocada em quem não tem srcset. */
+    var alvo = minimo || 640;
+    return {
+      src: raiz + '-' + (disp.filter(function (w) { return w >= alvo; })[0] || disp[disp.length - 1]) + '.webp',
+      srcset: disp.map(function (w) { return raiz + '-' + w + '.webp ' + w + 'w'; }).join(', '),
+      larguras: disp
+    };
+  }
+
+  /* Escreve a <img> completa a partir do valor do backoffice. */
+  function imgDe(valor, alt, sizes, pasta, extra) {
+    var f = resolverFoto(valor, pasta);
+    if (!f) return '';
+    return '<img src="' + esc(f.src) + '"' +
+      (f.srcset ? ' srcset="' + esc(f.srcset) + '" sizes="' + esc(sizes || '100vw') + '"' : '') +
+      ' alt="' + esc(alt || '') + '" loading="lazy" decoding="async"' +
+      attrsDim(f.src) + (extra || '') + ' />';
+  }
+
   /* ------------------------------------------------- revelação ao entrar */
   var revIO = ('IntersectionObserver' in window) ? new IntersectionObserver(function (ens, o) {
     ens.forEach(function (e) {
@@ -80,6 +139,11 @@
       var y = window.scrollY || doc.documentElement.scrollTop;
       if (!encolhida && y > 90) { encolhida = true; nav.classList.add('is-scrolled'); }
       else if (encolhida && y < 40) { encolhida = false; nav.classList.remove('is-scrolled'); }
+      /* O botão flutuante do WhatsApp não aparece no topo: ali já há dois
+         botões grandes no hero, e um terceiro a flutuar por cima só tapava a
+         fotografia. A classe vive no <html> para o CSS a poder usar em
+         qualquer sítio da página. */
+      doc.documentElement.classList.toggle('desceu', y > 260);
     };
     var pendente = false;
     window.addEventListener('scroll', function () {
@@ -177,20 +241,74 @@
     doc.querySelectorAll('.nav__link[href^="#"]').forEach(function (a) {
       links[a.getAttribute('href').slice(1)] = a;
     });
+    /* Guarda-se o conjunto das secções dentro da banda e decide-se a partir
+       dele. Antes só se marcava ao ENTRAR numa secção: no topo da página só o
+       hero está na banda, e o hero não tem link — logo nada limpava a marca e
+       «Serviços» ficava aceso depois de o visitante voltar ao início. */
+    var visiveis = {};
     var io = new IntersectionObserver(function (ens) {
       ens.forEach(function (e) {
-        var a = links[e.target.id];
-        if (a && e.isIntersecting) {
-          Object.keys(links).forEach(function (k) { links[k].classList.remove('is-actual'); });
-          a.classList.add('is-actual');
-        }
+        if (e.isIntersecting) visiveis[e.target.id] = true;
+        else delete visiveis[e.target.id];
+      });
+      /* a secção mais acima na página é a que manda */
+      var actual = null;
+      for (var i = 0; i < alvos.length; i++) {
+        if (visiveis[alvos[i].id] && links[alvos[i].id]) { actual = alvos[i].id; break; }
+      }
+      Object.keys(links).forEach(function (k) {
+        links[k].classList.toggle('is-actual', k === actual);
+        if (k === actual) links[k].setAttribute('aria-current', 'true');
+        else links[k].removeAttribute('aria-current');
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     alvos.forEach(function (s) { io.observe(s); });
   }
 
   /* ============================================ CONTEÚDO EDITÁVEL (site) */
-  getJSON('data/site.json').then(function (site) {
+  Promise.all([getJSON('data/site.json'), dimsProntas]).then(function (rr) {
+    var site = rr[0];
+
+    /* --- topo da página: título com realce, fotografia e cabeçalho ------- */
+    /* O realce é uma expressão que o cliente escreve à parte, em vez de HTML.
+       Se a expressão não existir no título, o título aparece inteiro sem
+       realce — nunca com <em> a meio de uma palavra. */
+    var h1 = el('hero-titulo');
+    if (h1 && site.hero && site.hero.titulo) {
+      var t = String(site.hero.titulo);
+      var dq = String(site.hero.destaque || '').trim();
+      var k = dq ? t.toLowerCase().indexOf(dq.toLowerCase()) : -1;
+      h1.innerHTML = (k === -1)
+        ? esc(t)
+        : esc(t.slice(0, k)) + '<em>' + esc(t.slice(k, k + dq.length)) + '</em>' + esc(t.slice(k + dq.length));
+    }
+    var heroFundo = doc.querySelector('.hero__fundo');
+    if (heroFundo && site.hero && site.hero.foto) {
+      var hf = resolverFoto(site.hero.foto, 'trabalhos', 1280);
+      if (hf) {
+        heroFundo.innerHTML = '<img src="' + esc(hf.src) + '"' +
+          (hf.srcset ? ' srcset="' + esc(hf.srcset) + '" sizes="100vw"' : '') +
+          ' alt=""' + attrsDim(hf.src) + ' fetchpriority="high" />';
+      }
+    }
+    aplicarHead(el('contactos'), site.contactos_head);
+
+    /* --- faixa de textura ----------------------------------------------- */
+    var faixa = doc.querySelector('.faixa');
+    if (faixa && site.faixa) {
+      var ff = resolverFoto(site.faixa.foto, 'trabalhos', 1280);
+      var ftx = String(site.faixa.texto || '');
+      var fdq = String(site.faixa.destaque || '').trim();
+      var fk = fdq ? ftx.toLowerCase().indexOf(fdq.toLowerCase()) : -1;
+      var frase = (fk === -1) ? esc(ftx)
+        : esc(ftx.slice(0, fk)) + '<em>' + esc(ftx.slice(fk, fk + fdq.length)) + '</em>' + esc(ftx.slice(fk + fdq.length));
+      faixa.innerHTML =
+        (ff ? '<img src="' + esc(ff.src) + '"' +
+          (ff.srcset ? ' srcset="' + esc(ff.srcset) + '" sizes="100vw"' : '') +
+          ' alt="" loading="lazy"' + attrsDim(ff.src) + ' />' : '') +
+        '<div class="faixa__txt"><p>' + frase + '</p></div>';
+    }
+
     var c = site.contactos || {};
     TELEFONE_INTL = c.telefone_intl || '';
 
@@ -385,39 +503,274 @@
       var itens = (d && d.itens) || [];
 
       svcGrid.innerHTML = itens.map(function (s, i) {
-        var base = 'assets/img/trabalhos/' + (s.foto || '');
-        var src = base + '-840.webp';
-        var ss = s.foto ? [320, 480, 640, 840].map(function (w) {
-          var f = base + '-' + w + '.webp';
-          return DIMS[f] ? f + ' ' + w + 'w' : null;
-        }).filter(Boolean).join(', ') : '';
-        var inclui = (s.inclui || []).length
-          ? '<ul class="ficha__inclui">' + s.inclui.map(function (x) {
-              return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
-          : '';
+        var capa = resolverFoto(s.foto, 'trabalhos');
+        var src = capa ? capa.src : '';
+        var ss = capa ? capa.srcset : '';
         /* âncoras antigas: os serviços que foram agrupados mantêm o id, senão
            um link que já ande por aí deixa de ir a lado nenhum */
         var alias = (s.alias || []).map(function (a) {
           return '<span id="servico-' + esc(a) + '"></span>'; }).join('');
         /* as 9 zonas de rato; em telemóvel nunca correm (hover:hover) */
         var zonas = new Array(9).join('<i></i>') + '<i></i>';
+        /* Galeria do detalhe. Só fotografias que existem mesmo: as faixas
+           nasceram 3:1 e são apresentadas como banda larga, não como retrato. */
+        var galeria = (s.fotos && s.fotos.length ? s.fotos : (s.foto ? [{ nome: s.foto, legenda: s.legenda_foto }] : []))
+          .map(function (f) {
+            var larga = baseDaFoto(f.nome).indexOf('faixa-') === 0;
+            var r = resolverFoto(f.nome, 'trabalhos');
+            if (!r) return '';
+            var fs = r.srcset, fsrc = r.src;
+            return '<figure class="folha__foto' + (larga ? ' folha__foto--larga' : '') + '">' +
+              '<img src="' + esc(fsrc) + '"' +
+              (fs ? ' srcset="' + esc(fs) + '" sizes="(max-width:48rem) 92vw, 20rem"' : '') +
+              ' alt="' + esc(f.legenda || s.titulo) + '" loading="lazy" decoding="async"' +
+              attrsDim(fsrc) + ' />' +
+              (f.legenda ? '<figcaption>' + esc(f.legenda) + '</figcaption>' : '') +
+              '</figure>';
+          }).join('');
+        /* Carrossel. A pista é um scroller com scroll-snap: no telemóvel
+           arrasta-se com o dedo e no teclado navega-se com as setas, tudo
+           nativo. As setas e os pontos são só um atalho por cima disso — sem
+           JavaScript o CSS empilha as fotografias e esconde os controlos. */
+        var nFotos = (galeria.match(/<figure/g) || []).length;
+        var carrossel = '';
+        if (nFotos) {
+          var pontos = '';
+          if (nFotos > 1) {
+            for (var k = 0; k < nFotos; k++) {
+              pontos += '<button class="carrossel__ponto" type="button" data-ir="' + k + '"' +
+                (k === 0 ? ' aria-current="true"' : '') +
+                ' aria-label="Fotografia ' + (k + 1) + ' de ' + nFotos + '"></button>';
+            }
+          }
+          carrossel = '<div class="carrossel" data-carrossel>' +
+            '<div class="carrossel__pista" tabindex="0" role="group" aria-label="Fotografias — ' + esc(s.titulo) + '">' +
+            galeria + '</div>' +
+            (nFotos > 1
+              ? '<button class="carrossel__seta carrossel__seta--ant" type="button" data-passo="-1" aria-label="Fotografia anterior">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>' +
+                '<button class="carrossel__seta carrossel__seta--seg" type="button" data-passo="1" aria-label="Fotografia seguinte">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>' +
+                '<div class="carrossel__pontos">' + pontos + '</div>'
+              : '') +
+            '</div>';
+        }
+
+        var listaDet = (s.inclui || []).length
+          ? '<ul class="folha__inclui">' + s.inclui.map(function (x) {
+              return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
+          : '';
+        var tempo = s.tempo ? '<p class="folha__tempo">Tempo médio: ' + esc(s.tempo) + '</p>' : '';
+        var texto = s.detalhe ? '<p class="folha__texto">' + esc(s.detalhe) + '</p>' : '';
+
+        /* O painel fica FORA da .placa de propósito: qualquer overflow, filtro
+           ou opacidade dentro da subárvore com preserve-3d achata o 3D — foi o
+           que já aconteceu no iPhone com o mix-blend-mode. */
+        var painel =
+          '<details class="ficha__det" id="detalhe-' + esc(s.id) + '">' +
+          '<summary>Ver detalhe — ' + esc(s.titulo) + '</summary>' +
+          '<div class="ficha__det-corpo">' +
+          '<h4 class="folha__tit" tabindex="-1">' + esc(s.titulo) + '</h4>' +
+          '<p class="folha__desc">' + esc(s.descricao) + '</p>' + texto + tempo + listaDet +
+          carrossel + '</div></details>';
+
         return '<article class="ficha" id="servico-' + esc(s.id) + '">' + alias +
           '<div class="placa">' + zonas +
           '<div class="camadas">' +
-          (s.foto ? '<img src="' + esc(src) + '"' +
+          (capa ? '<img src="' + esc(src) + '"' +
             (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:1000px) 46vw, 260px"' : '') +
             ' alt="' + esc(s.legenda_foto || s.titulo) + '" loading="lazy"' + attrsDim(src) + ' />' : '') +
           '<span class="moldura"></span><span class="brilho"></span>' +
           '<span class="selo">' + ('0' + (i + 1)).slice(-2) + '</span>' +
+          /* Face do cartão: só o título e o convite. A descrição e o que
+             inclui vivem no painel — repetir aqui era ler duas vezes o mesmo. */
           '<div class="ficha__corpo"><span class="risca"></span>' +
-          '<h3>' + esc(s.titulo) + '</h3>' +
-          '<p>' + esc(s.descricao) + '</p>' + inclui +
-          '</div></div></div></article>';
+          '<h3><a class="ficha__abrir" href="#detalhe-' + esc(s.id) + '">' + esc(s.titulo) + '</a></h3>' +
+          '<span class="ficha__mais" aria-hidden="true">Ver detalhe</span>' +
+          '</div></div></div>' + painel + '</article>';
       }).join('');
 
 
       revelar(svcGrid);
+      ligarFolha(svcGrid);
     }).catch(function () { });
+  }
+
+  /* ========================================== FOLHA DE DETALHE DOS SERVIÇOS
+
+     Um <dialog> partilhado: folha que sobe de baixo no telemóvel, caixa
+     centrada no computador. O conteúdo é MOVIDO do <details> para cá e
+     devolvido ao fechar — copiar duplicaria o texto para o motor de busca.
+
+     Porquê <details> como origem e não um <dialog> por serviço: um <dialog>
+     fechado é display:none, sai da árvore de acessibilidade e o Ctrl+F do
+     browser não o encontra. Um <details> fechado é encontrável, o browser
+     abre-o sozinho na pesquisa, e sem JavaScript o site continua inteiro. */
+  var folha = el('folha');
+  var folhaCorpo = el('folha-corpo');
+  var folhaOrigem = null;      /* o <details> de onde veio o conteúdo */
+  var folhaGatilho = null;     /* para devolver o foco a quem abriu */
+  var fecharPorHistorico = false;
+  var fundoNoBackdrop = false;
+  var btFolhaX = el('folha-fechar');
+
+  function podeFolha() {
+    return !!(folha && folhaCorpo && typeof folha.showModal === 'function');
+  }
+
+  function abrirFolha(det, gatilho) {
+    if (!podeFolha() || folha.open) return false;
+    var corpo = det.querySelector('.ficha__det-corpo');
+    if (!corpo) return false;
+    /* dois modais ao mesmo tempo, com lógicas de inert diferentes, desorientam */
+    fecharMenu();
+    folhaOrigem = det;
+    folhaGatilho = gatilho || null;
+    folhaCorpo.appendChild(corpo);
+    ligarCarrossel(corpo);
+    var t = corpo.querySelector('.folha__tit');
+    folha.setAttribute('aria-label', t ? t.textContent : 'Detalhe do serviço');
+    doc.documentElement.classList.add('folha-aberta');
+    folha.showModal();
+    /* O showModal() foca o primeiro focável, que é o X — o leitor de ecrã diria
+       "Fechar" em vez do nome do serviço. Passa-se o foco para o título.
+       Dois frames porque o Safari mexe no foco depois do primeiro; e um
+       setTimeout por cima porque com o separador em segundo plano o
+       requestAnimationFrame não chega a correr. */
+    var focarTitulo = function () {
+      if (!t || !folha.open) return;
+      if (folhaCorpo.contains(doc.activeElement) && doc.activeElement !== btFolhaX) return;
+      try { t.focus({ preventScroll: true }); } catch (e) { t.focus(); }
+    };
+    requestAnimationFrame(function () { requestAnimationFrame(focarTitulo); });
+    setTimeout(focarTitulo, 60);
+    try { history.pushState({ folha: det.id }, ''); } catch (e) { }
+    return true;
+  }
+
+  /* Devolve o conteúdo ao <details> de origem. Tem de poder ser chamada duas
+     vezes sem estragar nada: há caminhos de fecho que se sobrepõem. */
+  function restaurarFolha() {
+    var corpo = folhaCorpo.firstElementChild;
+    if (corpo && folhaOrigem) folhaOrigem.appendChild(corpo);
+    doc.documentElement.classList.remove('folha-aberta');
+    if (folhaOrigem) folhaOrigem.open = false;
+    if (folhaGatilho) { try { folhaGatilho.focus({ preventScroll: true }); } catch (e) { } }
+    folhaOrigem = null; folhaGatilho = null;
+  }
+
+  /* O fecho é explícito e não depende do evento `close` do <dialog>: medido no
+     Chrome 148, chamar .close() não o dispara, e um site que só arrume o que
+     mexeu nesse evento fica com o scroll travado e o conteúdo fora do sítio.
+     O listener de `close` fica como rede, porque restaurarFolha() é idempotente. */
+  function fecharFolha() {
+    if (!podeFolha()) return;
+    var tinhaHistorico = !fecharPorHistorico && history.state && history.state.folha;
+    if (folha.open) folha.close();
+    restaurarFolha();
+    /* A entrada que se empilhou ao abrir tem de sair, senão o botão Voltar do
+       telemóvel fica preso a fechar uma folha que já está fechada. */
+    if (tinhaHistorico) { try { history.back(); } catch (e) { } }
+    fecharPorHistorico = false;
+  }
+
+  if (podeFolha()) {
+    folha.addEventListener('close', restaurarFolha);
+
+    /* ESC: o browser dispara `cancel` antes de fechar. Trava-se aí para o fecho
+       passar pelo mesmo caminho de todos os outros. */
+    folha.addEventListener('cancel', function (e) { e.preventDefault(); fecharFolha(); });
+
+    window.addEventListener('popstate', function () {
+      if (folha.open) { fecharPorHistorico = true; fecharFolha(); }
+    });
+
+    if (btFolhaX) btFolhaX.addEventListener('click', fecharFolha);
+
+    /* Clicar fora fecha. Compara-se também o pointerdown para um arrasto que
+       comece dentro e acabe no fundo não fechar sem querer. */
+    folha.addEventListener('pointerdown', function (e) { fundoNoBackdrop = (e.target === folha); });
+    folha.addEventListener('click', function (e) {
+      if (e.target === folha && fundoNoBackdrop) fecharFolha();
+    });
+  }
+
+  /* --------------------------------------------------------- CARROSSEL
+     A pista já rola sozinha (scroll-snap + overflow-x). Isto é só o atalho:
+     setas, pontos, e manter os dois em sincronia com o que o dedo fez. */
+  function ligarCarrossel(raiz) {
+    var car = raiz.querySelector('[data-carrossel]');
+    if (!car || car.dataset.ligado) return;
+    car.dataset.ligado = '1';
+    var pista = car.querySelector('.carrossel__pista');
+    var fotos = [].slice.call(pista.children);
+    var pontos = [].slice.call(car.querySelectorAll('.carrossel__ponto'));
+    var setas = [].slice.call(car.querySelectorAll('.carrossel__seta'));
+    if (fotos.length < 2) return;
+
+    var suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function actual() {
+      var meio = pista.scrollLeft + pista.clientWidth / 2;
+      var melhor = 0, dist = Infinity;
+      fotos.forEach(function (f, i) {
+        var c = f.offsetLeft + f.offsetWidth / 2;
+        var d = Math.abs(c - meio);
+        if (d < dist) { dist = d; melhor = i; }
+      });
+      return melhor;
+    }
+    function irPara(i) {
+      i = Math.max(0, Math.min(fotos.length - 1, i));
+      pista.scrollTo({ left: fotos[i].offsetLeft, behavior: suave ? 'smooth' : 'auto' });
+    }
+    function sincronizar() {
+      var i = actual();
+      pontos.forEach(function (p, k) {
+        if (k === i) p.setAttribute('aria-current', 'true');
+        else p.removeAttribute('aria-current');
+      });
+      setas.forEach(function (b) {
+        var passo = +b.dataset.passo;
+        b.disabled = (passo < 0 && i === 0) || (passo > 0 && i === fotos.length - 1);
+      });
+    }
+    setas.forEach(function (b) {
+      b.addEventListener('click', function () { irPara(actual() + (+b.dataset.passo)); });
+    });
+    pontos.forEach(function (p) {
+      p.addEventListener('click', function () { irPara(+p.dataset.ir); });
+    });
+    var pendente;
+    pista.addEventListener('scroll', function () {
+      clearTimeout(pendente); pendente = setTimeout(sincronizar, 70);
+    }, { passive: true });
+    sincronizar();
+  }
+
+  function ligarFolha(grelha) {
+    /* Sem <dialog> (browser muito antigo) os <details> voltam a aparecer e
+       abrem no lugar — o serviço nunca fica inacessível. */
+    if (!podeFolha()) { doc.documentElement.classList.add('sem-folha'); return; }
+    doc.documentElement.classList.add('tem-folha');
+    /* Delegado: no computador as 9 zonas de rato ficam por cima do cartão, e o
+       clique nelas borbulha na mesma até aqui. */
+    grelha.addEventListener('click', function (e) {
+      var ficha = e.target.closest ? e.target.closest('.ficha') : null;
+      if (!ficha) return;
+      var det = ficha.querySelector('.ficha__det');
+      if (!det) return;
+      e.preventDefault();
+      abrirFolha(det, ficha.querySelector('.ficha__abrir'));
+    });
+    /* Teclado: o <a> do título dispara o clique acima, mas o <summary> do
+       fallback também tem de levar à folha em vez de abrir no lugar. */
+    grelha.querySelectorAll('.ficha__det > summary').forEach(function (sum) {
+      sum.addEventListener('click', function (e) {
+        e.preventDefault();
+        abrirFolha(sum.parentElement, sum);
+      });
+    });
   }
 
   /* ==================================================================== FAQ */
