@@ -91,13 +91,25 @@ PREPARAR = r"""
   await dorme(400);
 
   // abrir todos os "Ver mais": o conteúdo escondido também tem de ser indexado
+  // (e, no fim, garantir que nada ficou com hidden — ver a rede lá em baixo)
   for (let volta = 0; volta < 4; volta++) {
-    const botoes = [...document.querySelectorAll('.more-btn')]
-      .filter(b => !b.hidden && b.textContent.trim() === 'Ver mais');
+    const botoes = [...document.querySelectorAll('.more-btn, .pecas__btn-mais')]
+      .filter(b => !b.hidden && b.getAttribute('aria-expanded') !== 'true'
+                   && /Ver mais/i.test(b.textContent));
     if (!botoes.length) break;
     botoes.forEach(b => b.click());
     await dorme(250);
   }
+
+  // Rede de segurança. O HTML congelado é o que serve quem lê sem JavaScript,
+  // e aí NÃO há botão nenhum para revelar o que estiver escondido: se sair um
+  // hidden na foto, esse conteúdo desaparece do site e do motor de busca sem
+  // dar erro. Já aconteceu com as peças, ao acrescentar o «Ver mais».
+  document.querySelectorAll('#pecas-lista [hidden]').forEach(n => { n.hidden = false; });
+  // E devolver a lista ao estado inicial: com a classe --js congelada no HTML,
+  // a regra de CSS que esconde a partir da sexta ficava desligada e as doze
+  // apareciam até o JavaScript arrancar e as recolher — um salto à vista.
+  document.querySelectorAll('.pecas__ul--js').forEach(n => { n.classList.remove('pecas__ul--js'); });
 
   // A galeria é distribuída pelo masonry conforme as proporções das imagens JÁ
   // carregadas nesse instante — uma corrida que dava colunas diferentes a cada

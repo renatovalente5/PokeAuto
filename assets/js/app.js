@@ -966,12 +966,91 @@
          «lista com 12 itens» nem permite saltar de item em item. */
       pecasLista.innerHTML = '<ul class="pecas__ul">' + itens.map(linha).join('') + '</ul>';
 
+      /* ------------------------------------------------- VER MAIS / VER MENOS
+
+         Mostra as primeiras LIMITE peças e esconde o resto atrás de um botão.
+         O estado escondido é aplicado AQUI, em runtime, e o botão vive fora dos
+         marcadores de pré-render: sem JavaScript a lista aparece inteira, que é
+         o que interessa para quem lê sem ele e para o motor de busca. */
+      var LIMITE = 5;
+      var caixaMais = el('pecas-mais');
+      var aviso = el('pecas-aviso');   /* lido pelo aplicar(), declarado antes dele */
+      var filtroActual = '';
+      var expandido = false;
+
+      /* No estado inicial — sem filtro e por expandir — quem esconde as peças a
+         partir da sexta é o CSS, por :nth-child. Assim já vêm escondidas da
+         primeira pintura e a lista não salta quando o JavaScript arranca. A
+         partir da primeira interacção o JavaScript assume: põe a classe
+         --js no <ul>, que desliga a regra do CSS, e passa a usar `hidden`
+         peça a peça — que é o que o filtro obriga, porque aí as visíveis já
+         não são as primeiras cinco. */
+      var ul = pecasLista.querySelector('.pecas__ul');
+
+      function aplicar(anunciar, interagiu) {
+        var todas = [].slice.call(pecasLista.querySelectorAll('.peca'));
+        var naCategoria = todas.filter(function (l) {
+          return !filtroActual || l.getAttribute('data-cat') === filtroActual;
+        });
+        var mostradas = expandido ? naCategoria.length : Math.min(LIMITE, naCategoria.length);
+        if (interagiu && ul) {
+          ul.classList.add('pecas__ul--js');
+          todas.forEach(function (l) {
+            var i = naCategoria.indexOf(l);
+            /* hidden e não display:none — sai da árvore de acessibilidade e do
+               Ctrl+F do browser da mesma maneira, mas diz-se sozinho no HTML */
+            l.hidden = (i === -1 || i >= mostradas);
+          });
+        }
+
+        var escondidas = naCategoria.length - mostradas;
+        if (!caixaMais) return;
+        if (naCategoria.length <= LIMITE) {
+          caixaMais.innerHTML = '';
+        } else {
+          caixaMais.innerHTML =
+            '<button class="btn btn--fantasma pecas__btn-mais" type="button" ' +
+            'aria-expanded="' + (expandido ? 'true' : 'false') + '" ' +
+            'aria-controls="pecas-lista">' +
+            (expandido ? 'Ver menos' : 'Ver mais ' + escondidas +
+              (escondidas === 1 ? ' peça' : ' peças')) +
+            '</button>';
+        }
+        if (anunciar && aviso) {
+          aviso.textContent = naCategoria.length +
+            (naCategoria.length === 1 ? ' peça' : ' peças') +
+            (filtroActual ? ' em ' + filtroActual : '') +
+            (escondidas > 0 ? ', ' + mostradas + ' à vista' : '');
+        }
+      }
+
+      if (caixaMais) {
+        caixaMais.addEventListener('click', function (e) {
+          var b = e.target.closest('.pecas__btn-mais');
+          if (!b) return;
+          var aRecolher = expandido;
+          expandido = !expandido;
+          aplicar(true, true);
+          if (aRecolher) {
+            /* ao recolher, a lista encurta debaixo dos pés: se o topo já ficou
+               acima do ecrã, o visitante ficava a olhar para outra secção */
+            var topo = pecasLista.getBoundingClientRect().top;
+            if (topo < 0) pecasLista.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            var bt = caixaMais.querySelector('.pecas__btn-mais');
+            if (bt) bt.focus({ preventScroll: true });
+          } else {
+            /* ao expandir, o foco vai para a primeira peça que acabou de surgir */
+            var novas = pecasLista.querySelectorAll('.peca:not([hidden]) .peca__btn');
+            var alvo = novas[Math.min(LIMITE, novas.length - 1)];
+            if (alvo) alvo.focus({ preventScroll: true });
+          }
+        });
+      }
+
+      aplicar(false, false);
+
       /* filtros só a partir de 9 peças: com 4 são ruído */
       var caixaFiltros = el('pecas-filtros');
-      /* Região que anuncia, em voz, quantas peças ficaram depois de filtrar.
-         Sem esta declaração o handler lançava ReferenceError em 'use strict'
-         a cada clique — filtrava e só depois rebentava, em silêncio. */
-      var aviso = el('pecas-aviso');
       if (caixaFiltros) {
         if (itens.length < 9 || cats.length < 2) {
           caixaFiltros.remove();
@@ -999,17 +1078,11 @@
             });
             b.classList.add('is-on');
             b.setAttribute('aria-pressed', 'true');
-            var f = b.getAttribute('data-f');
-            var visiveis = 0;
-            pecasLista.querySelectorAll('.peca').forEach(function (l) {
-              var mostrar = (!f || l.getAttribute('data-cat') === f);
-              l.style.display = mostrar ? '' : 'none';
-              if (mostrar) visiveis++;
-            });
-            /* dizer em voz alta quantas ficaram: quem não vê a lista encolher
-               não tem outra forma de saber que o filtro fez alguma coisa */
-            if (aviso) aviso.textContent = visiveis + (visiveis === 1 ? ' peça' : ' peças') +
-              (f ? ' em ' + f : '');
+            filtroActual = b.getAttribute('data-f');
+            /* mudar de categoria recolhe a lista: senão bastava expandir uma vez
+               para todas as categorias seguintes abrirem já esticadas */
+            expandido = false;
+            aplicar(true, true);
           });
         }
       }
