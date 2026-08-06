@@ -18,10 +18,10 @@ media:
     output: assets/img/trabalhos
     extensions: [jpg, jpeg, png, webp]
     categories: [image]
-  - name: pecas
-    label: Fotografias de peças
-    input: assets/img/pecas
-    output: assets/img/pecas
+  - name: lavagens
+    label: Fotografias de lavagens
+    input: assets/img/lavagens
+    output: assets/img/lavagens
     extensions: [jpg, jpeg, png, webp]
     categories: [image]
 
@@ -263,10 +263,10 @@ content:
               - { name: legenda, label: Legenda, type: string }
 
   # ------------------------------------------------------ BALCÃO DE PEÇAS
-  - name: pecas
-    label: Balcão de peças
+  - name: lavagens
+    label: Lavagem e estética
     type: file
-    path: data/pecas.json
+    path: data/lavagens.json
     fields:
       - name: head
         label: Títulos da secção
@@ -278,65 +278,51 @@ content:
             label: Subtítulo
             type: text
             description: >-
-              NÃO escreva que o que está listado está garantidamente disponível. A
-              lista é mantida à mão e fica desactualizada sozinha; prometer stock
-              contradiz o aviso logo abaixo e é prática comercial enganosa
-              (DL 57/2008 art. 7.º). Diga antes «o tipo de peças que costumamos ter».
+              Bom sítio para dizer para que carros valem estes preços. Se os preços
+              da tabela forem só para ligeiros normais, diga-o aqui — anunciar um
+              preço que depois não se pratica é prática comercial enganosa
+              (DL 57/2008, art. 7.º).
       - name: itens
-        label: Peças em stock
+        label: Serviços e preços
         type: object
         list: true
         description: >-
-          Com a lista vazia, a secção desaparece do site em vez de ficar um espaço
-          por preencher. ATENÇÃO: airbags e pré-tensores de cinto NÃO podem ser
-          listados — são pirotecnia e a lei proíbe vendê-los ao público. A publicação
-          falha se algum aparecer aqui.
+          Com a lista vazia, a secção mostra um convite a pedir orçamento em vez de
+          um espaço em branco. O preço que puser aqui é o que a pessoa vai esperar
+          pagar — se variar muito com o carro, diga-o no subtítulo acima.
         fields:
-          - { name: nome, label: Nome da peça, type: string }
-          - { name: referencia, label: "Referência (opcional)", type: string }
+          - { name: nome, label: Nome do serviço, type: string }
           - name: categoria
             label: Categoria
             type: select
             options:
-              values: [Travagem, Motor, Filtros, Suspensão, Elétrica, Escape, Óleos e fluidos, Acessórios, Outra]
-          - { name: compatibilidade, label: "Compatível com (opcional)", type: string }
-          - name: estado
-            label: Estado
-            type: select
-            options:
-              values:
-                - { value: nova, label: "Nova" }
-                - { value: usada, label: "Usada (com origem documentada)" }
+              values: [Lavagens, Interior, Tratamentos]
             description: >-
-              Peças usadas provenientes de veículos em fim de vida só podem ser
-              vendidas com documento comprovativo de origem (DL 152-D/2017 art.81 n.6).
-              Se não tiveres esse documento, não listes a peça.
+              É o que define a ilustração e os filtros. Se criar uma categoria nova,
+              não há desenho para ela e usa-se o das lavagens.
+          - name: inclui
+            label: "O que inclui"
+            type: string
+            description: >-
+              Uma linha curta com o que está incluído. É isto que faz a pessoa
+              perceber a diferença entre a lavagem de 20 € e a de 30 €.
+          - { name: duracao, label: "Quanto tempo demora (opcional)", type: string }
           - name: preco
             label: "Preço (opcional)"
             type: string
             description: >-
-              Se puseres preço, tem de ser o valor final com IVA incluído (DL 138/90).
-              Deixa vazio para aparecer "Sob consulta" — omitir preço é legal, indicar
-              mal não é.
-          - name: preco_unidade
-            label: "Preço por unidade de medida"
-            type: string
-            description: >-
-              OBRIGATÓRIO por lei (DL 138/90, art. 6.º) sempre que a peça for
-              vendida por volume ou peso e tiver preço indicado — óleos, líquidos,
-              massas. Escreva no formato «8,30 €/L» ou «12,00 €/kg», já com IVA.
-              Dispensa-se se a embalagem for de exactamente 1 L ou 1 kg (aí o preço
-              por litro é igual ao de venda), se for menor que 50 ml, maior que 10 L,
-              ou se deixar o preço vazio. Se faltar, a publicação falha com aviso.
+              Tem de ser o valor final, com IVA incluído (DL 138/90). Deixe vazio
+              para aparecer «Sob consulta» — não indicar preço é legal, indicar um
+              preço que não se pratica não é.
           - name: foto
             label: "Fotografia (opcional)"
             type: image
-            options: { media: pecas }
+            options: { media: lavagens }
             description: >-
-              Se não puser fotografia, aparece uma ilustração da categoria da peça —
-              não fica um quadrado vazio.
+              Se não puser fotografia, aparece a ilustração da categoria — não fica
+              um quadrado vazio.
 
-  # ------------------------------------------------------------------ FAQ
+  # ---------------------------------------------------------- TRABALHOS
   - name: trabalhos
     label: "Fotografias para o Google Imagens"
     type: file

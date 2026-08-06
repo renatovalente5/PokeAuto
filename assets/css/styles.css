@@ -149,16 +149,10 @@ body.menu-aberto .menu { display: flex; }
    duas filas; abaixo disso continuam numa fila deslizante, mas com um degradê
    no bordo direito a dizer que há mais. */
 
-/* ======================================================== ANTES DE LIGAR */
-
-  background: var(--carbono);
-  display: grid; grid-template-columns: 92px 1fr; gap: 1.4rem;
-  padding: clamp(1.3rem, 3vw, 2rem);
-  transition: background var(--t);
-}
-.svc:hover { background: var(--carbono-alto); }
-
-/* serviços com fotografia ganham duas colunas de conteúdo */
+/* Aqui viviam os cartões .svc dos Serviços. O redesenho de dfb5334 substituiu-os
+   pelas placas 3D e apagou os selectores, mas deixou as declarações órfãs — um
+   erro de sintaxe que ficou no CSS servido desde então. `.svc` já não existe no
+   HTML nem no JavaScript. */
 
 /* ============================================================ FAIXA-TEXTURA */
 .faixa { position: relative; }
@@ -183,32 +177,32 @@ body.menu-aberto .menu { display: flex; }
    caixa com barra vermelha ANTES das peças — 90 palavras de texto jurídico a
    ocupar meio ecrã de telemóvel, que faziam a secção parecer um contrato em
    vez de uma oficina. Continuam legíveis e a um toque de distância. */
-.pecas__condicoes {
+.lavagens__condicoes {
   margin-top: 1.4rem; border-top: 1px solid rgba(20, 22, 26, .12);
   padding-top: .9rem; font-size: .85rem; color: var(--claro-2);
 }
-.pecas__condicoes > summary {
+.lavagens__condicoes > summary {
   cursor: pointer; font-weight: 600; color: var(--claro-tinta);
   list-style: none; display: inline-flex; align-items: center; gap: .4rem;
   /* 44 px de altura: com .3rem ficava em 32, que passa o mínimo da WCAG 2.5.8
      mas é apertado para um polegar. */
   padding: .65rem 0; min-height: 44px;
 }
-.pecas__condicoes > summary::-webkit-details-marker { display: none; }
+.lavagens__condicoes > summary::-webkit-details-marker { display: none; }
 /* Um triângulo desenhado à mão: o marcador nativo tem tamanho e cor do sistema
    e não acompanha a tipografia da página. */
-.pecas__condicoes > summary::before {
+.lavagens__condicoes > summary::before {
   content: ''; width: 0; height: 0; flex: none;
   border-left: 5px solid currentColor;
   border-top: 4px solid transparent; border-bottom: 4px solid transparent;
   transition: transform .18s ease;
 }
-.pecas__condicoes[open] > summary::before { transform: rotate(90deg); }
-.pecas__condicoes > p { margin-top: .5rem; line-height: 1.6; max-width: 62ch; }
+.lavagens__condicoes[open] > summary::before { transform: rotate(90deg); }
+.lavagens__condicoes > p { margin-top: .5rem; line-height: 1.6; max-width: 62ch; }
 @media (prefers-reduced-motion: reduce) {
-  .pecas__condicoes > summary::before { transition: none; }
+  .lavagens__condicoes > summary::before { transition: none; }
 }
-.pecas__filtros { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.2rem; }
+.lavagens__filtros { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.2rem; }
 .filtro {
   padding: .34rem .85rem; font-size: .88rem; font-weight: 600;
   background: #FFFFFF; color: var(--claro-tinta);
@@ -218,44 +212,44 @@ body.menu-aberto .menu { display: flex; }
 .filtro:hover { border-color: var(--claro-tinta); }
 .filtro.is-on { background: var(--claro-tinta); color: #FFFFFF; border-color: var(--claro-tinta); }
 
-.pecas__lista { border: 1px solid #E1E5EA; border-radius: var(--raio-g); overflow: hidden; background: #FFFFFF; }
+.lavagens__lista { border: 1px solid #E1E5EA; border-radius: var(--raio-g); overflow: hidden; background: #FFFFFF; }
 /* A lista é agora <ul>/<li> por semântica; o marcador e o recuo saem. */
-.pecas__ul { list-style: none; margin: 0; padding: 0; }
+.lavagens__ul { list-style: none; margin: 0; padding: 0; }
 /* A navbar é fixa: sem isto, ao tabular pela lista o elemento focado podia
    ficar por baixo dela e o anel de foco desaparecia atrás da barra. */
-.peca__btn, .filtro { scroll-margin-top: calc(var(--nav-h) + 1rem); }
-.peca {
+.lavagem__btn, .filtro { scroll-margin-top: calc(var(--nav-h) + 1rem); }
+.lavagem {
   display: grid; grid-template-columns: 64px 1fr auto; gap: 1rem; align-items: center;
   padding: .95rem 1.1rem;
   border-top: 1px solid #EDF0F3;
 }
-.peca:first-child { border-top: 0; }
-.peca__fig {
+.lavagem:first-child { border-top: 0; }
+.lavagem__fig {
   width: 64px; height: 64px; border-radius: var(--raio); overflow: hidden;
   background: #E6E8EC; display: grid; place-items: center; flex: none;
 }
 /* `cover` é o certo para uma fotografia de uma peça. Para as ilustrações
    de categoria, que já vêm com a margem desenhada, `cover` cortava-lhes
    as pontas — daí o contain nessas. */
-.peca__fig img { width: 100%; height: 100%; object-fit: cover; }
-.peca__fig img[src*="/cat-"] { object-fit: contain; }
+.lavagem__fig img { width: 100%; height: 100%; object-fit: cover; }
+.lavagem__fig img[src*="/cat-"] { object-fit: contain; }
 /* peça sem foto é uma linha DESENHADA, não um rectângulo cinzento vazio */
-.peca__fig--vazia { color: #9AA2AC; }
-.peca__fig--vazia svg { width: 26px; height: 26px; }
-.peca__nome { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; color: var(--claro-tinta); line-height: 1.2; }
-.peca__meta { font-size: .84rem; color: var(--claro-2); margin-top: .15rem; }
-.peca__ref { font-family: var(--f-mono); font-size: .8rem; color: var(--claro-2); }
-.peca__dir { text-align: right; display: grid; gap: .35rem; justify-items: end; }
-.peca__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
-.peca__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
-.peca__btn {
+.lavagem__fig--vazia { color: #9AA2AC; }
+.lavagem__fig--vazia svg { width: 26px; height: 26px; }
+.lavagem__nome { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; color: var(--claro-tinta); line-height: 1.2; }
+.lavagem__meta { font-size: .84rem; color: var(--claro-2); margin-top: .15rem; }
+.lavagem__ref { font-family: var(--f-mono); font-size: .8rem; color: var(--claro-2); }
+.lavagem__dir { text-align: right; display: grid; gap: .35rem; justify-items: end; }
+.lavagem__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
+.lavagem__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
+.lavagem__btn {
   min-height: 44px; display: inline-flex; align-items: center;
   padding: .42rem .9rem; font-size: .84rem; font-weight: 600;
   background: var(--claro-tinta); color: #FFFFFF; text-decoration: none;
   border-radius: var(--raio); white-space: nowrap;
 }
-.peca__btn:hover { background: var(--vermelho-claro); }
-.pecas__data { margin-top: 1rem; font-size: .82rem; color: var(--claro-2); }
+.lavagem__btn:hover { background: var(--vermelho-claro); }
+.lavagens__data { margin-top: 1rem; font-size: .82rem; color: var(--claro-2); }
 
 /* =================================================================== FAQ */
 .faq { max-width: 860px; }
@@ -379,15 +373,14 @@ body.menu-aberto .menu { display: flex; }
        está ali para se reconhecer a porta na rua. */
     object-position: 50% 54%; }
 
-  .svc { grid-template-columns: 60px 1fr; gap: 1rem; }
 
 }
 
 @media (max-width: 620px) {
   .rodape__topo { grid-template-columns: 1fr; }
-  .peca { grid-template-columns: 52px 1fr; row-gap: .6rem; }
-  .peca__fig { width: 52px; height: 52px; }
-  .peca__dir { grid-column: 1 / -1; justify-items: start; text-align: left;
+  .lavagem { grid-template-columns: 52px 1fr; row-gap: .6rem; }
+  .lavagem__fig { width: 52px; height: 52px; }
+  .lavagem__dir { grid-column: 1 / -1; justify-items: start; text-align: left;
                display: flex; align-items: center; gap: .9rem; }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
@@ -428,10 +421,10 @@ body.menu-aberto .menu { display: flex; }
 .doc__caixa { border-left: 3px solid var(--dourado); background: var(--carbono); padding: 1rem 1.1rem; border-radius: var(--raio); margin-block: 1.2rem; }
 
 /* estado vazio do balcão de peças: um convite, não um buraco */
-.pecas__vazio { padding: 1.6rem 1.2rem; text-align: center; }
-.pecas__vazio p { max-width: 52ch; margin-inline: auto; margin-bottom: .7rem; color: var(--claro-2); }
-.pecas__vazio strong { color: var(--claro-tinta); }
-.pecas__vazio .peca__btn { display: inline-block; margin-top: .5rem; padding: .6rem 1.2rem; }
+.lavagens__vazio { padding: 1.6rem 1.2rem; text-align: center; }
+.lavagens__vazio p { max-width: 52ch; margin-inline: auto; margin-bottom: .7rem; color: var(--claro-2); }
+.lavagens__vazio strong { color: var(--claro-tinta); }
+.lavagens__vazio .lavagem__btn { display: inline-block; margin-top: .5rem; padding: .6rem 1.2rem; }
 .contacto-item:empty { display: none; }
 
 /* ============================================================================
@@ -992,23 +985,23 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 
 /* ------------------------------------------------- VER MAIS NO BALCÃO ---- */
 /* [hidden] no <li> não chegava: o atributo só vale display:none pela folha do
-   browser, e `.peca { display: grid }` é mais específico e ganhava — as peças
+   browser, e `.lavagem { display: grid }` é mais específico e ganhava — as peças
    ficavam «escondidas» e à vista na mesma. */
-.peca[hidden] { display: none; }
+.lavagem[hidden] { display: none; }
 /* Estado inicial: a partir da sexta peça, escondidas já na primeira pintura,
    para a lista não saltar quando o JavaScript arranca. A classe --js é posta
    pelo JavaScript à primeira interacção e desliga isto, porque com um filtro
    activo as visíveis já não são as primeiras cinco. */
-.pecas__ul > .peca:nth-child(n+6) { display: none; }
+.lavagens__ul > .lavagem:nth-child(n+6) { display: none; }
 /* Tem de repetir o :nth-child: sem ele esta regra fica com menos especificidade
    do que a de cima e nunca ganhava — o «Ver mais» não mostrava nada. */
-.pecas__ul--js > .peca:nth-child(n+6) { display: grid; }
-.pecas__ul--js > .peca[hidden] { display: none; }
-.pecas__mais { display: flex; justify-content: center; margin-top: 1.1rem; }
-.pecas__mais:empty { display: none; }
-.pecas__btn-mais { min-width: 14rem; }
+.lavagens__ul--js > .lavagem:nth-child(n+6) { display: grid; }
+.lavagens__ul--js > .lavagem[hidden] { display: none; }
+.lavagens__mais { display: flex; justify-content: center; margin-top: 1.1rem; }
+.lavagens__mais:empty { display: none; }
+.lavagens__btn-mais { min-width: 14rem; }
 /* A faixa é clara: o botão fantasma, pensado para fundo escuro, ficava
    invisível. Aqui a moldura e o texto são a tinta escura da secção. */
-.seccao--claro .pecas__btn-mais { color: var(--claro-tinta); border-color: rgba(20,22,26,.28); }
-.seccao--claro .pecas__btn-mais:hover { background: var(--claro-tinta); color: #FFFFFF;
+.seccao--claro .lavagens__btn-mais { color: var(--claro-tinta); border-color: rgba(20,22,26,.28); }
+.seccao--claro .lavagens__btn-mais:hover { background: var(--claro-tinta); color: #FFFFFF;
   border-color: var(--claro-tinta); }

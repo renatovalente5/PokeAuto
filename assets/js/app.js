@@ -847,34 +847,34 @@
     });
   }
 
-  /* ======================================================= BALCÃO DE PEÇAS */
-  var pecasLista = el('pecas-lista');
-  if (pecasLista) {
-    Promise.all([getJSON('data/pecas.json'), dimsProntas]).then(function (r) {
+  /* ================================================== LAVAGEM E ESTÉTICA */
+  var lavagensLista = el('lavagens-lista');
+  if (lavagensLista) {
+    Promise.all([getJSON('data/lavagens.json'), dimsProntas]).then(function (r) {
       var d = r[0];
       var itens = ((d && d.itens) || []).filter(function (p) { return p && p.nome; });
-      var seccao = el('pecas');
+      var seccao = el('lavagens');
 
       aplicarHead(seccao, d.head);
 
-      /* Sem peças na lista, a secção mostra um estado honesto em vez de um vazio.
+      /* Sem serviços na lista, a secção mostra um estado honesto em vez de um vazio.
          Antes eu removia a secção inteira — mas o pré-render escreve o resultado
          de volta no index.html, e isso apagava a secção do ficheiro de origem:
-         no dia em que o cliente acrescentasse a primeira peça, já não havia
+         no dia em que o cliente acrescentasse o primeiro serviço, já não havia
          secção para voltar. Um convite a telefonar também converte melhor do que
          um buraco. */
       if (!itens.length) {
-        var filtrosVazio = el('pecas-filtros');
+        var filtrosVazio = el('lavagens-filtros');
         if (filtrosVazio) filtrosVazio.innerHTML = '';
-        pecasLista.innerHTML =
-          '<div class="pecas__vazio">' +
-          '<p><strong>Ainda não temos a lista publicada aqui.</strong></p>' +
-          '<p>Temos peças em stock na oficina e trabalhamos com fornecedores para o ' +
-          'que não houver. Diga-nos de que peça precisa e dizemos-lhe se temos e ' +
-          'quanto custa.</p>' +
-          '<a class="peca__btn" href="https://wa.me/' + (TELEFONE_INTL || '351922022364') +
-          '?text=' + encodeURIComponent('Olá! Queria saber se têm uma peça disponível: ') +
-          '" target="_blank" rel="noopener">Perguntar por uma peça</a>' +
+        lavagensLista.innerHTML =
+          '<div class="lavagens__vazio">' +
+          '<p><strong>Ainda não temos a tabela publicada aqui.</strong></p>' +
+          '<p>Fazemos lavagem por dentro e por fora, higienização do ar condicionado, ' +
+          'estofos e cera. Diga-nos o que precisa e o carro que tem, e dizemos-lhe ' +
+          'quanto custa e quanto tempo demora.</p>' +
+          '<a class="lavagem__btn" href="https://wa.me/' + (TELEFONE_INTL || '351922022364') +
+          '?text=' + encodeURIComponent('Olá! Queria marcar uma lavagem. ') +
+          '" target="_blank" rel="noopener">Pedir orçamento</a>' +
           '</div>';
         return;
       }
@@ -890,100 +890,93 @@
         var t = String(c || '').toLowerCase()
           .replace(/[áàâã]/g, 'a').replace(/[éê]/g, 'e').replace(/í/g, 'i')
           .replace(/[óôõ]/g, 'o').replace(/[úü]/g, 'u').replace(/ç/g, 'c');
-        if (t.indexOf('trav') === 0) return 'travagem';
-        if (t.indexOf('motor') === 0) return 'motor';
-        if (t.indexOf('filtro') === 0) return 'filtros';
-        if (t.indexOf('susp') === 0) return 'suspensao';
-        if (t.indexOf('elet') === 0 || t.indexOf('elect') === 0) return 'eletrica';
-        if (t.indexOf('escape') === 0) return 'escape';
-        if (t.indexOf('oleo') === 0) return 'oleos';
-        if (t.indexOf('acess') === 0) return 'acessorios';
-        return 'outra';
+        if (t.indexOf('lava') === 0) return 'lavagens';
+        if (t.indexOf('interior') === 0) return 'interior';
+        if (t.indexOf('trat') === 0) return 'tratamentos';
+        return 'lavagens';
       }
 
       function linha(p) {
         /* A fotografia do cliente vem do backoffice como caminho completo; passa
            pelo mesmo resolvedor dos serviços, para servir a variante do tamanho
            certo em vez do original de 4000px que saiu do telemóvel. */
-        var f = p.foto ? resolverFoto(p.foto, 'pecas', 128) : null;
+        var f = p.foto ? resolverFoto(p.foto, 'lavagens', 128) : null;
         if (!f) {
           /* Sem fotografia, a ilustração da categoria. É um DESENHO e não uma
              fotografia de propósito: uma foto genérica daria a entender que
-             aquela peça em concreto é aquela da imagem. */
-          var base = 'assets/img/pecas/cat-' + slugCat(p.categoria);
+             aquele serviço em concreto dá aquele resultado. */
+          var base = 'assets/img/lavagens/cat-' + slugCat(p.categoria);
           if (DIMS[base + '-128.webp']) {
             f = { src: base + '-128.webp',
                   srcset: base + '-128.webp 128w, ' + base + '-192.webp 192w' };
           }
         }
         var fig = f
-          ? '<div class="peca__fig"><img src="' + esc(f.src) + '"' +
+          ? '<div class="lavagem__fig"><img src="' + esc(f.src) + '"' +
             (f.srcset ? ' srcset="' + esc(f.srcset) + '" sizes="64px"' : '') +
             ' alt="" loading="lazy" decoding="async"' + attrsDim(f.src) + ' /></div>'
-          : '<div class="peca__fig peca__fig--vazia" aria-hidden="true">' + ICONE_PECA + '</div>';
+          : '<div class="lavagem__fig lavagem__fig--vazia" aria-hidden="true">' + ICONE_PECA + '</div>';
+        /* O que o serviço inclui é o que faz alguém escolher entre a lavagem de
+           20 € e a de 30 €. Vai a seguir ao nome, e a duração à frente do preço
+           — quem marca uma lavagem quer saber quanto tempo fica sem o carro. */
         var meta = [];
-        if (p.compatibilidade) meta.push(esc(p.compatibilidade));
-        if (p.estado === 'usada') meta.push('Usada');
-        /* O preço por unidade de medida não é enfeite: o DL 138/90 art. 6.º
-           obriga os CATÁLOGOS que refiram preço de venda a indicá-lo também,
-           em produtos vendidos por volume ou peso. A ASAE fiscaliza. */
-        var porUnidade = p.preco_unidade
-          ? esc(p.preco_unidade) + ' · IVA incluído'
-          : 'IVA incluído';
+        if (p.inclui) meta.push(esc(p.inclui));
         var preco = p.preco
-          ? '<span class="peca__preco">' + esc(p.preco) + '<small>' + porUnidade + '</small></span>'
-          : '<span class="peca__preco">Sob consulta</span>';
-        var msg = encodeURIComponent('Olá! Tenho interesse nesta peça: ' + p.nome +
-                  (p.referencia ? ' (ref. ' + p.referencia + ')' : ''));
+          ? '<span class="lavagem__preco">' + esc(p.preco) +
+            '<small>' + (p.duracao ? esc(p.duracao) + ' · ' : '') + 'IVA incluído</small></span>'
+          : '<span class="lavagem__preco">Sob consulta</span>';
+        /* A mensagem já leva o serviço escrito: quem recebe sabe logo do que se
+           trata, e quem envia não tem de o explicar. */
+        var msg = encodeURIComponent('Olá! Queria marcar: ' + p.nome +
+                  (p.preco ? ' (' + p.preco + ')' : ''));
         /* o número vem do backoffice, não escrito à mão — senão mudá-lo em
            Contactos deixava estes botões todos no número antigo */
         var wa = 'https://wa.me/' + (TELEFONE_INTL || '351922022364');
-        return '<li class="peca" data-cat="' + esc(p.categoria || '') + '">' + fig +
-          '<div><div class="peca__nome">' + esc(p.nome) + '</div>' +
-          (p.referencia ? '<div class="peca__ref">Ref. ' + esc(p.referencia) + '</div>' : '') +
-          (meta.length ? '<div class="peca__meta">' + meta.join(' · ') + '</div>' : '') +
-          '</div><div class="peca__dir">' + preco +
-          /* O texto visível continua «Perguntar» para não encher a linha, mas o
-             nome acessível leva o nome da peça: doze ligações iguais no rotor
-             do VoiceOver não se distinguem umas das outras. */
-          '<a class="peca__btn" href="' + wa + '?text=' + msg +
-          '" target="_blank" rel="noopener" aria-label="Perguntar por: ' + esc(p.nome) +
-          '">Perguntar</a></div></li>';
+        return '<li class="lavagem" data-cat="' + esc(p.categoria || '') + '">' + fig +
+          '<div><div class="lavagem__nome">' + esc(p.nome) + '</div>' +
+          (meta.length ? '<div class="lavagem__meta">' + meta.join(' · ') + '</div>' : '') +
+          '</div><div class="lavagem__dir">' + preco +
+          /* O texto visível é só «Marcar» para não encher a linha, mas o nome
+             acessível leva o serviço: onze ligações iguais no rotor do
+             VoiceOver não se distinguem umas das outras. */
+          '<a class="lavagem__btn" href="' + wa + '?text=' + msg +
+          '" target="_blank" rel="noopener" aria-label="Marcar: ' + esc(p.nome) +
+          '">Marcar</a></div></li>';
       }
 
       /* <ul>/<li> e não doze <div>: sem isso o leitor de ecrã não anuncia
          «lista com 12 itens» nem permite saltar de item em item. */
-      pecasLista.innerHTML = '<ul class="pecas__ul">' + itens.map(linha).join('') + '</ul>';
+      lavagensLista.innerHTML = '<ul class="lavagens__ul">' + itens.map(linha).join('') + '</ul>';
 
       /* ------------------------------------------------- VER MAIS / VER MENOS
 
-         Mostra as primeiras LIMITE peças e esconde o resto atrás de um botão.
+         Mostra os primeiros LIMITE serviços e esconde o resto atrás de um botão.
          O estado escondido é aplicado AQUI, em runtime, e o botão vive fora dos
          marcadores de pré-render: sem JavaScript a lista aparece inteira, que é
          o que interessa para quem lê sem ele e para o motor de busca. */
       var LIMITE = 5;
-      var caixaMais = el('pecas-mais');
-      var aviso = el('pecas-aviso');   /* lido pelo aplicar(), declarado antes dele */
+      var caixaMais = el('lavagens-mais');
+      var aviso = el('lavagens-aviso');   /* lido pelo aplicar(), declarado antes dele */
       var filtroActual = '';
       var expandido = false;
 
-      /* No estado inicial — sem filtro e por expandir — quem esconde as peças a
+      /* No estado inicial — sem filtro e por expandir — quem esconde os serviços a
          partir da sexta é o CSS, por :nth-child. Assim já vêm escondidas da
          primeira pintura e a lista não salta quando o JavaScript arranca. A
          partir da primeira interacção o JavaScript assume: põe a classe
          --js no <ul>, que desliga a regra do CSS, e passa a usar `hidden`
-         peça a peça — que é o que o filtro obriga, porque aí as visíveis já
+         serviço a serviço — que é o que o filtro obriga, porque aí as visíveis já
          não são as primeiras cinco. */
-      var ul = pecasLista.querySelector('.pecas__ul');
+      var ul = lavagensLista.querySelector('.lavagens__ul');
 
       function aplicar(anunciar, interagiu) {
-        var todas = [].slice.call(pecasLista.querySelectorAll('.peca'));
+        var todas = [].slice.call(lavagensLista.querySelectorAll('.lavagem'));
         var naCategoria = todas.filter(function (l) {
           return !filtroActual || l.getAttribute('data-cat') === filtroActual;
         });
         var mostradas = expandido ? naCategoria.length : Math.min(LIMITE, naCategoria.length);
         if (interagiu && ul) {
-          ul.classList.add('pecas__ul--js');
+          ul.classList.add('lavagens__ul--js');
           todas.forEach(function (l) {
             var i = naCategoria.indexOf(l);
             /* hidden e não display:none — sai da árvore de acessibilidade e do
@@ -998,16 +991,16 @@
           caixaMais.innerHTML = '';
         } else {
           caixaMais.innerHTML =
-            '<button class="btn btn--fantasma pecas__btn-mais" type="button" ' +
+            '<button class="btn btn--fantasma lavagens__btn-mais" type="button" ' +
             'aria-expanded="' + (expandido ? 'true' : 'false') + '" ' +
-            'aria-controls="pecas-lista">' +
+            'aria-controls="lavagens-lista">' +
             (expandido ? 'Ver menos' : 'Ver mais ' + escondidas +
-              (escondidas === 1 ? ' peça' : ' peças')) +
+              (escondidas === 1 ? ' serviço' : ' serviços')) +
             '</button>';
         }
         if (anunciar && aviso) {
           aviso.textContent = naCategoria.length +
-            (naCategoria.length === 1 ? ' peça' : ' peças') +
+            (naCategoria.length === 1 ? ' serviço' : ' serviços') +
             (filtroActual ? ' em ' + filtroActual : '') +
             (escondidas > 0 ? ', ' + mostradas + ' à vista' : '');
         }
@@ -1015,7 +1008,7 @@
 
       if (caixaMais) {
         caixaMais.addEventListener('click', function (e) {
-          var b = e.target.closest('.pecas__btn-mais');
+          var b = e.target.closest('.lavagens__btn-mais');
           if (!b) return;
           var aRecolher = expandido;
           expandido = !expandido;
@@ -1023,13 +1016,13 @@
           if (aRecolher) {
             /* ao recolher, a lista encurta debaixo dos pés: se o topo já ficou
                acima do ecrã, o visitante ficava a olhar para outra secção */
-            var topo = pecasLista.getBoundingClientRect().top;
-            if (topo < 0) pecasLista.scrollIntoView({ block: 'start', behavior: 'smooth' });
-            var bt = caixaMais.querySelector('.pecas__btn-mais');
+            var topo = lavagensLista.getBoundingClientRect().top;
+            if (topo < 0) lavagensLista.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            var bt = caixaMais.querySelector('.lavagens__btn-mais');
             if (bt) bt.focus({ preventScroll: true });
           } else {
-            /* ao expandir, o foco vai para a primeira peça que acabou de surgir */
-            var novas = pecasLista.querySelectorAll('.peca:not([hidden]) .peca__btn');
+            /* ao expandir, o foco vai para o primeiro serviço que acabou de surgir */
+            var novas = lavagensLista.querySelectorAll('.lavagem:not([hidden]) .lavagem__btn');
             var alvo = novas[Math.min(LIMITE, novas.length - 1)];
             if (alvo) alvo.focus({ preventScroll: true });
           }
@@ -1038,8 +1031,8 @@
 
       aplicar(false, false);
 
-      /* filtros só a partir de 9 peças: com 4 são ruído */
-      var caixaFiltros = el('pecas-filtros');
+      /* filtros só a partir de 9 serviços: com 4 são ruído */
+      var caixaFiltros = el('lavagens-filtros');
       if (caixaFiltros) {
         if (itens.length < 9 || cats.length < 2) {
           caixaFiltros.remove();
@@ -1048,15 +1041,15 @@
              pelo fundo, e um leitor de ecrã não tem como saber qual está ligado
              — a lista encolhe sem explicação. */
           caixaFiltros.setAttribute('role', 'group');
-          caixaFiltros.setAttribute('aria-label', 'Filtrar peças por categoria');
+          caixaFiltros.setAttribute('aria-label', 'Filtrar serviços por categoria');
           caixaFiltros.innerHTML =
             '<button class="filtro is-on" type="button" aria-pressed="true" data-f="">Todas ' +
-            '<span class="mono">' + itens.length + '</span><span class="visually-hidden"> peças</span></button>' +
+            '<span class="mono">' + itens.length + '</span><span class="visually-hidden"> serviços</span></button>' +
             cats.map(function (c) {
               var n = itens.filter(function (p) { return p.categoria === c; }).length;
               return '<button class="filtro" type="button" aria-pressed="false" data-f="' + esc(c) + '">' +
                      esc(c) + ' <span class="mono">' + n + '</span>' +
-                     '<span class="visually-hidden"> peças</span></button>';
+                     '<span class="visually-hidden"> serviços</span></button>';
             }).join('');
           caixaFiltros.addEventListener('click', function (e) {
             var b = e.target.closest('.filtro');

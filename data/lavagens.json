@@ -1,0 +1,97 @@
+{
+  "head": {
+    "etiqueta": "Lavagem e estética",
+    "titulo": "Deixe o carro como novo",
+    "lead": "Preços para ligeiros, com IVA. Carrinhas e SUV acrescem."
+  },
+  "itens": [
+    {
+      "nome": "Lavagem exterior",
+      "categoria": "Lavagens",
+      "inclui": "Carroçaria, jantes, vidros e brilho nos pneus",
+      "duracao": "30 min",
+      "preco": "15 €",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem interior",
+      "categoria": "Lavagens",
+      "inclui": "Aspiração, tablier, painéis, vidros por dentro e tapetes",
+      "duracao": "45 min",
+      "preco": "20 €",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem completa",
+      "categoria": "Lavagens",
+      "inclui": "Interior e exterior, do tejadilho aos tapetes",
+      "duracao": "1 h 15",
+      "preco": "30 €",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem completa + cera",
+      "categoria": "Lavagens",
+      "inclui": "A lavagem completa, mais cera de protecção que dura cerca de 2 meses",
+      "duracao": "1 h 45",
+      "preco": "45 €",
+      "foto": ""
+    },
+    {
+      "nome": "Higienização do ar condicionado",
+      "categoria": "Interior",
+      "inclui": "Desinfecção das condutas e do evaporador, tira o cheiro a húmido",
+      "duracao": "30 min",
+      "preco": "25 €",
+      "foto": ""
+    },
+    {
+      "nome": "Limpeza de estofos em tecido",
+      "categoria": "Interior",
+      "inclui": "Injecção e extracção em bancos e alcatifas, tira nódoas e cheiros",
+      "duracao": "2 h",
+      "preco": "60 €",
+      "foto": ""
+    },
+    {
+      "nome": "Tratamento de estofos em pele",
+      "categoria": "Interior",
+      "inclui": "Limpeza suave e hidratação, para a pele não gretar",
+      "duracao": "1 h 30",
+      "preco": "70 €",
+      "foto": ""
+    },
+    {
+      "nome": "Remoção de odores",
+      "categoria": "Interior",
+      "inclui": "Tratamento com ozono ao habitáculo inteiro",
+      "duracao": "1 h",
+      "preco": "30 €",
+      "foto": ""
+    },
+    {
+      "nome": "Aplicação de cera",
+      "categoria": "Tratamentos",
+      "inclui": "Cera à mão sobre pintura já lavada, protege cerca de 2 meses",
+      "duracao": "45 min",
+      "preco": "25 €",
+      "foto": ""
+    },
+    {
+      "nome": "Restauro de faróis (par)",
+      "categoria": "Tratamentos",
+      "inclui": "Lixagem e polimento do policarbonato amarelecido",
+      "duracao": "1 h",
+      "preco": "45 €",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem de motor",
+      "categoria": "Tratamentos",
+      "inclui": "Desengorduramento do compartimento, com as zonas sensíveis protegidas",
+      "duracao": "45 min",
+      "preco": "40 €",
+      "foto": ""
+    }
+  ]
+}

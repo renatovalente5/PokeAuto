@@ -36,7 +36,7 @@ from cdp import Chrome                                        # noqa: E402
 PAGINA = os.path.join(RAIZ, 'index.html')
 
 # Zonas que o app.js preenche e que valem indexação
-ZONAS = ['servicos-lista', 'pecas-lista',
+ZONAS = ['servicos-lista', 'lavagens-lista',
 
          # topo da página: título com realce e fotografia, ambos editáveis no
          # backoffice. Sem congelar isto, quem chega com o JavaScript ainda por
@@ -93,7 +93,7 @@ PREPARAR = r"""
   // abrir todos os "Ver mais": o conteúdo escondido também tem de ser indexado
   // (e, no fim, garantir que nada ficou com hidden — ver a rede lá em baixo)
   for (let volta = 0; volta < 4; volta++) {
-    const botoes = [...document.querySelectorAll('.more-btn, .pecas__btn-mais')]
+    const botoes = [...document.querySelectorAll('.more-btn, .lavagens__btn-mais')]
       .filter(b => !b.hidden && b.getAttribute('aria-expanded') !== 'true'
                    && /Ver mais/i.test(b.textContent));
     if (!botoes.length) break;
@@ -105,11 +105,11 @@ PREPARAR = r"""
   // e aí NÃO há botão nenhum para revelar o que estiver escondido: se sair um
   // hidden na foto, esse conteúdo desaparece do site e do motor de busca sem
   // dar erro. Já aconteceu com as peças, ao acrescentar o «Ver mais».
-  document.querySelectorAll('#pecas-lista [hidden]').forEach(n => { n.hidden = false; });
+  document.querySelectorAll('#lavagens-lista [hidden]').forEach(n => { n.hidden = false; });
   // E devolver a lista ao estado inicial: com a classe --js congelada no HTML,
   // a regra de CSS que esconde a partir da sexta ficava desligada e as doze
   // apareciam até o JavaScript arrancar e as recolher — um salto à vista.
-  document.querySelectorAll('.pecas__ul--js').forEach(n => { n.classList.remove('pecas__ul--js'); });
+  document.querySelectorAll('.lavagens__ul--js').forEach(n => { n.classList.remove('lavagens__ul--js'); });
 
   // A galeria é distribuída pelo masonry conforme as proporções das imagens JÁ
   // carregadas nesse instante — uma corrida que dava colunas diferentes a cada
@@ -293,7 +293,7 @@ def escapar(t):
 # rastreador não ficar com a versão antiga quando o cliente editar.
 CABECALHOS = [
     ('servicos', 'servicos.json', 'head'),
-    ('pecas', 'pecas.json', 'head'),
+    ('lavagens', 'lavagens.json', 'head'),
     ('contactos', 'site.json', 'contactos_head'),
 ]
 CLASSES = [('etiqueta', 'etiqueta'), ('h-sec', 'titulo'), ('lead', 'lead')]
@@ -778,15 +778,15 @@ def main():
     else:
         print('AVISO: marcador de json-ld em falta')
 
-    pecas = ler_json(os.path.join(RAIZ, 'data', 'pecas.json'), 'data/pecas.json')
-    tem_pecas = bool([x for x in (pecas.get('itens') or []) if x and x.get('nome')])
+    lavagens = ler_json(os.path.join(RAIZ, 'data', 'lavagens.json'), 'data/lavagens.json')
+    tem_lavagens = bool([x for x in (lavagens.get('itens') or []) if x and x.get('nome')])
 
     for z in ZONAS:
         conteudo = zonas.get(z)
         if conteudo is None:
             # a secção de peças desaparece em runtime quando não há peças; não é
             # avaria, é o comportamento pedido
-            if not (z == 'pecas-lista' and not tem_pecas):
+            if not (z == 'lavagens-lista' and not tem_lavagens):
                 print('AVISO: zona %s não veio do browser' % z)
             continue
         padrao = re.compile(r'(<!--pre:%s-->).*?(<!--/pre:%s-->)' % (z, z), re.S)
@@ -813,7 +813,7 @@ def main():
     # significava que, no dia em que o cliente acrescentasse a primeira peça, a
     # secção já não existia no ficheiro para voltar. Em vez disso o app.js desenha
     # um estado vazio honesto, que também é o que fica no HTML servido.
-    resumo.append('peças: %d' % (len(pecas.get('itens') or [])))
+    resumo.append('peças: %d' % (len(lavagens.get('itens') or [])))
 
     # título e descrição da página — o que aparece no Google
     novo, n_seo = aplicar_seo(novo, RAIZ)
