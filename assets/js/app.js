@@ -847,17 +847,6 @@
     });
   }
 
-  /* ==================================================================== FAQ */
-  var faq = el('faq-lista');
-  if (faq) {
-    getJSON('data/faq.json').then(function (d) {
-      aplicarHead(el('faq'), d.head);
-      faq.innerHTML = ((d && d.itens) || []).map(function (x) {
-        return '<details><summary>' + esc(x.q) + '</summary><p>' + esc(x.a) + '</p></details>';
-      }).join('');
-    }).catch(function () { });
-  }
-
   /* ======================================================= BALCÃO DE PEÇAS */
   var pecasLista = el('pecas-lista');
   if (pecasLista) {

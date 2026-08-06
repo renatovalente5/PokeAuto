@@ -337,30 +337,6 @@ content:
               não fica um quadrado vazio.
 
   # ------------------------------------------------------------------ FAQ
-  - name: faq
-    label: Perguntas frequentes
-    type: file
-    path: data/faq.json
-    fields:
-      - name: head
-        label: Títulos da secção
-        type: object
-        fields:
-          - { name: etiqueta, label: Etiqueta, type: string }
-          - { name: titulo, label: Título, type: string }
-          - { name: lead, label: Subtítulo, type: text }
-      - name: itens
-        label: Perguntas
-        type: object
-        list: true
-        fields:
-          - { name: q, label: Pergunta, type: string }
-          - { name: a, label: Resposta, type: text }
-
-  # ------------------------------------------------------------ TRABALHOS
-  # Esta secção já não aparece no site: as fotografias vivem nos Serviços. O que
-  # esta lista faz hoje é alimentar o sitemap de imagens, que é como o Google
-  # encontra as fotografias para a pesquisa de imagens.
   - name: trabalhos
     label: "Fotografias para o Google Imagens"
     type: file

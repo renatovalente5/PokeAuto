@@ -179,10 +179,34 @@ body.menu-aberto .menu { display: flex; }
 /* ================================================================== PEÇAS */
 /* Linhas, nunca grelha de cartões: com 4 peças uma grelha parece uma loja
    vazia; uma lista parece um inventário — que é o que isto é. */
-.pecas__aviso {
-  border-left: 3px solid var(--vermelho-claro);
-  background: #FFFFFF; padding: .9rem 1.1rem; border-radius: var(--raio);
-  font-size: .9rem; color: var(--claro-2); margin-bottom: 1.4rem;
+/* As condições de venda, agora depois da lista e recolhidas. Antes eram uma
+   caixa com barra vermelha ANTES das peças — 90 palavras de texto jurídico a
+   ocupar meio ecrã de telemóvel, que faziam a secção parecer um contrato em
+   vez de uma oficina. Continuam legíveis e a um toque de distância. */
+.pecas__condicoes {
+  margin-top: 1.4rem; border-top: 1px solid rgba(20, 22, 26, .12);
+  padding-top: .9rem; font-size: .85rem; color: var(--claro-2);
+}
+.pecas__condicoes > summary {
+  cursor: pointer; font-weight: 600; color: var(--claro-tinta);
+  list-style: none; display: inline-flex; align-items: center; gap: .4rem;
+  /* 44 px de altura: com .3rem ficava em 32, que passa o mínimo da WCAG 2.5.8
+     mas é apertado para um polegar. */
+  padding: .65rem 0; min-height: 44px;
+}
+.pecas__condicoes > summary::-webkit-details-marker { display: none; }
+/* Um triângulo desenhado à mão: o marcador nativo tem tamanho e cor do sistema
+   e não acompanha a tipografia da página. */
+.pecas__condicoes > summary::before {
+  content: ''; width: 0; height: 0; flex: none;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+  transition: transform .18s ease;
+}
+.pecas__condicoes[open] > summary::before { transform: rotate(90deg); }
+.pecas__condicoes > p { margin-top: .5rem; line-height: 1.6; max-width: 62ch; }
+@media (prefers-reduced-motion: reduce) {
+  .pecas__condicoes > summary::before { transition: none; }
 }
 .pecas__filtros { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.2rem; }
 .filtro {
@@ -604,7 +628,10 @@ body.menu-aberto .menu { display: flex; }
 .mapa__facade img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; opacity: .45; }
 #mapa-aceitar { pointer-events: auto; }
 
-@media (max-width: 460px) { .cookies__acoes { grid-template-columns: 1fr; } }
+/* Antes empilhava os dois botões abaixo dos 460px, o que somava mais 60px de
+   altura a um aviso que já tapava meio ecrã. Lado a lado cabem bem — os
+   rótulos são de uma palavra — e ambos continuam com 44px de altura. */
+@media (max-width: 460px) { .cookies__acoes .btn { padding-inline: .5rem; } }
 
 /* A identificação legal é obrigatória (DL 7/2004 art.10) mas a lei não exige
    destaque — só acesso fácil e permanente. Fica discreta; o que a lei manda

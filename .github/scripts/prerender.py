@@ -36,7 +36,7 @@ from cdp import Chrome                                        # noqa: E402
 PAGINA = os.path.join(RAIZ, 'index.html')
 
 # Zonas que o app.js preenche e que valem indexação
-ZONAS = ['servicos-lista', 'faq-lista', 'pecas-lista',
+ZONAS = ['servicos-lista', 'pecas-lista',
 
          # topo da página: título com realce e fotografia, ambos editáveis no
          # backoffice. Sem congelar isto, quem chega com o JavaScript ainda por
@@ -293,7 +293,6 @@ def escapar(t):
 # rastreador não ficar com a versão antiga quando o cliente editar.
 CABECALHOS = [
     ('servicos', 'servicos.json', 'head'),
-    ('faq', 'faq.json', 'head'),
     ('pecas', 'pecas.json', 'head'),
     ('contactos', 'site.json', 'contactos_head'),
 ]
@@ -602,7 +601,6 @@ def construir_jsonld(raiz):
     """
     site = ler_json(os.path.join(raiz, 'data', 'site.json'), 'data/site.json')
     servicos = ler_json(os.path.join(raiz, 'data', 'servicos.json'), 'data/servicos.json')
-    faq = ler_json(os.path.join(raiz, 'data', 'faq.json'), 'data/faq.json')
     c = site.get('contactos', {})
     L = site.get('legal', {})
 
@@ -702,22 +700,14 @@ def construir_jsonld(raiz):
     }
 
     pagina = {
-        '@type': ['WebPage', 'FAQPage'],
+        '@type': 'WebPage',
         '@id': SITE + '/',
         'url': SITE + '/',
         'name': 'PokeAuto — Oficina auto em São João da Madeira',
         'inLanguage': 'pt-PT',
         'isPartOf': {'@id': SITE + '/#site'},
         'about': {'@id': SITE + '/#oficina'},
-        'mainEntity': [
-            {'@type': 'Question', 'name': q['q'],
-             'acceptedAnswer': {'@type': 'Answer', 'text': q['a']}}
-            for q in faq.get('itens', [])
-        ],
     }
-    if not pagina['mainEntity']:
-        pagina['@type'] = 'WebPage'
-        del pagina['mainEntity']
 
     import json as _json
     grafo = {'@context': 'https://schema.org', '@graph': [negocio, website, pagina]}

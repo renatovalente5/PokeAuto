@@ -134,10 +134,7 @@
       }
     },
     {
-      "@type": [
-        "WebPage",
-        "FAQPage"
-      ],
+      "@type": "WebPage",
       "@id": "https://pokeauto.pt/",
       "url": "https://pokeauto.pt/",
       "name": "PokeAuto — Oficina auto em São João da Madeira",
@@ -147,49 +144,7 @@
       },
       "about": {
         "@id": "https://pokeauto.pt/#oficina"
-      },
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Trabalham com que marcas?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Somos uma oficina multimarca e trabalhamos com ligeiros de qualquer marca. O Regulamento (UE) 2018/858 garante às oficinas independentes o acesso à informação técnica de reparação dos fabricantes."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Reparar aqui faz-me perder a garantia do carro?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Não. Fazer a manutenção numa oficina independente não anula a garantia do fabricante. A garantia só pode ser posta em causa se ficar demonstrado que uma intervenção concreta causou o defeito."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Dizem-me o preço antes de mexer no carro?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sim. Apresentamos o que encontrámos e o custo previsto antes de avançar. Nenhum trabalho é feito sem a sua autorização."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Passam fatura com o meu número de contribuinte?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sim, sempre. Basta indicar o NIF no momento do pagamento."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Vendem peças ao balcão?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sim, ao balcão, na oficina. A secção Balcão de peças mostra o tipo de peças que costumamos ter; a disponibilidade é confirmada connosco. A venda é feita na oficina — o site é meramente informativo."
-          }
-        }
-      ]
+      }
     }
   ]
 }
@@ -212,7 +167,6 @@
         <a class="nav__link" href="#servicos">Serviços</a>
         <a class="nav__link" href="#pecas">Peças</a>
         <a class="nav__link" href="#contactos">Contactos</a>
-        <a class="nav__link" href="#faq">Perguntas</a>
         <a class="btn btn--vermelho nav__cta" href="tel:+351922022364" data-tel>Ligar</a>
       </nav>
 
@@ -236,7 +190,6 @@
       <a class="menu__link" href="#servicos">Serviços</a>
       <a class="menu__link" href="#pecas">Peças</a>
       <a class="menu__link" href="#contactos">Contactos</a>
-      <a class="menu__link" href="#faq">Perguntas</a>
     </nav>
     <div class="menu__acoes">
       <a class="btn btn--vermelho" href="tel:+351922022364" data-tel>Ligar agora</a>
@@ -303,16 +256,8 @@
           <p class="etiqueta">Balcão de peças</p>
           <div class="filete"></div>
           <h2 class="h-sec" id="pecas-t">O que temos na oficina</h2>
-          <p class="lead">Esta lista mostra o tipo de peças que costumamos ter à mão na oficina. Confirme connosco antes de se deslocar.</p>
+          <p class="lead">O que costumamos ter à mão. Confirme connosco antes de se deslocar.</p>
         </div>
-        <!-- Aviso fixo, não editável no backoffice: se houvesse forma de encomendar
-             à distância entrava o DL 24/2014, com 14 dias de livre resolução e
-             informação pré-contratual obrigatória. -->
-        <p class="pecas__aviso">
-          Não vendemos online. Este catálogo é meramente informativo e não constitui proposta
-          contratual — a venda é feita na oficina. Os preços indicados são da peça, com IVA, e não incluem montagem nem mão-de-obra, que são orçamentadas à parte. A disponibilidade está sujeita a confirmação.
-          Peças novas têm 3 anos de garantia legal de conformidade; peças usadas, no mínimo 18 meses.
-        </p>
         <div class="pecas__filtros" id="pecas-filtros"></div>
         <!-- Diz em voz alta quantas peças ficaram depois de filtrar. Quem não vê
              a lista encolher não tem outra forma de saber que o filtro actuou. -->
@@ -323,6 +268,24 @@
              HTML servido, e quem não tem JavaScript via um botão morto — com
              as peças escondidas e sem forma de as mostrar. -->
         <div class="pecas__mais" id="pecas-mais"></div>
+
+        <!-- As condições têm de estar na página: sem elas o catálogo podia
+             passar por proposta contratual e entrava o DL 24/2014, com 14 dias
+             de livre resolução e informação pré-contratual obrigatória. Mas
+             estavam ANTES das peças, e eram 90 palavras de texto jurídico a
+             ocupar meio ecrã de telemóvel antes de se ver um único artigo — o
+             cliente disse que o site parecia um blog, e tinha razão. Continuam
+             cá, na íntegra, depois da lista e recolhidas. -->
+        <details class="pecas__condicoes">
+          <summary>Condições de venda e garantia</summary>
+          <p>
+            Não vendemos online. Este catálogo é meramente informativo e não constitui proposta
+            contratual — a venda é feita na oficina. Os preços indicados são da peça, com IVA, e
+            não incluem montagem nem mão-de-obra, que são orçamentadas à parte. A disponibilidade
+            está sujeita a confirmação. Peças novas têm 3 anos de garantia legal de conformidade;
+            peças usadas, no mínimo 18 meses.
+          </p>
+        </details>
       </div>
     </section>
 
@@ -403,17 +366,6 @@
       </div>
     </section>
 
-    <!-- ============================================================= FAQ -->
-    <section class="seccao seccao--claro" id="faq" aria-labelledby="faq-t">
-      <div class="wrap">
-        <div class="cabeca">
-          <p class="etiqueta">Perguntas frequentes</p>
-          <div class="filete"></div>
-          <h2 class="h-sec" id="faq-t">Antes de nos ligar</h2>
-        </div>
-        <div class="faq" id="faq-lista"><!--pre:faq-lista--><details><summary>Trabalham com que marcas?</summary><p>Somos uma oficina multimarca e trabalhamos com ligeiros de qualquer marca. O Regulamento (UE) 2018/858 garante às oficinas independentes o acesso à informação técnica de reparação dos fabricantes.</p></details><details><summary>Reparar aqui faz-me perder a garantia do carro?</summary><p>Não. Fazer a manutenção numa oficina independente não anula a garantia do fabricante. A garantia só pode ser posta em causa se ficar demonstrado que uma intervenção concreta causou o defeito.</p></details><details><summary>Dizem-me o preço antes de mexer no carro?</summary><p>Sim. Apresentamos o que encontrámos e o custo previsto antes de avançar. Nenhum trabalho é feito sem a sua autorização.</p></details><details><summary>Passam fatura com o meu número de contribuinte?</summary><p>Sim, sempre. Basta indicar o NIF no momento do pagamento.</p></details><details><summary>Vendem peças ao balcão?</summary><p>Sim, ao balcão, na oficina. A secção Balcão de peças mostra o tipo de peças que costumamos ter; a disponibilidade é confirmada connosco. A venda é feita na oficina — o site é meramente informativo.</p></details><!--/pre:faq-lista--></div>
-      </div>
-    </section>
   </main>
 
   <!-- ==================================================== FOLHA DE DETALHE -->
@@ -458,7 +410,6 @@
             <li><a href="#servicos">Serviços</a></li>
             <li><a href="#pecas">Peças</a></li>
             <li><a href="#contactos">Contactos</a></li>
-            <li><a href="#faq">Perguntas frequentes</a></li>
           </ul>
         </nav>
 
@@ -519,11 +470,13 @@
        aria-labelledby="cookies-t" aria-describedby="cookies-d" hidden>
     <div class="cookies__caixa">
       <h2 class="cookies__t" id="cookies-t">Cookies neste site</h2>
+      <!-- Curto de propósito. Eram 45 palavras, e num ecrã de 375 px o aviso
+           tapava metade do site à primeira visita. Diz o mesmo: não há cookies,
+           a excepção é o mapa, e o que isso implica. O detalhe está na Política. -->
       <p class="cookies__d" id="cookies-d">
-        Este site não usa cookies para funcionar nem para o analisar. A única
-        excepção é o <strong>mapa do Google</strong> na secção de contactos: se o
-        aceitar, a Google pode instalar cookies no seu dispositivo e os seus dados
-        podem ser tratados fora da União Europeia.
+        Não usamos cookies. A excepção é o <strong>mapa do Google</strong> nos
+        contactos: se o aceitar, a Google pode instalar cookies e tratar os seus
+        dados fora da União Europeia.
         <a class="link-d" href="legal/cookies.html">Política de Cookies</a>
       </p>
       <div class="cookies__acoes">
