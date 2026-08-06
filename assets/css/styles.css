@@ -239,7 +239,11 @@ body.menu-aberto .menu { display: flex; }
 .lavagem__nome { font-family: var(--f-display); font-weight: 700; font-size: 1.1rem; color: var(--claro-tinta); line-height: 1.2; }
 .lavagem__meta { font-size: .84rem; color: var(--claro-2); margin-top: .15rem; }
 .lavagem__ref { font-family: var(--f-mono); font-size: .8rem; color: var(--claro-2); }
-.lavagem__dir { text-align: right; display: grid; gap: .35rem; justify-items: end; }
+/* No computador há largura de sobra: preço à ESQUERDA do botão, na mesma
+   linha. Empilhados, o preço ficava a flutuar sobre o botão e a linha ganhava
+   altura sem necessidade. */
+.lavagem__dir { display: flex; align-items: center; justify-content: flex-end;
+                gap: .9rem; text-align: right; }
 .lavagem__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
 .lavagem__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
 .lavagem__btn {
@@ -380,13 +384,11 @@ body.menu-aberto .menu { display: flex; }
   .rodape__topo { grid-template-columns: 1fr; }
   .lavagem { grid-template-columns: 52px 1fr; row-gap: .6rem; }
   .lavagem__fig { width: 52px; height: 52px; }
-  /* Segunda linha, a toda a largura: preço encostado à esquerda e «Marcar» à
-     direita. Estavam os dois colados à esquerda, e o botão ficava perdido a
-     meio da linha em vez de ser o fim natural da leitura — e longe do polegar,
-     que num telemóvel alcança melhor esse canto. */
-  .lavagem__dir { grid-column: 1 / -1; text-align: left;
-               display: flex; align-items: center; justify-content: space-between;
-               gap: .9rem; }
+  /* No telemóvel não há largura para os dois lado a lado sem apertar o nome do
+     serviço: o preço fica POR CIMA do botão, e os dois encostados à direita —
+     que é onde o polegar chega melhor. */
+  .lavagem__dir { grid-column: 1 / -1; text-align: right;
+               display: grid; gap: .45rem; justify-items: end; }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
 }
@@ -494,67 +496,78 @@ body.menu-aberto .menu { display: flex; }
   position: relative;
   display: flex; flex-direction: column;
   min-width: 0;
-  background: var(--carbono);
-  border: 1px solid var(--aco);
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 22, 26, .10);
   border-radius: var(--raio-g);
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 22, 26, .05);
   transition: transform var(--t), border-color var(--t), box-shadow var(--t);
 }
 
 /* Proporção fixa na capa: é isto que faz os cartões acabarem todos à mesma
    altura, independentemente de o título ter uma ou duas linhas. */
-.serv__capa { aspect-ratio: 16 / 10; background: var(--carbono-alto); overflow: hidden; }
+.serv__capa { aspect-ratio: 16 / 10; background: #E6E8EC; overflow: hidden; }
 .serv__capa img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform .5s cubic-bezier(0, 0, 0, 1);
 }
 
 /* flex:1 no corpo + margin-top:auto na acção = a acção encosta ao fundo em
-   todos os cartões, mesmo com descrições de comprimentos diferentes. */
+   todos os cartões, mesmo com conteúdos de comprimentos diferentes. */
 .serv__corpo {
   flex: 1; display: flex; flex-direction: column;
-  padding: clamp(1rem, 2.4vw, 1.35rem);
+  padding: clamp(1.05rem, 2.4vw, 1.4rem);
 }
+/* O nome do serviço é o que se lê primeiro e é a razão de o cartão existir:
+   sem a descrição a competir com ele, ganha corpo e respiração. */
 .serv__tit {
-  font-size: clamp(1.1rem, 1.5vw, 1.3rem); text-transform: uppercase;
-  line-height: 1.1; margin-bottom: .45rem;
+  font-size: clamp(1.3rem, 2vw, 1.65rem); text-transform: uppercase;
+  line-height: 1.05; letter-spacing: -.01em;
+  color: var(--claro-tinta);
 }
-/* A ligação estica-se sobre o cartão inteiro: alvo grande no telemóvel, e
-   continua a ser um único tab-stop com nome próprio. */
 .serv__link { color: inherit; text-decoration: none; }
 .serv__link::after { content: ''; position: absolute; inset: 0; }
-.serv__desc { font-size: .93rem; color: var(--prata); line-height: 1.55; }
 
 .serv__inclui {
   display: flex; flex-wrap: wrap; gap: .35rem .4rem;
-  margin-top: .75rem; list-style: none; padding: 0;
+  margin-top: .8rem; list-style: none; padding: 0;
 }
 .serv__inclui li {
-  font-size: .74rem; letter-spacing: .02em;
-  padding: .22rem .55rem; border-radius: 999px;
-  background: var(--carbono-alto); color: var(--prata);
-  border: 1px solid var(--aco);
+  font-size: .78rem; letter-spacing: .01em;
+  padding: .26rem .6rem; border-radius: 999px;
+  background: #F1F3F6; color: var(--claro-2);
+  border: 1px solid rgba(20, 22, 26, .09);
 }
 
 .serv__accao {
-  margin-top: auto; padding-top: .95rem;
+  margin-top: auto; padding-top: 1rem;
   display: inline-flex; align-items: center; gap: .4rem;
-  font-family: var(--f-mono); font-size: .74rem;
-  letter-spacing: .04em; text-transform: uppercase; color: var(--dourado);
+  font-family: var(--f-mono); font-size: .76rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--vermelho-claro);
 }
 .serv__accao svg { width: 15px; height: 15px; transition: transform var(--t); }
+
+/* O cartão da lavagem sai da secção em vez de abrir um painel, e um botão a
+   sério diz isso melhor do que uma linha de texto. */
+.serv__botao {
+  margin-top: auto; align-self: flex-start;
+  color: var(--claro-tinta); border-color: rgba(20, 22, 26, .28);
+}
+.serv:hover .serv__botao { background: var(--claro-tinta); color: #FFFFFF;
+  border-color: var(--claro-tinta); }
+.serv__corpo > .serv__inclui + .serv__botao { margin-top: 1rem; }
 
 /* O anel de foco tem de aparecer no CARTÃO, não na ligação: a ligação é um
    texto de uma linha e a área clicável é o cartão todo. */
 .serv:has(.serv__link:focus-visible) {
-  outline: 2px solid var(--dourado); outline-offset: 3px;
+  outline: 2px solid var(--vermelho-claro); outline-offset: 3px;
 }
 .serv__link:focus-visible { outline: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   @media (hover: hover) and (pointer: fine) {
-    .serv:hover { transform: translateY(-3px); border-color: #3a3f47;
-      box-shadow: 0 18px 40px -22px rgba(0, 0, 0, .9); }
+    .serv:hover { transform: translateY(-3px); border-color: rgba(20, 22, 26, .2);
+      box-shadow: 0 16px 34px -20px rgba(20, 22, 26, .45); }
     .serv:hover .serv__capa img { transform: scale(1.05); }
     .serv:hover .serv__accao svg { transform: translateX(3px); }
   }

@@ -594,15 +594,23 @@
           '<div class="serv__corpo">' +
           /* Uma só ligação por cartão, esticada por ::after sobre o cartão
              inteiro: alvo grande no telemóvel, e no teclado continua a ser um
-             único tab-stop com nome próprio. */
+             único tab-stop com nome próprio.
+             A descrição saiu: o nome do serviço mais os pontos do que inclui já
+             dizem o suficiente num cartão, e o texto todo vive no painel. */
           '<h3 class="serv__tit"><a class="serv__link" href="' + esc(vaiPara) + '">' +
           esc(s.titulo) + '</a></h3>' +
-          '<p class="serv__desc">' + esc(s.descricao || '') + '</p>' +
           (chips ? '<ul class="serv__inclui">' + chips + '</ul>' : '') +
-          '<span class="serv__accao" aria-hidden="true">' + esc(textoAccao) +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
-          'stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>' +
-          '</span>' +
+          /* Com ligação para outra secção, a acção é um botão a sério — é uma
+             saída do cartão, não um «abrir para ver mais». */
+          (s.ligacao
+            ? '<span class="btn btn--fantasma serv__botao">' + esc(textoAccao) +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+              'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+              '<path d="M5 12h13M13 6l6 6-6 6"/></svg></span>'
+            : '<span class="serv__accao" aria-hidden="true">' + esc(textoAccao) +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+              'stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>' +
+              '</span>') +
           '</div>' +
           (s.ligacao ? '' : painel) + '</article>';
       }).join('');

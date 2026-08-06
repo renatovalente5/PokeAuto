@@ -60,7 +60,7 @@
     },
     {
       "id": "lavagens",
-      "titulo": "Lavagens",
+      "titulo": "Lavagem",
       "descricao": "Por dentro e por fora, higienização do ar condicionado, estofos e cera. Com preço e tempo à frente de cada serviço.",
       "inclui": [
         "Exterior e jantes",
@@ -95,7 +95,7 @@
       ],
       "detalhe": "",
       "ligacao": "#lavagens",
-      "ligacao_texto": "Ver pacotes"
+      "ligacao_texto": "Ver mais lavagens"
     }
   ]
 }
