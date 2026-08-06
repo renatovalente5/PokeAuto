@@ -123,6 +123,11 @@ body.menu-aberto .menu { display: flex; }
 .hero .h-hero { margin-block: .6rem 1rem; }
 .hero .h-hero em { font-style: normal; color: var(--dourado); }
 .hero__lead { margin-bottom: 1.5rem; }
+/* Os dois textos da capa foram retirados a pedido, mas os elementos ficam —
+   vazios — para o cliente os poder repor a partir do backoffice sem precisar
+   de ninguém. Enquanto estiverem sem texto não ocupam espaço nenhum: `:empty`
+   só casa quando não há um único nó lá dentro, nem sequer um espaço. */
+.hero__lead:empty, .hero__nota:empty { display: none; }
 .hero__acoes { display: flex; flex-wrap: wrap; gap: .7rem; }
 
 .hero__media { position: relative; }
