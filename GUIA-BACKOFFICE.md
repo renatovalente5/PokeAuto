@@ -4,7 +4,7 @@ O site é **gerido por si, sem programação**. Todos os textos e todas as
 fotografias — incluindo a do topo da página — mudam num painel simples e
 gratuito. Aqui fica explicado como.
 
-Site: **https://renatovalente5.github.io/PokeAuto/**
+Site: **https://pokeauto.pt/**
 
 ---
 

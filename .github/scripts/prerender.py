@@ -300,6 +300,55 @@ CABECALHOS = [
 CLASSES = [('etiqueta', 'etiqueta'), ('h-sec', 'titulo'), ('lead', 'lead')]
 
 
+def aplicar_dominio(html, rel):
+    """Faz o canónico, o og:url e o og:image apontarem sempre para SITE.
+
+    Estavam escritos à mão em cada página. Quando o domínio próprio entrou, os
+    sitemaps foram regenerados mas estes ficaram para trás — e o Search Console
+    respondeu «URL não permitido» em todos os URLs, porque um sitemap servido em
+    pokeauto.pt não pode listar páginas de outro domínio. Passa a haver uma só
+    fonte de verdade: a constante SITE, aqui em cima.
+
+    `rel` é o caminho do ficheiro a partir da raiz do site ('index.html',
+    'legal/termos.html'). O index é servido como '/' — o canónico tem de dizer
+    isso, senão o Google vê duas páginas onde há uma."""
+    caminho = '' if rel == 'index.html' else rel
+    aqui = SITE + '/' + caminho
+    n = 0
+
+    def troca_origem(m):
+        """Mantém o caminho e a versão (?v=...), troca só o domínio."""
+        resto = re.sub(r'^https?://[^/]+(?:/PokeAuto)?', '', m.group(2))
+        return m.group(1) + SITE + resto + m.group(3)
+
+    html, k = re.subn(r'(<link[^>]*rel="canonical"[^>]*href=")([^"]*)(")',
+                      lambda m: m.group(1) + aqui + m.group(3), html)
+    n += k
+    html, k = re.subn(r'(<meta[^>]*property="og:url"[^>]*content=")([^"]*)(")',
+                      lambda m: m.group(1) + aqui + m.group(3), html)
+    n += k
+    for prop in ('og:image', 'twitter:image'):
+        html, k = re.subn(r'(<meta[^>]*property="%s"[^>]*content=")([^"]*)(")' % prop,
+                          troca_origem, html)
+        n += k
+    return html, n
+
+
+def escrever_robots(raiz):
+    """O robots.txt anuncia os sitemaps, e tem de os anunciar no domínio certo."""
+    destino = os.path.join(raiz, 'robots.txt')
+    novo = ('User-agent: *\nAllow: /\n\n'
+            'Sitemap: %s/sitemap.xml\n'
+            'Sitemap: %s/sitemap-imagens.xml\n' % (SITE, SITE))
+    try:
+        if open(destino, encoding='utf-8').read() == novo:
+            return False
+    except IOError:
+        pass
+    open(destino, 'w', encoding='utf-8').write(novo)
+    return True
+
+
 def aplicar_seo(html, raiz):
     """<title> e meta description a partir do data/site.json.
 
@@ -371,8 +420,13 @@ def aplicar_cabecalhos(html, raiz):
 
 
 # ---------------------------------------------------------------- dados estruturados
-# Enquanto não houver domínio próprio, o site vive no subcaminho do GitHub Pages.
-SITE = 'https://renatovalente5.github.io/PokeAuto'
+# O domínio próprio está no ar desde 6/8/2026, com HTTPS forçado; o endereço
+# antigo do GitHub Pages redirecciona para cá com 301.
+#
+# Isto tem de bater certo com o que o Search Console lê: um sitemap servido em
+# pokeauto.pt com URLs de outro domínio dá «URL não permitido» e nenhuma página
+# é indexada. Sem barra no fim — é sempre concatenado com caminhos que já a têm.
+SITE = 'https://pokeauto.pt'
 
 # Constantes que não vivem no backoffice (são técnicas, o cliente não lhes mexe).
 # geo: geocodificação da Rua da Liberdade em São João da Madeira (OpenStreetMap).
@@ -773,6 +827,8 @@ def main():
 
     # título e descrição da página — o que aparece no Google
     novo, n_seo = aplicar_seo(novo, RAIZ)
+    novo, n_dom = aplicar_dominio(novo, 'index.html')
+    resumo.append('canónico e og: %s' % ('%d referências ao domínio' % n_dom if n_dom else 'nada a fazer'))
     resumo.append('título/descrição: %s' % ('%d actualizados' % n_seo if n_seo else 'já em dia'))
 
     # etiquetas/títulos/subtítulos das secções
@@ -815,6 +871,7 @@ def main():
         antes_txt = open(f, encoding='utf-8').read()
         depois, _ = aplicar_legal(antes_txt, site_dados)
         depois, _ = aplicar_site(depois, site_dados)
+        depois, _ = aplicar_dominio(depois, 'legal/' + os.path.basename(f))
         if depois != antes_txt:
             open(f, 'w', encoding='utf-8').write(depois)
             n_legais += 1
@@ -826,6 +883,7 @@ def main():
         return travar(e)
     print('  sitemaps: %s (%d fotos no de imagens)'
           % (', '.join(sitemaps) if sitemaps else 'já em dia', n_fotos))
+    print('  robots.txt: %s' % ('actualizado' if escrever_robots(RAIZ) else 'já em dia'))
 
     # quanto texto passou a ser visível sem JavaScript
     sem_js = re.sub(r'<script.*?</script>|<style.*?</style>', '', novo, flags=re.S)

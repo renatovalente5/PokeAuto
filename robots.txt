@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://renatovalente5.github.io/PokeAuto/sitemap.xml
-Sitemap: https://renatovalente5.github.io/PokeAuto/sitemap-imagens.xml
+Sitemap: https://pokeauto.pt/sitemap.xml
+Sitemap: https://pokeauto.pt/sitemap-imagens.xml
