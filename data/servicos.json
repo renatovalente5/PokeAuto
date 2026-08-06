@@ -59,20 +59,21 @@
       "detalhe": ""
     },
     {
-      "id": "lavagem",
-      "titulo": "Lavagem completa",
-      "descricao": "Espuma activa e lavagem manual, na box da oficina.",
+      "id": "lavagens",
+      "titulo": "Lavagens",
+      "descricao": "Por dentro e por fora, higienização do ar condicionado, estofos e cera. Com preço e tempo à frente de cada serviço.",
       "inclui": [
         "Exterior e jantes",
         "Aspiração e estofos",
-        "Vidros e bagageira"
+        "Ar condicionado"
       ],
       "tempo": "",
       "foto": "mercedes-cla-frente",
       "legenda_foto": "Mercedes CLA depois da lavagem",
       "alias": [
         "lavagem-exterior",
-        "lavagem-interior"
+        "lavagem-interior",
+        "personalizacao"
       ],
       "fotos": [
         {
@@ -82,26 +83,7 @@
         {
           "nome": "lavagem-espuma-oficina",
           "legenda": "Espuma activa na box da oficina"
-        }
-      ],
-      "detalhe": ""
-    },
-    {
-      "id": "ar-condicionado",
-      "titulo": "Interior e ar condicionado",
-      "descricao": "Higienização do evaporador e do habitáculo.",
-      "inclui": [
-        "Higienização do evaporador",
-        "Desodorização",
-        "Filtro de habitáculo"
-      ],
-      "tempo": "",
-      "foto": "interior-bmw-limpo",
-      "legenda_foto": "Habitáculo tratado, tablier e estofos",
-      "alias": [
-        "personalizacao"
-      ],
-      "fotos": [
+        },
         {
           "nome": "interior-bmw-limpo",
           "legenda": "Habitáculo tratado — tablier, consola e estofos"
@@ -111,7 +93,9 @@
           "legenda": "Posto de condução depois da higienização"
         }
       ],
-      "detalhe": ""
+      "detalhe": "",
+      "ligacao": "#lavagens",
+      "ligacao_texto": "Ver pacotes"
     }
   ]
 }

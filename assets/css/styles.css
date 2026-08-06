@@ -380,8 +380,13 @@ body.menu-aberto .menu { display: flex; }
   .rodape__topo { grid-template-columns: 1fr; }
   .lavagem { grid-template-columns: 52px 1fr; row-gap: .6rem; }
   .lavagem__fig { width: 52px; height: 52px; }
-  .lavagem__dir { grid-column: 1 / -1; justify-items: start; text-align: left;
-               display: flex; align-items: center; gap: .9rem; }
+  /* Segunda linha, a toda a largura: preço encostado à esquerda e «Marcar» à
+     direita. Estavam os dois colados à esquerda, e o botão ficava perdido a
+     meio da linha em vez de ser o fim natural da leitura — e longe do polegar,
+     que num telemóvel alcança melhor esse canto. */
+  .lavagem__dir { grid-column: 1 / -1; text-align: left;
+               display: flex; align-items: center; justify-content: space-between;
+               gap: .9rem; }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
 }
@@ -469,96 +474,106 @@ body.menu-aberto .menu { display: flex; }
   display: flex; align-items: center; gap: .5rem; }
 .hero__nota::before { content: ''; width: 20px; height: 2px; background: var(--dourado); flex: none; }
 
-/* -------------------------------------------------------- CARTÕES 3D */
-.fichas { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(.9rem, 2vw, 1.4rem); }
-.ficha { min-width: 0; }
+/* ------------------------------------------------ CARTÕES DOS SERVIÇOS */
+/* Substituem os cartões 3D com o título por cima da fotografia. Três razões
+   para a mudança: as quatro fotografias eram praticamente a mesma rua, o texto
+   sobre imagem só se lia por causa de um gradiente, e num telemóvel de 375px
+   as duas colunas fixas davam cartões de 166px. */
 
-.placa {
-  perspective: 900px;              /* tem de estar no PAI do que roda */
-  perspective-origin: 50% 45%;
+/* auto-fit + minmax: passa sozinha de três colunas para duas e para uma,
+   conforme o espaço, sem media queries a decidir números redondos. O
+   `min(100%, …)` evita que a coluna mínima seja maior do que o ecrã — sem ele,
+   abaixo dos 17rem havia transbordo horizontal. */
+.servs {
   display: grid;
-  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  aspect-ratio: 4 / 5;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: clamp(1rem, 2.2vw, 1.6rem);
 }
-/* As 9 zonas de rato precisam de linha E coluna EXPLÍCITAS. Sem isso a grelha
-   empurra-as para linhas implícitas de altura zero, ficam fora do cartão e o
-   hover nunca dispara — em silêncio, sem erro nenhum. */
-.placa > i { z-index: 3; }
-.placa > i:nth-child(3n+1) { grid-column: 1; }
-.placa > i:nth-child(3n+2) { grid-column: 2; }
-.placa > i:nth-child(3n)   { grid-column: 3; }
-.placa > i:nth-child(-n+3) { grid-row: 1; }
-.placa > i:nth-child(n+4):nth-child(-n+6) { grid-row: 2; }
-.placa > i:nth-child(n+7)  { grid-row: 3; }
 
-.camadas {
-  grid-area: 1 / 1 / 4 / 4; position: relative;
-  border-radius: var(--raio); transform-style: preserve-3d;
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--s, 1));
-  transition: transform .5s cubic-bezier(0,0,0,1), box-shadow .5s cubic-bezier(0,0,0,1),
-              --bx .45s ease-out, --by .45s ease-out;
-  box-shadow: 0 2px 6px rgba(0,0,0,.5), 0 24px 48px -12px rgba(0,0,0,.75),
-              0 0 0 1px var(--aco);
+.serv {
+  position: relative;
+  display: flex; flex-direction: column;
+  min-width: 0;
+  background: var(--carbono);
+  border: 1px solid var(--aco);
+  border-radius: var(--raio-g);
+  overflow: hidden;
+  transition: transform var(--t), border-color var(--t), box-shadow var(--t);
 }
-.camadas > img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--raio); }
-.camadas::after { content: ''; position: absolute; inset: 0; border-radius: var(--raio);
-  pointer-events: none;
-  background: linear-gradient(to top, rgba(11,11,13,.97) 6%, rgba(11,11,13,.82) 34%,
-              rgba(11,11,13,.28) 62%, transparent 82%); }
 
-/* reflexo. SEM mix-blend-mode: cria um grupo de composição e o Safari achata o
-   preserve-3d do pai — o 3D desaparecia exactamente no iPhone. */
-.brilho { position: absolute; inset: 0; border-radius: var(--raio); pointer-events: none;
-  opacity: 0; transform: translateZ(30px);
-  background: radial-gradient(38% 34% at var(--bx) var(--by), rgba(255,255,255,.3), transparent 70%);
-  transition: opacity .45s ease-out; }
+/* Proporção fixa na capa: é isto que faz os cartões acabarem todos à mesma
+   altura, independentemente de o título ter uma ou duas linhas. */
+.serv__capa { aspect-ratio: 16 / 10; background: var(--carbono-alto); overflow: hidden; }
+.serv__capa img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .5s cubic-bezier(0, 0, 0, 1);
+}
 
-/* moldura com gradiente das cores da marca, sem SVG e sem imagem */
-.moldura { position: absolute; inset: -1px; border-radius: calc(var(--raio) + 1px);
-  padding: 1px; pointer-events: none; transform: translateZ(12px);
-  background: conic-gradient(from var(--ang), transparent 0 42%, var(--dourado) 52%,
-              var(--amarelo) 57%, var(--vermelho) 66%, transparent 76%);
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; }
+/* flex:1 no corpo + margin-top:auto na acção = a acção encosta ao fundo em
+   todos os cartões, mesmo com descrições de comprimentos diferentes. */
+.serv__corpo {
+  flex: 1; display: flex; flex-direction: column;
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+}
+.serv__tit {
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem); text-transform: uppercase;
+  line-height: 1.1; margin-bottom: .45rem;
+}
+/* A ligação estica-se sobre o cartão inteiro: alvo grande no telemóvel, e
+   continua a ser um único tab-stop com nome próprio. */
+.serv__link { color: inherit; text-decoration: none; }
+.serv__link::after { content: ''; position: absolute; inset: 0; }
+.serv__desc { font-size: .93rem; color: var(--prata); line-height: 1.55; }
 
-.selo { position: absolute; top: 12px; left: 14px; transform: translateZ(70px);
-  font-family: var(--f-mono); font-weight: 500; font-size: .82rem;
-  background: var(--amarelo); color: #0B0B0D; padding: .16rem .5rem; border-radius: 3px; }
-.ficha__corpo { position: absolute; inset: auto 0 0; padding: 0 16px 16px;
-  transform: translateZ(48px); }
-.ficha__corpo .risca { display: block; width: 26px; height: 3px; background: var(--vermelho);
-  border-radius: 2px; margin-bottom: .5rem; }
-.ficha__corpo h3 { font-size: clamp(1.15rem, 1.7vw, 1.45rem); text-transform: uppercase;
-  line-height: 1.06; margin-bottom: .3rem; }
+.serv__inclui {
+  display: flex; flex-wrap: wrap; gap: .35rem .4rem;
+  margin-top: .75rem; list-style: none; padding: 0;
+}
+.serv__inclui li {
+  font-size: .74rem; letter-spacing: .02em;
+  padding: .22rem .55rem; border-radius: 999px;
+  background: var(--carbono-alto); color: var(--prata);
+  border: 1px solid var(--aco);
+}
+
+.serv__accao {
+  margin-top: auto; padding-top: .95rem;
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--f-mono); font-size: .74rem;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--dourado);
+}
+.serv__accao svg { width: 15px; height: 15px; transition: transform var(--t); }
+
+/* O anel de foco tem de aparecer no CARTÃO, não na ligação: a ligação é um
+   texto de uma linha e a área clicável é o cartão todo. */
+.serv:has(.serv__link:focus-visible) {
+  outline: 2px solid var(--dourado); outline-offset: 3px;
+}
+.serv__link:focus-visible { outline: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) and (pointer: fine) {
+    .serv:hover { transform: translateY(-3px); border-color: #3a3f47;
+      box-shadow: 0 18px 40px -22px rgba(0, 0, 0, .9); }
+    .serv:hover .serv__capa img { transform: scale(1.05); }
+    .serv:hover .serv__accao svg { transform: translateX(3px); }
+  }
+}
 
 /* ------------------------------------------------------------- MOVIMENTO */
 @media (prefers-reduced-motion: no-preference) {
   @media (hover: hover) and (pointer: fine) {
-    .placa > i:hover ~ .camadas { --s: 1.02;
-      box-shadow: 0 2px 6px rgba(0,0,0,.5), 0 40px 70px -16px rgba(0,0,0,.85), 0 0 0 1px #3a3f47; }
-    .placa > i:hover ~ .camadas .brilho { opacity: 1; }
-    .placa > i:nth-child(-n+3):hover ~ .camadas { --rx: 7deg; --by: 0%; }
-    .placa > i:nth-child(n+4):nth-child(-n+6):hover ~ .camadas { --rx: 0deg; --by: 45%; }
-    .placa > i:nth-child(n+7):hover ~ .camadas { --rx: -7deg; --by: 92%; }
-    .placa > i:nth-child(3n+1):hover ~ .camadas { --ry: -9deg; --bx: 18%; }
-    .placa > i:nth-child(3n+2):hover ~ .camadas { --ry: 0deg; --bx: 50%; }
-    .placa > i:nth-child(3n):hover ~ .camadas { --ry: 9deg; --bx: 82%; }
   }
   /* @supports OBRIGATÓRIO — ver a nota 2 no topo deste bloco */
   @supports (animation-timeline: view()) {
-    .ficha { animation: surgir linear both; animation-timeline: view();
+    .serv { animation: surgir linear both; animation-timeline: view();
       animation-range: entry 6% cover 26%; }
-    .ficha .moldura { animation: rodar linear both; animation-timeline: view();
-      animation-range: entry 0% exit 100%; }
     .hero__fundo img { animation: aproximar linear both; animation-timeline: view();
       animation-range: cover 0% cover 100%; }
   }
 }
-@keyframes surgir { from { opacity: 0; transform: translateY(26px) rotateX(9deg); }
+@keyframes surgir { from { opacity: 0; transform: translateY(20px); }
                     to   { opacity: 1; transform: none; } }
-@keyframes rodar  { from { --ang: 0deg; } to { --ang: 360deg; } }
 @keyframes aproximar { from { transform: scale(1.06); } to { transform: scale(1.16); } }
 
 /* Os chips do «inclui» passaram para o painel de detalhe. Repeti-los no
@@ -753,35 +768,16 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
    devolvem-no a quem precisa dele. */
 .ficha__det { display: none; }
 .sem-folha .ficha__det { display: block; margin-top: .7rem; }
-.sem-folha .ficha__mais { display: none; }
-.sem-folha .ficha { cursor: auto; }
+.sem-folha .serv { cursor: auto; }
 .ficha__det > summary { cursor: pointer; padding: .5rem .2rem; font-weight: 600;
   color: var(--dourado); }
 .sem-folha .ficha__det-corpo { padding: .6rem .2rem 0; }
 
-/* --- o cartão passa a ser um alvo --------------------------------------- */
-.ficha { cursor: pointer; }
-/* As 9 zonas de rato ficam por cima do cartão (z-index 3) e engoliriam o toque.
-   No computador são precisas para a inclinação e o clique borbulha na mesma;
-   no telemóvel não fazem nada e só estorvam. */
-@media (hover: none) { .placa > i { pointer-events: none; } }
-/* Sem sobreposição esticada de propósito: o clique é apanhado por delegação no
-   .ficha, e um pseudo-elemento a cobrir o cartão ficaria por cima das zonas de
-   rato e partia a inclinação 3D no terço de baixo. */
-.ficha__abrir { color: inherit; text-decoration: none; }
-.ficha__mais { display: inline-flex; align-items: center; gap: .34rem;
-  margin-top: .6rem; font-family: var(--f-mono); font-size: .72rem;
-  letter-spacing: .04em; text-transform: uppercase; color: var(--dourado); }
-.ficha__mais::after { content: '›'; font-size: 1.25em; line-height: 1; }
-@media (prefers-reduced-motion: no-preference) {
-  @media (hover: hover) and (pointer: fine) {
-    .ficha__mais { transition: gap .3s cubic-bezier(0,0,0,1); }
-    .placa:hover .ficha__mais { gap: .62rem; }
-  }
-}
-.ficha__abrir:focus-visible { outline: none; }
-.ficha:has(.ficha__abrir:focus-visible) .camadas { outline: 2px solid var(--dourado);
-  outline-offset: 3px; }
+/* Sem <dialog>, os <details> voltam a abrir no lugar e o cartão deixa de ser
+   um alvo — daí o cursor normal acima. Com <dialog>, quem apanha o clique é a
+   delegação no contentor, e a área é o cartão inteiro pela sobreposição
+   esticada do .serv__link. */
+.serv { cursor: pointer; }
 
 /* --- a folha ------------------------------------------------------------ */
 .folha { padding: 0; border: 0; background: transparent; color: var(--branco);

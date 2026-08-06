@@ -261,6 +261,19 @@ content:
                 type: image
                 options: { media: fotos }
               - { name: legenda, label: Legenda, type: string }
+          - name: ligacao
+            label: "Em vez do painel, levar a outra secção (opcional)"
+            type: string
+            description: >-
+              Se preencher com uma âncora — por exemplo #lavagens — o cartão
+              deixa de abrir o painel de detalhe e passa a levar a essa secção
+              da página. É assim que o cartão das Lavagens leva à tabela de
+              preços, em vez de repetir aqui o que lá está.
+          - name: ligacao_texto
+            label: "Texto da acção dessa ligação"
+            type: string
+            description: >-
+              Só conta se preencher o campo acima. Por omissão diz «Ver mais».
 
   # ------------------------------------------------------ BALCÃO DE PEÇAS
   - name: lavagens

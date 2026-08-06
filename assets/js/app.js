@@ -504,7 +504,7 @@
       aplicarHead(el('servicos'), d.head);
       var itens = (d && d.itens) || [];
 
-      svcGrid.innerHTML = itens.map(function (s, i) {
+      svcGrid.innerHTML = itens.map(function (s) {
         var capa = resolverFoto(s.foto, 'trabalhos');
         var src = capa ? capa.src : '';
         var ss = capa ? capa.srcset : '';
@@ -512,8 +512,6 @@
            um link que já ande por aí deixa de ir a lado nenhum */
         var alias = (s.alias || []).map(function (a) {
           return '<span id="servico-' + esc(a) + '"></span>'; }).join('');
-        /* as 9 zonas de rato; em telemóvel nunca correm (hover:hover) */
-        var zonas = new Array(9).join('<i></i>') + '<i></i>';
         /* Galeria do detalhe. Só fotografias que existem mesmo: as faixas
            nasceram 3:1 e são apresentadas como banda larga, não como retrato. */
         var galeria = (s.fotos && s.fotos.length ? s.fotos : (s.foto ? [{ nome: s.foto, legenda: s.legenda_foto }] : []))
@@ -576,20 +574,37 @@
           '<p class="folha__desc">' + esc(s.descricao) + '</p>' + texto + tempo + listaDet +
           carrossel + '</div></details>';
 
-        return '<article class="ficha" id="servico-' + esc(s.id) + '">' + alias +
-          '<div class="placa">' + zonas +
-          '<div class="camadas">' +
+        /* Um serviço com `ligacao` não abre painel nenhum: leva a outra secção
+           da página. É o caso das Lavagens, que têm tabela de preços própria —
+           repetir aqui o que lá está seria ler duas vezes o mesmo. */
+        var vaiPara = s.ligacao ? String(s.ligacao) : '#detalhe-' + s.id;
+        var textoAccao = s.ligacao ? (s.ligacao_texto || 'Ver mais') : 'Ver detalhe';
+
+        var chips = (s.inclui || []).slice(0, 3).map(function (x) {
+          return '<li>' + esc(x) + '</li>'; }).join('');
+
+        return '<article class="serv" id="servico-' + esc(s.id) + '" data-reveal>' + alias +
+          /* A capa é decorativa: o texto ao lado já diz tudo, e um alt repetido
+             faz o leitor de ecrã anunciar o serviço duas vezes seguidas. */
+          '<div class="serv__capa" aria-hidden="true">' +
           (capa ? '<img src="' + esc(src) + '"' +
-            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:1000px) 46vw, 260px"' : '') +
-            ' alt="' + esc(s.legenda_foto || s.titulo) + '" loading="lazy"' + attrsDim(src) + ' />' : '') +
-          '<span class="moldura"></span><span class="brilho"></span>' +
-          '<span class="selo">' + ('0' + (i + 1)).slice(-2) + '</span>' +
-          /* Face do cartão: só o título e o convite. A descrição e o que
-             inclui vivem no painel — repetir aqui era ler duas vezes o mesmo. */
-          '<div class="ficha__corpo"><span class="risca"></span>' +
-          '<h3><a class="ficha__abrir" href="#detalhe-' + esc(s.id) + '">' + esc(s.titulo) + '</a></h3>' +
-          '<span class="ficha__mais" aria-hidden="true">Ver detalhe</span>' +
-          '</div></div></div>' + painel + '</article>';
+            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:700px) 92vw, (max-width:1100px) 46vw, 22rem"' : '') +
+            ' alt="" loading="lazy" decoding="async"' + attrsDim(src) + ' />' : '') +
+          '</div>' +
+          '<div class="serv__corpo">' +
+          /* Uma só ligação por cartão, esticada por ::after sobre o cartão
+             inteiro: alvo grande no telemóvel, e no teclado continua a ser um
+             único tab-stop com nome próprio. */
+          '<h3 class="serv__tit"><a class="serv__link" href="' + esc(vaiPara) + '">' +
+          esc(s.titulo) + '</a></h3>' +
+          '<p class="serv__desc">' + esc(s.descricao || '') + '</p>' +
+          (chips ? '<ul class="serv__inclui">' + chips + '</ul>' : '') +
+          '<span class="serv__accao" aria-hidden="true">' + esc(textoAccao) +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+          'stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>' +
+          '</span>' +
+          '</div>' +
+          (s.ligacao ? '' : painel) + '</article>';
       }).join('');
 
 
@@ -827,15 +842,17 @@
        abrem no lugar — o serviço nunca fica inacessível. */
     if (!podeFolha()) { doc.documentElement.classList.add('sem-folha'); return; }
     doc.documentElement.classList.add('tem-folha');
-    /* Delegado: no computador as 9 zonas de rato ficam por cima do cartão, e o
-       clique nelas borbulha na mesma até aqui. */
+    /* Delegado no contentor: apanha o clique em qualquer ponto do cartão,
+       incluindo a sobreposição esticada da ligação. */
     grelha.addEventListener('click', function (e) {
-      var ficha = e.target.closest ? e.target.closest('.ficha') : null;
-      if (!ficha) return;
-      var det = ficha.querySelector('.ficha__det');
+      var cartao = e.target.closest ? e.target.closest('.serv') : null;
+      if (!cartao) return;
+      var det = cartao.querySelector('.ficha__det');
+      /* Um cartão com ligação para outra secção não tem painel: deixa-se o
+         clique seguir o seu caminho normal até à âncora. */
       if (!det) return;
       e.preventDefault();
-      abrirFolha(det, ficha.querySelector('.ficha__abrir'));
+      abrirFolha(det, cartao.querySelector('.serv__link'));
     });
     /* Teclado: o <a> do título dispara o clique acima, mas o <summary> do
        fallback também tem de levar à folha em vez de abrir no lugar. */
