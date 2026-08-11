@@ -951,36 +951,10 @@
       var itens = ((d && d.itens) || []).filter(function (p) { return p && p.nome; });
       var seccao = el('lavagens');
 
-      /* ------------------------------------------------------------- IVA
-         O cliente trabalha com os preços SEM IVA — é assim que a tabela dele
-         está escrita e é assim que ele os sabe de cor. Mas o que tem de
-         aparecer a um particular é o preço final, com todos os impostos
-         (DL 138/90, art. 1.º): é esse que ele fica obrigado a praticar.
-
-         Por isso o backoffice leva o valor base e é o site que faz a conta.
-         Assim não há duas verdades a divergir — o cliente escreve 10 € e o
-         site mostra 12,30 €, com o «10 € + IVA» por baixo a explicar de onde
-         vem. Se um dia a taxa mudar, muda-se num sítio só. */
-      var TAXA_IVA = Number((d && d.head && d.head.iva) || 23);
-      if (!isFinite(TAXA_IVA) || TAXA_IVA < 0) TAXA_IVA = 23;
-
-      function paraNumero(txt) {
-        var n = parseFloat(String(txt || '').replace(/[^\d,.-]/g, '').replace(',', '.'));
-        return isFinite(n) ? n : null;
-      }
-      function emEuros(n) {
-        /* Duas casas, e sem as casas quando são zero: «12,30 €» mas «10 €». */
-        var t = n.toFixed(2).replace('.', ',');
-        if (t.slice(-3) === ',00') t = t.slice(0, -3);
-        return t + ' €';
-      }
-      function comIVA(txt) {
-        var n = paraNumero(txt);
-        if (n === null) return '';
-        /* Arredondar ao cêntimo ANTES de mostrar: 5 € × 1,23 dá 6,1499999 em
-           vírgula flutuante, e sem isto saía «6,14 €» em vez de «6,15 €». */
-        return emEuros(Math.round(n * (1 + TAXA_IVA / 100) * 100) / 100);
-      }
+      /* O site NÃO faz contas com o IVA, a pedido do cliente: mostra o valor
+         que está no backoffice, tal e qual, com «+ IVA» ao lado. Já cá esteve
+         a conta feita em JavaScript e foi retirada — o que se escreve na
+         tabela é o que aparece. */
 
       aplicarHead(seccao, d.head);
 
@@ -1067,13 +1041,13 @@
         if (p.duracao) nota.push(esc(p.duracao));
         if (p.unidade) nota.push(esc(p.unidade));
         nota = nota.length ? '<small class="lavagem__nota">' + nota.join(' · ') + '</small>' : '';
-        /* O número grande é o FINAL, que é o que a pessoa vai pagar e o que a
-           lei manda mostrar. Por baixo, em pequeno, o base com «+ IVA»: é
-           donde vem a conta, e é o número que o cliente reconhece da tabela
-           dele. Só depois o rótulo do tipo de carro. */
+        /* O valor mostrado é o BASE, com «+ IVA» ao lado, a pedido do cliente —
+           é assim que ele trabalha e é a tabela que ele conhece. O «+ IVA» vai
+           em letra pequena colado ao número, e não numa linha própria, para a
+           célula continuar com duas linhas: número e tipo de carro. */
         function tarifa(valor, rotulo) {
-          return '<span class="lavagem__tarifa"><b>' + esc(comIVA(valor)) + '</b>' +
-            '<small class="lavagem__base">' + esc(valor) + ' + IVA</small>' +
+          return '<span class="lavagem__tarifa"><b>' + esc(valor) +
+            '<span class="lavagem__iva"> + IVA</span></b>' +
             '<small>' + rotulo + '</small></span>';
         }
         var preco;
@@ -1089,9 +1063,8 @@
           /* Um preço só vale para qualquer carro, e por isso fica CENTRADO sobre
              as duas colunas em vez de encostado a uma delas. */
           preco = '<span class="lavagem__preco">' +
-            '<b class="lavagem__unico">' + esc(comIVA(p.preco)) + '</b>' +
-            '<small class="lavagem__base lavagem__base--unico">' +
-            esc(p.preco) + ' + IVA</small>' + nota + '</span>';
+            '<b class="lavagem__unico">' + esc(p.preco) +
+            '<span class="lavagem__iva"> + IVA</span></b>' + nota + '</span>';
         } else {
           preco = '<span class="lavagem__preco">' +
             '<b class="lavagem__unico lavagem__consulta">Sob consulta</b>' + nota + '</span>';
@@ -1101,9 +1074,9 @@
            manda nenhuma — a oficina pergunta o carro, e mandar só a do ligeiro
            era prometer o preço mais baixo a quem tem uma carrinha. */
         var msg = encodeURIComponent('Olá! Queria marcar: ' + p.nome +
-                  /* O preço que vai na mensagem é o FINAL — é o que a pessoa
-                     leu no site e é o que ela espera pagar. */
-                  (p.preco && !p.preco_grande ? ' (' + comIVA(p.preco) +
+                  /* A mensagem leva o preço tal como está no site, com o «+ IVA»
+                     — senão quem recebe fica a achar que já é o total. */
+                  (p.preco && !p.preco_grande ? ' (' + p.preco + ' + IVA' +
                     (p.unidade ? ' ' + p.unidade : '') + ')' : ''));
         /* o número vem do backoffice, não escrito à mão — senão mudá-lo em
            Contactos deixava estes botões todos no número antigo */
