@@ -217,7 +217,11 @@ body.menu-aberto .menu { display: flex; }
 .filtro:hover { border-color: var(--claro-tinta); }
 .filtro.is-on { background: var(--claro-tinta); color: #FFFFFF; border-color: var(--claro-tinta); }
 
-.lavagens__lista { border: 1px solid #E1E5EA; border-radius: var(--raio-g); overflow: hidden; background: #FFFFFF; }
+/* A tabela não precisa da largura toda do ecrã. Sem limite, num monitor de
+   1541px o nome do serviço acabava a 640px de distância do seu preço — a linha
+   deixava de se ler como uma linha e o olho tinha de atravessar o vazio. */
+.lavagens__lista { max-width: 60rem;
+  border: 1px solid #E1E5EA; border-radius: var(--raio-g); overflow: hidden; background: #FFFFFF; }
 /* A lista é agora <ul>/<li> por semântica; o marcador e o recuo saem. */
 .lavagens__ul { list-style: none; margin: 0; padding: 0; }
 /* A navbar é fixa: sem isto, ao tabular pela lista o elemento focado podia
@@ -249,19 +253,43 @@ body.menu-aberto .menu { display: flex; }
    altura sem necessidade. */
 .lavagem__dir { display: flex; align-items: center; justify-content: flex-end;
                 gap: .9rem; text-align: right; }
-.lavagem__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
-.lavagem__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
-/* Duas tarifas — ligeiro e SUV/carrinha — lado a lado, cada uma com a etiqueta
-   por baixo do número. Sem cabeçalho de coluna de propósito: um cabeçalho no
-   topo da lista sai do ecrã ao rolar e deixa de dizer qual preço é qual. */
-.lavagem__preco--duplo { display: flex; flex-wrap: wrap; justify-content: flex-end;
-  gap: .15rem 1.1rem; }
-.lavagem__tarifa { display: grid; justify-items: end; line-height: 1.15; }
-.lavagem__tarifa small { font-size: .66rem; }
-/* A nota do IVA ocupa a linha toda por baixo das duas tarifas. */
-.lavagem__nota { flex: 1 0 100%; }
+/* Os preços são DUAS COLUNAS de largura fixa, iguais em todas as linhas: é
+   isso, e só isso, que os faz alinhar de cima a baixo da lista. Com as colunas
+   a encolherem ao texto de cada linha, «10 €» e «20 €» ficavam em sítios
+   diferentes e um preço único aterrava debaixo da coluna dos SUV. */
+.lavagem__preco {
+  display: grid; grid-template-columns: 4.4rem 6.6rem; column-gap: .3rem;
+  align-items: baseline;
+  font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem;
+  color: var(--claro-tinta); white-space: nowrap;
+}
+.lavagem__tarifa { text-align: right; }
+/* Um preço só vale para qualquer carro: fica a cavalo das duas colunas, como
+   uma célula unida numa tabela, em vez de encostado a uma delas. */
+.lavagem__unico { grid-column: 1 / -1; text-align: center; }
+.lavagem__consulta { font-family: var(--f-corpo); font-weight: 400;
+  font-size: .95rem; color: var(--claro-2); }
+.lavagem__nota { grid-column: 1 / -1; text-align: center;
+  font-family: var(--f-corpo); font-weight: 400; font-size: .72rem;
+  color: var(--claro-2); }
+
+/* Cabeçalho das colunas, uma vez só à cabeça da lista. Recua a largura do botão
+   mais a goteira para as etiquetas caírem mesmo por cima dos números. */
+.lavagens__cab { display: flex; justify-content: flex-end;
+  padding: .7rem 1.1rem .5rem; background: #F7F9FB;
+  border-bottom: 1px solid #EDF0F3; }
+.lavagens__cab[hidden] { display: none; }
+.lavagens__cab-dir { display: grid; grid-template-columns: 4.4rem 6.6rem;
+  column-gap: .3rem; margin-right: calc(5.6rem + .9rem); }
+/* Estes dois rótulos são a chave de leitura da tabela toda — a 11px e em cinza
+   claro eram os primeiros a desaparecer de um ecrã ao sol. */
+.lavagens__cab .lavagem__tarifa { font-family: var(--f-corpo); font-size: .78rem;
+  font-weight: 700; letter-spacing: .02em; color: var(--claro-tinta); }
+/* Largura fixa: é a partir dela que o cabeçalho sabe quanto recuar para as
+   etiquetas ficarem por cima dos números. */
 .lavagem__btn {
-  min-height: 44px; display: inline-flex; align-items: center;
+  min-height: 44px; min-width: 5.6rem; display: inline-flex;
+  align-items: center; justify-content: center;
   padding: .42rem .9rem; font-size: .84rem; font-weight: 600;
   background: var(--claro-tinta); color: #FFFFFF; text-decoration: none;
   border-radius: var(--raio); white-space: nowrap;
@@ -398,11 +426,14 @@ body.menu-aberto .menu { display: flex; }
   .rodape__topo { grid-template-columns: 1fr; }
   .lavagem { grid-template-columns: 52px 1fr; row-gap: .6rem; }
   .lavagem__fig { width: 52px; height: 52px; }
-  /* No telemóvel não há largura para os dois lado a lado sem apertar o nome do
-     serviço: o preço fica POR CIMA do botão, e os dois encostados à direita —
-     que é onde o polegar chega melhor. */
-  .lavagem__dir { grid-column: 1 / -1; text-align: right;
-               display: grid; gap: .45rem; justify-items: end; }
+  /* No telemóvel o nome fica sozinho na primeira linha e o preço com o botão na
+     segunda, os dois encostados à direita — que é onde o polegar chega melhor.
+     O preço à ESQUERDA do botão, na mesma linha, e não por cima dele: com duas
+     tarifas, empilhados davam quatro alturas de texto por serviço. */
+  .lavagem__dir { grid-column: 1 / -1; }
+  /* As colunas apertam um pouco para os dois caberem lado a lado a 360px. */
+  .lavagem__preco, .lavagens__cab-dir { grid-template-columns: 3.6rem 5.6rem; }
+  .lavagens__cab-dir { margin-right: calc(5.6rem + .9rem); }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
 }

@@ -1020,28 +1020,35 @@
            — quem marca uma lavagem quer saber quanto tempo fica sem o carro. */
         var meta = [];
         if (p.inclui) meta.push(esc(p.inclui));
-        /* Duas tarifas quando o preço depende do tamanho do carro. Cada uma leva
-           a sua etiqueta POR BAIXO do número: uma tabela com duas colunas e um
-           cabeçalho lá em cima obriga a pessoa a subir para saber qual é qual,
-           e no telemóvel o cabeçalho já saiu do ecrã.
+        /* As tarifas vivem em DUAS COLUNAS de largura fixa, iguais em todas as
+           linhas: é isso que as faz alinhar em coluna de cima a baixo da lista.
+           Antes cada número ocupava o espaço do seu próprio texto, e um preço
+           único acabava debaixo da coluna dos SUV — os 10 € da cera líquida
+           liam-se como sendo o preço da carrinha.
 
-           A nota do IVA fica uma vez só, no fim, em vez de repetida em cada
-           tarifa — repetida, é o que mais se lê numa linha de preços. */
-        var rotulo = p.unidade ? esc(p.unidade) + ' · IVA incluído' : 'IVA incluído';
-        if (p.duracao) rotulo = esc(p.duracao) + ' · ' + rotulo;
+           Quem manda no rótulo é o cabeçalho da lista, uma vez só. Aqui ficam
+           apenas os rótulos para leitores de ecrã, que não vêem colunas. E a
+           nota do IVA saiu das linhas todas: já está no subtítulo da secção,
+           e repetida dez vezes era o que mais se lia numa lista de preços. */
+        var nota = [];
+        if (p.duracao) nota.push(esc(p.duracao));
+        if (p.unidade) nota.push(esc(p.unidade));
+        nota = nota.length ? '<small class="lavagem__nota">' + nota.join(' · ') + '</small>' : '';
         var preco;
         if (p.preco && p.preco_grande) {
-          preco = '<span class="lavagem__preco lavagem__preco--duplo">' +
-            '<span class="lavagem__tarifa"><b>' + esc(p.preco) + '</b>' +
-            '<small>Ligeiro</small></span>' +
-            '<span class="lavagem__tarifa"><b>' + esc(p.preco_grande) + '</b>' +
-            '<small>SUV, carrinha</small></span>' +
-            '<small class="lavagem__nota">' + rotulo + '</small></span>';
+          preco = '<span class="lavagem__preco">' +
+            '<b class="lavagem__tarifa"><span class="visually-hidden">Ligeiro: </span>' +
+            esc(p.preco) + '</b>' +
+            '<b class="lavagem__tarifa"><span class="visually-hidden">SUV ou carrinha: </span>' +
+            esc(p.preco_grande) + '</b>' + nota + '</span>';
         } else if (p.preco) {
-          preco = '<span class="lavagem__preco">' + esc(p.preco) +
-            '<small>' + rotulo + '</small></span>';
+          /* Um preço só vale para qualquer carro, e por isso fica CENTRADO sobre
+             as duas colunas em vez de encostado a uma delas. */
+          preco = '<span class="lavagem__preco">' +
+            '<b class="lavagem__unico">' + esc(p.preco) + '</b>' + nota + '</span>';
         } else {
-          preco = '<span class="lavagem__preco">Sob consulta</span>';
+          preco = '<span class="lavagem__preco">' +
+            '<b class="lavagem__unico lavagem__consulta">Sob consulta</b>' + nota + '</span>';
         }
         /* A mensagem já leva o serviço escrito: quem recebe sabe logo do que se
            trata, e quem envia não tem de o explicar. Com duas tarifas não se
@@ -1065,9 +1072,30 @@
           '">Marcar</a></div></li>';
       }
 
+      /* Cabeçalho das duas colunas de preço. Fica FORA da lista e colado ao topo
+         com position: sticky — a objecção a um cabeçalho era que ele sai do ecrã
+         quando se rola, e é exactamente isso que o sticky resolve.
+
+         É aria-hidden porque quem usa leitor de ecrã não vê colunas nenhumas:
+         para essas pessoas o rótulo vai dentro de cada preço, em visually-hidden,
+         onde é lido junto ao número a que pertence. Aqui repetido seria ruído.
+
+         Só aparece se houver mesmo linhas com duas tarifas à vista — filtrar
+         pelos Extras, que têm preço único, deixaria um cabeçalho a rotular
+         colunas que ali não existem. Quem trata disso é o aplicar(). */
+      var temDuplos = itens.some(function (p) { return p.preco && p.preco_grande; });
+      var cabecalho = temDuplos
+        ? '<div class="lavagens__cab" id="lavagens-cab" aria-hidden="true">' +
+          '<span class="lavagens__cab-dir">' +
+          '<span class="lavagem__tarifa">Ligeiro</span>' +
+          '<span class="lavagem__tarifa">SUV, carrinha</span>' +
+          '</span></div>'
+        : '';
+
       /* <ul>/<li> e não doze <div>: sem isso o leitor de ecrã não anuncia
          «lista com 12 itens» nem permite saltar de item em item. */
-      lavagensLista.innerHTML = '<ul class="lavagens__ul">' + itens.map(linha).join('') + '</ul>';
+      lavagensLista.innerHTML = cabecalho +
+        '<ul class="lavagens__ul">' + itens.map(linha).join('') + '</ul>';
 
       /* ------------------------------------------------- VER MAIS / VER MENOS
 
@@ -1104,6 +1132,18 @@
                Ctrl+F do browser da mesma maneira, mas diz-se sozinho no HTML */
             l.hidden = (i === -1 || i >= mostradas);
           });
+        }
+
+        /* O cabeçalho só faz sentido enquanto houver duas colunas para rotular.
+           Filtrar pelos Extras deixa só preços únicos à vista — e um cabeçalho
+           a dizer «Ligeiro | SUV, carrinha» por cima deles estaria a rotular
+           colunas que ali não estão. */
+        var cab = el('lavagens-cab');
+        if (cab) {
+          var visiveisComDuas = naCategoria.slice(0, mostradas).some(function (l) {
+            return l.querySelectorAll('.lavagem__tarifa').length > 1;
+          });
+          cab.hidden = !visiveisComDuas;
         }
 
         var escondidas = naCategoria.length - mostradas;
