@@ -891,7 +891,8 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
   border: 1px solid var(--aco); }
 .folha__corpo { overflow-y: auto; overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 1.3rem var(--gutter) max(1.3rem, env(safe-area-inset-bottom)); }
+  /* Sem espaço em cima: a fotografia começa no bordo da folha. */
+  padding: 0 var(--gutter) max(1.3rem, env(safe-area-inset-bottom)); }
 .folha__x { position: absolute; top: .6rem; right: .6rem; z-index: 2;
   width: 44px; height: 44px; display: grid; place-items: center;
   background: rgba(11,11,13,.66); border: 1px solid var(--aco); border-radius: 50%;
@@ -900,11 +901,40 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 .folha__x:hover { background: var(--vermelho); border-color: var(--vermelho); }
 .folha__pega, .folha__puxador { display: none; }
 
+/* A folha continua o cartão: a fotografia é o topo, de bordo a bordo, e o nome
+   do serviço fica POR CIMA dela, no mesmo degradê. Quem clica num cartão vê a
+   mesma peça a crescer, e não outra coisa.
+
+   O nome e o carrossel ocupam a MESMA célula da grelha. A ordem no HTML não
+   muda — nome, descrição, fotografias — porque é essa que o leitor de ecrã
+   segue e é o nome que tem de vir primeiro; quem os sobrepõe é a grelha. */
+.ficha__det-corpo {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+}
+.ficha__det-corpo > .carrossel {
+  grid-area: 1 / 1; margin-top: 0;
+  /* Sangra para os lados, para a fotografia tocar os bordos da folha. O nome,
+     que a cobre, repõe a goteira no seu próprio padding. */
+  margin-inline: calc(var(--gutter) * -1);
+}
+.ficha__det-corpo > .folha__tit { grid-area: 1 / 1; align-self: end; z-index: 2; }
+
 .folha__tit { font-family: var(--f-display); font-weight: 700;
   font-size: clamp(1.4rem, 5vw, 1.9rem); text-transform: uppercase;
-  line-height: 1.05; padding-right: 3rem; }
+  line-height: 1.05; color: #FFFFFF;
+  /* O mesmo degradê do cartão, pela mesma razão: é o mínimo que ainda passa o
+     contraste sobre um pixel branco. O padding de cima é o que dá altura ao
+     degradê para a transição não ser uma barra com um bordo. */
+  padding: clamp(2.6rem, 7vw, 3.4rem) calc(var(--gutter) + 3rem) .75rem var(--gutter);
+  background: linear-gradient(to top,
+    rgba(20, 22, 26, .97) 0%,
+    rgba(20, 22, 26, .95) 30%,
+    rgba(20, 22, 26, .88) 52%,
+    rgba(20, 22, 26, .66) 68%,
+    rgba(20, 22, 26, .34) 84%,
+    rgba(20, 22, 26, 0) 100%); }
 .folha__tit:focus { outline: none; }
-.folha__desc { color: var(--prata); margin-top: .5rem; }
+.folha__desc { color: var(--prata); margin-top: .9rem; }
 .folha__texto { color: var(--prata); margin-top: .7rem; }
 .folha__tempo { font-family: var(--f-mono); font-size: .82rem; color: var(--legenda);
   margin-top: .6rem; }
@@ -940,6 +970,13 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 @media (min-width: 48rem) { .folha__foto img { height: 48svh; } }
 .folha__foto figcaption { font-size: .78rem; color: var(--legenda); margin-top: .45rem;
   min-height: 2.2em; }
+/* Com JavaScript a legenda de cada figura cala-se e quem fala é a ranhura de
+   baixo. Sem JavaScript não há ranhura nenhuma e cada figura mantém a sua —
+   é por isso que a regra depende da classe que o ligarCarrossel() põe. */
+.carrossel--js .folha__foto figcaption { display: none; }
+.folha__legenda { font-size: .78rem; color: var(--legenda);
+  margin-top: .6rem; min-height: 2.2em; }
+.folha__legenda:empty { display: none; }
 
 .carrossel__seta {
   position: absolute; top: calc(50% - 1.4rem); translate: 0 -50%;
@@ -991,7 +1028,6 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
   .folha { margin: auto auto 0; width: 100%; max-width: none; }
   .folha__caixa { border-radius: 1.15rem 1.15rem 0 0; border-bottom: 0;
     max-height: 88svh; display: flex; flex-direction: column; }
-  .folha__corpo { padding-top: 1.6rem; }
   .folha__x { top: 1.05rem; z-index: 3; }
   /* A faixa de agarrar apanha o gesto em toda a largura e cobre o cabeçalho
      inteiro — é aí que a mão vai. Tem de ter touch-action: none, senão o

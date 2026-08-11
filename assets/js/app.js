@@ -566,6 +566,10 @@
                 ' aria-label="Fotografia ' + (k + 1) + ' de ' + nFotos + '"></button>';
             }
           }
+          /* Os PONTOS saem de dentro do .carrossel e ficam a seguir a ele. É o
+             que permite ao nome do serviço cobrir o fundo da fotografia, como
+             no cartão, sem ficar por cima dos pontos. Quem os procura é o
+             ligarCarrossel(), que passou a procurá-los na raiz do painel. */
           carrossel = '<div class="carrossel" data-carrossel>' +
             '<div class="carrossel__pista" tabindex="0" role="group" aria-label="Fotografias — ' + esc(s.titulo) + '">' +
             galeria + '</div>' +
@@ -573,10 +577,16 @@
               ? '<button class="carrossel__seta carrossel__seta--ant" type="button" data-passo="-1" aria-label="Fotografia anterior">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>' +
                 '<button class="carrossel__seta carrossel__seta--seg" type="button" data-passo="1" aria-label="Fotografia seguinte">' +
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>' +
-                '<div class="carrossel__pontos">' + pontos + '</div>'
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>'
               : '') +
-            '</div>';
+            '</div>' +
+            /* Ranhura para a legenda da fotografia que está à vista. As legendas
+               continuam dentro de cada <figure> — é lá que pertencem, e é de lá
+               que quem lê sem JavaScript as recebe — mas com o nome do serviço a
+               cobrir o fundo da fotografia ficavam por baixo dele. Aqui têm sítio
+               próprio, e o aria-live anuncia a mudança a quem não vê a imagem. */
+            '<p class="folha__legenda" aria-live="polite"></p>' +
+            (nFotos > 1 ? '<div class="carrossel__pontos">' + pontos + '</div>' : '');
         }
 
         /* A lista do que inclui saiu do painel e do cartão, a pedido: eram
@@ -845,7 +855,9 @@
     if (!car) return;
     var pista = car.querySelector('.carrossel__pista');
     var fotos = [].slice.call(pista.children);
-    var pontos = [].slice.call(car.querySelectorAll('.carrossel__ponto'));
+    /* Os pontos vivem FORA do .carrossel — foram para lá para o nome do serviço
+       poder cobrir o fundo da fotografia sem os tapar. Procuram-se na raiz. */
+    var pontos = [].slice.call(raiz.querySelectorAll('.carrossel__ponto'));
     var setas = [].slice.call(car.querySelectorAll('.carrossel__seta'));
     if (fotos.length < 2) return;
 
@@ -899,9 +911,18 @@
     }
     /* Sem argumento, lê a posição — é o caso do dedo e da roda do rato. Com
        argumento, é um destino pedido, que pode ainda estar a caminho. */
+    /* Com JavaScript, as legendas de dentro das <figure> escondem-se e passa a
+       haver uma só, por baixo, a descrever a fotografia à vista. */
+    var legenda = raiz.querySelector('.folha__legenda');
+    if (legenda) car.classList.add('carrossel--js');
+
     function sincronizar(i) {
       if (i == null) i = actual();
       alvo = i;
+      if (legenda) {
+        var cap = fotos[i] && fotos[i].querySelector('figcaption');
+        legenda.textContent = cap ? cap.textContent : '';
+      }
       pontos.forEach(function (p, k) {
         if (k === i) p.setAttribute('aria-current', 'true');
         else p.removeAttribute('aria-current');
