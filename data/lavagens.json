@@ -2,95 +2,107 @@
   "head": {
     "etiqueta": "Lavagem e estética",
     "titulo": "Deixe o carro como novo",
-    "lead": "Preços para ligeiros, com IVA. Carrinhas e SUV acrescem."
+    "lead": "Preços com IVA. Onde há dois, o primeiro é para ligeiros e o segundo para SUV e carrinhas."
   },
   "itens": [
     {
       "nome": "Lavagem exterior",
       "categoria": "Lavagens",
-      "inclui": "Carroçaria, jantes, vidros e brilho nos pneus",
-      "duracao": "30 min",
-      "preco": "15 €",
+      "inclui": "",
+      "duracao": "",
+      "preco": "10 €",
+      "preco_grande": "15 €",
+      "unidade": "",
       "foto": ""
     },
     {
       "nome": "Lavagem interior",
       "categoria": "Lavagens",
-      "inclui": "Aspiração, tablier, painéis, vidros por dentro e tapetes",
-      "duracao": "45 min",
+      "inclui": "",
+      "duracao": "",
+      "preco": "15 €",
+      "preco_grande": "20 €",
+      "unidade": "",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem interior e exterior",
+      "categoria": "Lavagens",
+      "inclui": "",
+      "duracao": "",
       "preco": "20 €",
+      "preco_grande": "30 €",
+      "unidade": "",
       "foto": ""
     },
     {
-      "nome": "Lavagem completa",
-      "categoria": "Lavagens",
-      "inclui": "Interior e exterior, do tejadilho aos tapetes",
-      "duracao": "1 h 15",
-      "preco": "30 €",
+      "nome": "Cera líquida",
+      "categoria": "Extras",
+      "inclui": "",
+      "duracao": "",
+      "preco": "10 €",
+      "preco_grande": "",
+      "unidade": "",
       "foto": ""
     },
     {
-      "nome": "Lavagem completa + cera",
-      "categoria": "Lavagens",
-      "inclui": "A lavagem completa, mais cera de protecção que dura cerca de 2 meses",
-      "duracao": "1 h 45",
-      "preco": "45 €",
+      "nome": "Desinfeção das condutas do ar condicionado",
+      "categoria": "Extras",
+      "inclui": "",
+      "duracao": "",
+      "preco": "20 €",
+      "preco_grande": "",
+      "unidade": "",
       "foto": ""
     },
     {
-      "nome": "Higienização do ar condicionado",
-      "categoria": "Interior",
-      "inclui": "Desinfecção das condutas e do evaporador, tira o cheiro a húmido",
-      "duracao": "30 min",
-      "preco": "25 €",
-      "foto": ""
-    },
-    {
-      "nome": "Limpeza de estofos em tecido",
-      "categoria": "Interior",
-      "inclui": "Injecção e extracção em bancos e alcatifas, tira nódoas e cheiros",
-      "duracao": "2 h",
-      "preco": "60 €",
-      "foto": ""
-    },
-    {
-      "nome": "Tratamento de estofos em pele",
-      "categoria": "Interior",
-      "inclui": "Limpeza suave e hidratação, para a pele não gretar",
-      "duracao": "1 h 30",
-      "preco": "70 €",
-      "foto": ""
-    },
-    {
-      "nome": "Remoção de odores",
-      "categoria": "Interior",
-      "inclui": "Tratamento com ozono ao habitáculo inteiro",
-      "duracao": "1 h",
-      "preco": "30 €",
-      "foto": ""
-    },
-    {
-      "nome": "Aplicação de cera",
-      "categoria": "Tratamentos",
-      "inclui": "Cera à mão sobre pintura já lavada, protege cerca de 2 meses",
-      "duracao": "45 min",
-      "preco": "25 €",
-      "foto": ""
-    },
-    {
-      "nome": "Restauro de faróis (par)",
-      "categoria": "Tratamentos",
-      "inclui": "Lixagem e polimento do policarbonato amarelecido",
-      "duracao": "1 h",
-      "preco": "45 €",
-      "foto": ""
-    },
-    {
-      "nome": "Lavagem de motor",
-      "categoria": "Tratamentos",
-      "inclui": "Desengorduramento do compartimento, com as zonas sensíveis protegidas",
-      "duracao": "45 min",
+      "nome": "Polimento de óticas",
+      "categoria": "Extras",
+      "inclui": "",
+      "duracao": "",
       "preco": "40 €",
+      "preco_grande": "",
+      "unidade": "por unidade",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem de jante",
+      "categoria": "Extras",
+      "inclui": "Inclui a remoção da jante para limpeza profunda",
+      "duracao": "",
+      "preco": "5 €",
+      "preco_grande": "",
+      "unidade": "por jante",
+      "foto": ""
+    },
+    {
+      "nome": "Lavagem e higienização completa do interior",
+      "categoria": "Interior",
+      "inclui": "Remoção e lavagem dos bancos, do chão e do tejadilho, higienização das condutas do ar condicionado, limpeza e remoção de manchas",
+      "duracao": "",
+      "preco": "",
+      "preco_grande": "",
+      "unidade": "",
+      "foto": ""
+    },
+    {
+      "nome": "Limpeza de bancos",
+      "categoria": "Interior",
+      "inclui": "",
+      "duracao": "",
+      "preco": "10 €",
+      "preco_grande": "",
+      "unidade": "por banco",
+      "foto": ""
+    },
+    {
+      "nome": "Sujidade profunda",
+      "categoria": "Interior",
+      "inclui": "Pelo de animais, areia, manchas difíceis, terra ou barro. Cobra-se por cada hora acima do tempo médio de lavagem, que é de 1 h 30",
+      "duracao": "",
+      "preco": "10 €",
+      "preco_grande": "",
+      "unidade": "por hora",
       "foto": ""
     }
   ]

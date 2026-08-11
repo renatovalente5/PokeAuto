@@ -988,7 +988,10 @@
           .replace(/[óôõ]/g, 'o').replace(/[úü]/g, 'u').replace(/ç/g, 'c');
         if (t.indexOf('lava') === 0) return 'lavagens';
         if (t.indexOf('interior') === 0) return 'interior';
-        if (t.indexOf('trat') === 0) return 'tratamentos';
+        /* «Extras» é a palavra do cliente para o que aqui se chamava
+           «Tratamentos» — cera, ar condicionado, óticas, jantes. Partilham a
+           mesma ilustração, que é um frasco de spray. */
+        if (t.indexOf('trat') === 0 || t.indexOf('extra') === 0) return 'tratamentos';
         return 'lavagens';
       }
 
@@ -1017,14 +1020,36 @@
            — quem marca uma lavagem quer saber quanto tempo fica sem o carro. */
         var meta = [];
         if (p.inclui) meta.push(esc(p.inclui));
-        var preco = p.preco
-          ? '<span class="lavagem__preco">' + esc(p.preco) +
-            '<small>' + (p.duracao ? esc(p.duracao) + ' · ' : '') + 'IVA incluído</small></span>'
-          : '<span class="lavagem__preco">Sob consulta</span>';
+        /* Duas tarifas quando o preço depende do tamanho do carro. Cada uma leva
+           a sua etiqueta POR BAIXO do número: uma tabela com duas colunas e um
+           cabeçalho lá em cima obriga a pessoa a subir para saber qual é qual,
+           e no telemóvel o cabeçalho já saiu do ecrã.
+
+           A nota do IVA fica uma vez só, no fim, em vez de repetida em cada
+           tarifa — repetida, é o que mais se lê numa linha de preços. */
+        var rotulo = p.unidade ? esc(p.unidade) + ' · IVA incluído' : 'IVA incluído';
+        if (p.duracao) rotulo = esc(p.duracao) + ' · ' + rotulo;
+        var preco;
+        if (p.preco && p.preco_grande) {
+          preco = '<span class="lavagem__preco lavagem__preco--duplo">' +
+            '<span class="lavagem__tarifa"><b>' + esc(p.preco) + '</b>' +
+            '<small>Ligeiro</small></span>' +
+            '<span class="lavagem__tarifa"><b>' + esc(p.preco_grande) + '</b>' +
+            '<small>SUV, carrinha</small></span>' +
+            '<small class="lavagem__nota">' + rotulo + '</small></span>';
+        } else if (p.preco) {
+          preco = '<span class="lavagem__preco">' + esc(p.preco) +
+            '<small>' + rotulo + '</small></span>';
+        } else {
+          preco = '<span class="lavagem__preco">Sob consulta</span>';
+        }
         /* A mensagem já leva o serviço escrito: quem recebe sabe logo do que se
-           trata, e quem envia não tem de o explicar. */
+           trata, e quem envia não tem de o explicar. Com duas tarifas não se
+           manda nenhuma — a oficina pergunta o carro, e mandar só a do ligeiro
+           era prometer o preço mais baixo a quem tem uma carrinha. */
         var msg = encodeURIComponent('Olá! Queria marcar: ' + p.nome +
-                  (p.preco ? ' (' + p.preco + ')' : ''));
+                  (p.preco && !p.preco_grande ? ' (' + p.preco +
+                    (p.unidade ? ' ' + p.unidade : '') + ')' : ''));
         /* o número vem do backoffice, não escrito à mão — senão mudá-lo em
            Contactos deixava estes botões todos no número antigo */
         var wa = 'https://wa.me/' + (TELEFONE_INTL || '351922022364');

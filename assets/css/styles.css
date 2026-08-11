@@ -251,6 +251,15 @@ body.menu-aberto .menu { display: flex; }
                 gap: .9rem; text-align: right; }
 .lavagem__preco { font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem; color: var(--claro-tinta); white-space: nowrap; }
 .lavagem__preco small { display: block; font-family: var(--f-corpo); font-size: .7rem; color: var(--claro-2); }
+/* Duas tarifas — ligeiro e SUV/carrinha — lado a lado, cada uma com a etiqueta
+   por baixo do número. Sem cabeçalho de coluna de propósito: um cabeçalho no
+   topo da lista sai do ecrã ao rolar e deixa de dizer qual preço é qual. */
+.lavagem__preco--duplo { display: flex; flex-wrap: wrap; justify-content: flex-end;
+  gap: .15rem 1.1rem; }
+.lavagem__tarifa { display: grid; justify-items: end; line-height: 1.15; }
+.lavagem__tarifa small { font-size: .66rem; }
+/* A nota do IVA ocupa a linha toda por baixo das duas tarifas. */
+.lavagem__nota { flex: 1 0 100%; }
 .lavagem__btn {
   min-height: 44px; display: inline-flex; align-items: center;
   padding: .42rem .9rem; font-size: .84rem; font-weight: 600;

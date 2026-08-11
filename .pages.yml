@@ -305,10 +305,12 @@ content:
             label: Categoria
             type: select
             options:
-              values: [Lavagens, Interior, Tratamentos]
+              values: [Lavagens, Extras, Interior]
             description: >-
-              É o que define a ilustração e os filtros. Se criar uma categoria nova,
-              não há desenho para ela e usa-se o das lavagens.
+              É o que define a ilustração e os filtros. «Extras» é o que se
+              acrescenta a uma lavagem — cera, ar condicionado, óticas, jantes.
+              Se criar uma categoria nova, não há desenho para ela e usa-se o das
+              lavagens.
           - name: inclui
             label: "O que inclui"
             type: string
@@ -317,12 +319,26 @@ content:
               perceber a diferença entre a lavagem de 20 € e a de 30 €.
           - { name: duracao, label: "Quanto tempo demora (opcional)", type: string }
           - name: preco
-            label: "Preço (opcional)"
+            label: "Preço para ligeiros (opcional)"
             type: string
             description: >-
               Tem de ser o valor final, com IVA incluído (DL 138/90). Deixe vazio
               para aparecer «Sob consulta» — não indicar preço é legal, indicar um
               preço que não se pratica não é.
+          - name: preco_grande
+            label: "Preço para SUV e carrinhas (opcional)"
+            type: string
+            description: >-
+              Só para os serviços em que o preço muda com o tamanho do carro.
+              Preenchido, aparecem os dois valores lado a lado com a etiqueta de
+              cada um. Vazio, aparece só o preço de cima, para todos os carros.
+          - name: unidade
+            label: "A que se refere o preço (opcional)"
+            type: string
+            description: >-
+              Escreva-o como se fala ao balcão — «por jante», «por banco»,
+              «por hora», «por unidade». Sai em letra pequena por baixo do preço.
+              Vazio, entende-se que o preço é do serviço inteiro.
           - name: foto
             label: "Fotografia (opcional)"
             type: image
