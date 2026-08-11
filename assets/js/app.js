@@ -602,8 +602,16 @@
            única forma de agir, e o título volta a ser só um título. */
         var accoes =
           '<div class="serv__accoes">' +
-          '<button class="btn btn--fantasma serv__btn" type="button" ' +
-          'data-abrir="' + esc(s.id) + '">Ver detalhe</button>' +
+          /* Volta a ser a acção pequena com a seta, e não um botão de caixa
+             cheia. Tem de continuar a ser um <button> a sério — quando isto
+             aqui esteve, era um <span aria-hidden> porque o cartão inteiro era
+             uma ligação; hoje o cartão não é clicável, e um <span> deixava
+             quem usa teclado sem forma de abrir o detalhe. */
+          '<button class="serv__accao" type="button" ' +
+          'data-abrir="' + esc(s.id) + '">Ver detalhe' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+          'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="M5 12h13M13 6l6 6-6 6"/></svg></button>' +
           (s.ligacao
             ? '<a class="btn btn--vermelho serv__btn" href="' + esc(s.ligacao) + '">' +
               esc(s.ligacao_texto || 'Ver mais') + '</a>'

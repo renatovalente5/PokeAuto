@@ -603,16 +603,31 @@ body.menu-aberto .menu { display: flex; }
    todos à mesma altura, com título de uma ou de duas linhas. */
 .serv__accoes {
   margin-top: auto; padding-top: 1.1rem;
-  display: flex; flex-wrap: wrap; gap: .55rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem;
+  justify-content: space-between;
 }
-/* A borda de 1px do botão fantasma conta para a altura (border-box): sem esta
-   linha o botão cheio ficava 2px mais baixo do que o do lado, e no telemóvel,
-   com os dois empilhados, a diferença via-se. */
-.serv__btn { flex: 1 1 auto; justify-content: center; white-space: nowrap;
+/* «Ver detalhe» volta a ser a acção pequena com a seta, e não um botão de caixa
+   cheia. É um <button> sem nada de botão à volta: fundo, borda e padding a zero,
+   porque o que se quer é o texto e a seta.
+
+   O laranja não pode ser o --dourado da marca: sobre o cartão branco dá 1,77:1,
+   ilegível para texto de 12px. Este dá 4,72:1, que passa o mínimo da norma. */
+.serv__accao {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: 0; background: none; border: 0; cursor: pointer;
+  font-family: var(--f-mono); font-size: .76rem;
+  letter-spacing: .04em; text-transform: uppercase; color: #C25008;
+}
+.serv__accao svg { width: 15px; height: 15px; transition: transform var(--t); }
+.serv__accao:hover { color: #9E4106; }
+.serv__accao:hover svg { transform: translateX(3px); }
+.serv__accao:focus-visible { outline: 2px solid var(--vermelho-claro); outline-offset: 3px;
+  border-radius: 3px; }
+/* O botão da tabela de preços continua a ser um botão a sério: é uma saída do
+   cartão, não um «abrir para ver mais». Encosta-se à direita, com a acção
+   pequena à esquerda. */
+.serv__btn { justify-content: center; white-space: nowrap;
   border: 1px solid transparent; }
-.serv__btn.btn--fantasma { color: var(--claro-tinta); border-color: rgba(20, 22, 26, .26); }
-.serv__btn.btn--fantasma:hover { background: var(--claro-tinta); color: #FFFFFF;
-  border-color: var(--claro-tinta); }
 
 /* O anel de foco volta a ser de cada botão: com o cartão a deixar de ser
    clicável, marcar o cartão inteiro passaria a mentir sobre o que está focado. */
