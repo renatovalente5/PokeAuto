@@ -238,12 +238,22 @@ def montar_legal(site):
         if L.get('capital_social'):
             p.append('Capital social: ' + L['capital_social'])
     else:
-        p.append((L.get('nome_titular') or '[nome do titular por confirmar]')
-                 + ', Empresário em Nome Individual, que usa a designação comercial «'
-                 + (L.get('designacao_comercial') or 'PokeAuto') + '»')
+        nome = L.get('nome_titular')
+        marca = L.get('designacao_comercial') or 'PokeAuto'
+        if nome:
+            p.append(nome + ', Empresário em Nome Individual, que usa a designação '
+                            'comercial «' + marca + '»')
+        else:
+            # Sem o nome do titular escreve-se só a designação comercial. O
+            # «[nome do titular por confirmar]» que aqui esteve ia parar ao
+            # rodapé de todas as páginas, à vista de quem visita o site: um
+            # aviso interno publicado. Faltar o nome é uma lacuna a fechar
+            # (DL 7/2004, art. 10.º), mas anunciá-la ao visitante não a fecha.
+            p.append(marca + ', Empresário em Nome Individual')
         if morada:
             p.append('Estabelecimento: ' + morada)
-        p.append('NIF ' + (L.get('nif') or '[por confirmar]'))
+        if L.get('nif'):
+            p.append('NIF ' + L['nif'])
     if c.get('email'):
         p.append('Email: ' + c['email'])
     return escapar(' · '.join(p))

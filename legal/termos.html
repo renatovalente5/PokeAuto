@@ -25,11 +25,16 @@
   <main class="doc">
     <div class="wrap doc__corpo">
       <h1>Termos e Condições</h1>
-      <p class="meta">Última actualização: julho de 2026</p>
+      <p class="meta">Última actualização: agosto de 2026</p>
+      <!-- Este é o destino do link «Informação legal» do rodapé: é aqui que
+           alguém vem procurar quem está por trás do site. Leva o mesmo bloco
+           gerado que vai ao rodapé — o prerender.py escreve-o em TODOS os nós
+           marcados, e assim não há duas versões dos mesmos factos a divergir
+           quando o cliente mudar algo no backoffice. -->
       <div class="doc__caixa" id="identificacao">
         <p><strong>Identificação (DL n.º 7/2004, art. 10.º)</strong></p>
-        <p>Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira.<br>
-        Telefone: 922 022 364 (chamada para a rede móvel nacional).</p>
+        <p id="bloco-legal">Rui Couto, Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF 271128330</p>
+        <p>Telefone: 922 022 364 (chamada para a rede móvel nacional).</p>
       </div>
 
       <h2>1. Objecto</h2>
@@ -39,18 +44,22 @@
       <h2>2. Não há venda nem contratação através do site</h2>
       <p>Não é possível comprar, encomendar nem contratar serviços através deste site. Não há
       carrinho de compras, pagamentos nem formulários de encomenda.</p>
-      <p>A secção «Balcão de peças» é <strong>meramente informativa</strong>: indica peças que
-      a oficina costuma ter em stock, para que possa saber o que procurar antes de se deslocar. Não
-      constitui proposta contratual nem oferta de venda à distância. A venda é sempre feita
+      <p>A tabela de <strong>lavagem e estética</strong> é <strong>meramente informativa</strong>:
+      serve para saber o que se faz e quanto custa antes de se deslocar. Não constitui proposta
+      contratual nem oferta de venda à distância. O botão «Marcar» abre uma conversa no WhatsApp
+      para combinar dia e hora — não fecha contrato nenhum. O serviço é sempre contratado
       presencialmente, na oficina.</p>
 
       <h2>3. Preços</h2>
-      <p>Quando é indicado um preço no site, é o preço final ao consumidor, com IVA e demais
-      encargos incluídos, referente à peça em si. Trabalhos de montagem ou de mão-de-obra são
-      orçamentados à parte.</p>
-      <p>A ausência de preço significa «sob consulta» e não dispensa orçamento. Os preços
-      afixados no estabelecimento prevalecem, e a disponibilidade das peças está sujeita a
-      confirmação.</p>
+      <p>Os valores indicados na tabela de lavagem e estética <strong>não incluem IVA</strong>,
+      que acresce à taxa legal em vigor. O valor total a pagar é confirmado antes de o trabalho
+      começar e é o que consta da factura.</p>
+      <p>Onde a tabela apresenta dois valores, o primeiro refere-se a veículos ligeiros e o
+      segundo a SUV, carrinhas e monovolumes; onde apresenta um só, é o mesmo para qualquer
+      veículo. A ausência de preço significa «sob consulta» e não dispensa orçamento.</p>
+      <p>Os preços afixados no estabelecimento prevalecem. Quando o estado do veículo obrigar a
+      mais tempo do que o previsto — sujidade profunda, pelo de animais, areia ou barro — esse
+      acréscimo é comunicado e autorizado antes de se prosseguir.</p>
 
       <h2>4. Orçamento e autorização</h2>
       <p>Nenhuma reparação é executada sem que o cliente seja informado do que foi encontrado e
@@ -101,7 +110,7 @@
   <footer class="rodape">
     <div class="wrap">
       <div class="rodape__legal" style="margin-top:0;border-top:0;padding-top:0">
-        <p id="bloco-legal">[nome do titular por confirmar], Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF [por confirmar]</p>
+        <p id="bloco-legal">Rui Couto, Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF 271128330</p>
         <div class="rodape__barra">
           <p class="rodape__copy">&copy; <span data-ano>2026</span> PokeAuto</p>
           <div class="rodape__links">
@@ -143,6 +152,6 @@
     </div>
   </div>
 
-  <script src="../assets/js/app.js?v=97c20538" defer></script>
+  <script src="../assets/js/app.js?v=87d9ce26" defer></script>
 </body>
 </html>

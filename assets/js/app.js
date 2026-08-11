@@ -363,19 +363,31 @@
       if (!blocos.length) {
         horBox.innerHTML = '';
       } else {
-        var linhas = blocos.map(function (b) {
+        function rotuloDe(dias) {
           /* "Segunda a Sexta" só se os dias forem MESMO seguidos. Segunda,
              quarta e sexta não é um intervalo. */
-          var brutos = (typeof b.dias === 'string' ? [b.dias] : b.dias).slice()
+          var brutos = (typeof dias === 'string' ? [dias] : dias).slice()
             .sort(function (x, y) { return ORDEM.indexOf(x) - ORDEM.indexOf(y); });
           var seguidos = brutos.every(function (d, i) {
             return i === 0 || ORDEM.indexOf(d) === ORDEM.indexOf(brutos[i - 1]) + 1;
           });
           var ds = brutos.map(function (d) { return DIAS[d] || d; });
-          var rot = (seguidos && ds.length > 2) ? ds[0] + ' a ' + ds[ds.length - 1]
-                  : ds.length === 2 ? ds.join(' e ') : ds.join(', ');
-          return '<li><span>' + esc(rot) + '</span> <span class="mono">' +
-                 esc(b.abre) + '–' + esc(b.fecha) + '</span></li>';
+          return (seguidos && ds.length > 2) ? ds[0] + ' a ' + ds[ds.length - 1]
+               : ds.length === 2 ? ds.join(' e ') : ds.join(', ');
+        }
+        /* Uma linha por CONJUNTO DE DIAS, não por bloco de horas. Quem fecha
+           para almoço tem dois blocos nos mesmos dias, e listá-los em separado
+           dava «Segunda a Sexta» escrito duas vezes seguidas — parecia dois
+           horários diferentes em vez de um com intervalo. */
+        var porDias = [], indice = {};
+        blocos.forEach(function (b) {
+          var rot = rotuloDe(b.dias);
+          if (!(rot in indice)) { indice[rot] = porDias.length; porDias.push({ rot: rot, horas: [] }); }
+          porDias[indice[rot]].horas.push(b.abre + '–' + b.fecha);
+        });
+        var linhas = porDias.map(function (g) {
+          return '<li><span>' + esc(g.rot) + '</span> <span class="mono">' +
+                 esc(g.horas.join(' · ')) + '</span></li>';
         }).join('');
         horBox.innerHTML =
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
@@ -409,11 +421,19 @@
         esc(L.conservatoria) + (L.matricula ? ' sob o n.º ' + esc(L.matricula) : ''));
       if (L.capital_social) p.push('Capital social: ' + esc(L.capital_social));
     } else {
-      p.push(esc(L.nome_titular || '[nome do titular por confirmar]') +
-             ', Empresário em Nome Individual, que usa a designação comercial «' +
-             esc(L.designacao_comercial || 'PokeAuto') + '»');
+      var marca = esc(L.designacao_comercial || 'PokeAuto');
+      /* Sem o nome do titular escreve-se só a designação comercial. O
+         «[nome do titular por confirmar]» que aqui esteve ia parar ao rodapé de
+         todas as páginas, à vista de quem visita o site: um aviso interno
+         publicado. Faltar o nome é uma lacuna a fechar (DL 7/2004, art. 10.º),
+         mas anunciá-la ao visitante não a fecha. Tem de bater certo com o que o
+         prerender.py escreve, senão o JavaScript repunha o aviso por cima. */
+      p.push(L.nome_titular
+        ? esc(L.nome_titular) + ', Empresário em Nome Individual, que usa a ' +
+          'designação comercial «' + marca + '»'
+        : marca + ', Empresário em Nome Individual');
       if (morada) p.push('Estabelecimento: ' + esc(morada));
-      p.push('NIF ' + esc(L.nif || '[por confirmar]'));
+      if (L.nif) p.push('NIF ' + esc(L.nif));
     }
     if (c.email) p.push('Email: ' + esc(c.email));
     alvo.innerHTML = p.join(' · ');

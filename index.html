@@ -113,7 +113,42 @@
             }
           }
         ]
-      }
+      },
+      "vatID": "PT271128330",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "https://schema.org/Monday",
+            "https://schema.org/Tuesday",
+            "https://schema.org/Wednesday",
+            "https://schema.org/Thursday",
+            "https://schema.org/Friday"
+          ],
+          "opens": "09:00",
+          "closes": "12:30"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "https://schema.org/Monday",
+            "https://schema.org/Tuesday",
+            "https://schema.org/Wednesday",
+            "https://schema.org/Thursday",
+            "https://schema.org/Friday"
+          ],
+          "opens": "14:00",
+          "closes": "19:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "https://schema.org/Saturday"
+          ],
+          "opens": "09:00",
+          "closes": "12:30"
+        }
+      ]
     },
     {
       "@type": "WebSite",
@@ -336,7 +371,7 @@
                  pré-render escreve o resultado de volta neste ficheiro, e apagar
                  o bloco significava não haver bloco para voltar no dia em que o
                  cliente preenchesse o horário. -->
-            <div class="contacto-item" id="contacto-horario"><!--pre:contacto-horario--><!--/pre:contacto-horario--></div>
+            <div class="contacto-item" id="contacto-horario"><!--pre:contacto-horario--><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.2 1.9"></path></svg><div><strong>Horário</strong><ul class="meta"><li><span>Segunda a Sexta</span> <span class="mono">09:00–12:30 · 14:00–19:00</span></li><li><span>Sábado</span> <span class="mono">09:00–12:30</span></li></ul></div><!--/pre:contacto-horario--></div>
 
             <div class="contacto-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
@@ -439,7 +474,12 @@
            jurídica — uma sociedade tem de publicar NIPC, conservatória, matrícula
            e capital social (CSC art.171); um empresário em nome individual não. -->
       <div class="rodape__legal">
-        
+        <!-- A identificação de quem está por trás do site (DL 7/2004, art. 10.º)
+             estava só nas páginas legais, alcançável pelo link «Informação
+             legal». Isso cumpre o «acesso permanente, fácil e directo», mas a
+             página que toda a gente vê era a única sem ela. É o mesmo bloco
+             gerado, escrito pelo prerender.py em todos os nós marcados. -->
+        <p id="bloco-legal">Rui Couto, Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF 271128330</p>
         <div class="rodape__barra">
           <p class="rodape__copy">&copy; <span data-ano>2026</span> PokeAuto</p>
           <div class="rodape__links">
@@ -493,6 +533,6 @@
     </div>
   </div>
 
-  <script src="assets/js/app.js?v=97c20538" defer></script>
+  <script src="assets/js/app.js?v=87d9ce26" defer></script>
 </body>
 </html>

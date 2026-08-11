@@ -40,12 +40,42 @@
     "destaque": "nota-se",
     "foto": "faixa-jante"
   },
-  "horario": [],
+  "horario": [
+    {
+      "dias": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "abre": "09:00",
+      "fecha": "12:30"
+    },
+    {
+      "dias": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "abre": "14:00",
+      "fecha": "19:00"
+    },
+    {
+      "dias": [
+        "Saturday"
+      ],
+      "abre": "09:00",
+      "fecha": "12:30"
+    }
+  ],
   "legal": {
     "forma_juridica": "eni",
-    "nome_titular": "",
+    "nome_titular": "Rui Couto",
     "designacao_comercial": "PokeAuto",
-    "nif": "",
+    "nif": "271128330",
     "nipc": "",
     "conservatoria": "",
     "matricula": "",
