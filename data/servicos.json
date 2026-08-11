@@ -37,14 +37,10 @@
       "titulo": "Revisão completa",
       "descricao": "Consumíveis substituídos e o resto verificado ponto por ponto.",
       "tempo": "",
-      "foto": "faixa-jante",
-      "legenda_foto": "Jante e travão à vista, na verificação de travões e pneus",
+      "foto": "mercedes-classe-e-frente",
+      "legenda_foto": "Mercedes Classe E pronto a entregar",
       "alias": [],
       "fotos": [
-        {
-          "nome": "faixa-jante",
-          "legenda": "Jante e travão à vista, na verificação de travões e pneus"
-        },
         {
           "nome": "mercedes-classe-e-frente",
           "legenda": "Mercedes Classe E pronto a entregar"
