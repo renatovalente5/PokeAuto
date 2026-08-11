@@ -261,7 +261,7 @@ body.menu-aberto .menu { display: flex; }
    rótulo mais comprido — a barra ficava fora do meio e cada preço a uma
    distância diferente dela: o «10 €» colado à barra e o «15 €» longe. */
 .lavagem__preco {
-  display: grid; grid-template-columns: 5.6rem 5.6rem; align-items: stretch;
+  display: grid; grid-template-columns: 6.6rem 6.6rem; align-items: stretch;
   font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem;
   color: var(--claro-tinta); white-space: nowrap;
 }
@@ -432,10 +432,22 @@ body.menu-aberto .menu { display: flex; }
   .lavagem__dir { grid-column: 1 / -1; }
   /* As colunas apertam um pouco — iguais na mesma — para o preço e o botão
      caberem lado a lado a 360px. */
-  .lavagem__preco { grid-template-columns: 5.2rem 5.2rem; }
+  .lavagem__preco { grid-template-columns: 6rem 6rem; }
+  .lavagem__tarifa small { font-size: .64rem; }
   .lavagem__tarifa { padding: 0 .4rem; }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
+}
+
+/* Num telemóvel de 320px — o iPhone SE ainda anda por aí — o par de preços mais
+   o botão não cabem com estas medidas: o bloco saía para fora da linha e ficava
+   cortado pelo cartão. Aperta-se aqui, e só aqui, em vez de encolher tudo para
+   toda a gente por causa do ecrã mais estreito. */
+@media (max-width: 21.5rem) {
+  .lavagem__preco { grid-template-columns: 5rem 5rem; }
+  .lavagem__tarifa { padding: 0 .25rem; }
+  .lavagem__tarifa small { font-size: .58rem; }
+  .lavagem__btn { min-width: 4.8rem; padding-inline: .6rem; }
 }
 
 /* Revelação suave — desligada para quem pede menos movimento */
