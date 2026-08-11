@@ -228,10 +228,6 @@ content:
             description: Só letras minúsculas e hífens, sem acentos. Ex.- ar-condicionado
           - { name: titulo, label: Nome do serviço, type: string }
           - { name: descricao, label: Descrição, type: text }
-          - name: inclui
-            label: O que inclui
-            type: string
-            list: true
           - name: tempo
             label: "Tempo médio (opcional)"
             type: string
@@ -262,13 +258,13 @@ content:
                 options: { media: fotos }
               - { name: legenda, label: Legenda, type: string }
           - name: ligacao
-            label: "Em vez do painel, levar a outra secção (opcional)"
+            label: "Segundo botão, para outra secção (opcional)"
             type: string
             description: >-
               Se preencher com uma âncora — por exemplo #lavagens — o cartão
-              deixa de abrir o painel de detalhe e passa a levar a essa secção
-              da página. É assim que o cartão das Lavagens leva à tabela de
-              preços, em vez de repetir aqui o que lá está.
+              ganha um segundo botão, ao lado do «Ver detalhe», que leva a essa
+              secção da página. É assim que o cartão das Lavagens leva à tabela
+              de preços sem deixar de ter o seu próprio detalhe.
           - name: ligacao_texto
             label: "Texto da acção dessa ligação"
             type: string

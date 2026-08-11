@@ -512,17 +512,20 @@
            um link que já ande por aí deixa de ir a lado nenhum */
         var alias = (s.alias || []).map(function (a) {
           return '<span id="servico-' + esc(a) + '"></span>'; }).join('');
-        /* Galeria do detalhe. Só fotografias que existem mesmo: as faixas
-           nasceram 3:1 e são apresentadas como banda larga, não como retrato. */
+        /* Galeria do detalhe. Só fotografias que existem mesmo. Todas entram na
+           pista com o mesmo recorte: num carrossel de uma fotografia por vista
+           não há «larga» nem «estreita» — quem manda é a vista, não o ficheiro. */
         var galeria = (s.fotos && s.fotos.length ? s.fotos : (s.foto ? [{ nome: s.foto, legenda: s.legenda_foto }] : []))
           .map(function (f) {
-            var larga = baseDaFoto(f.nome).indexOf('faixa-') === 0;
             var r = resolverFoto(f.nome, 'trabalhos');
             if (!r) return '';
             var fs = r.srcset, fsrc = r.src;
-            return '<figure class="folha__foto' + (larga ? ' folha__foto--larga' : '') + '">' +
+            return '<figure class="folha__foto">' +
               '<img src="' + esc(fsrc) + '"' +
-              (fs ? ' srcset="' + esc(fs) + '" sizes="(max-width:48rem) 92vw, 20rem"' : '') +
+              /* 42rem e não 20rem: a folha tem 46rem menos as goteiras, e a
+                 fotografia ocupa-as todas. Com 20rem o browser escolhia um
+                 ficheiro de 480px para uma caixa de 670 e saía desfocado. */
+              (fs ? ' srcset="' + esc(fs) + '" sizes="(max-width:48rem) 92vw, 42rem"' : '') +
               ' alt="' + esc(f.legenda || s.titulo) + '" loading="lazy" decoding="async"' +
               attrsDim(fsrc) + ' />' +
               (f.legenda ? '<figcaption>' + esc(f.legenda) + '</figcaption>' : '') +
@@ -556,10 +559,8 @@
             '</div>';
         }
 
-        var listaDet = (s.inclui || []).length
-          ? '<ul class="folha__inclui">' + s.inclui.map(function (x) {
-              return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'
-          : '';
+        /* A lista do que inclui saiu do painel e do cartão, a pedido: eram
+           três etiquetas a repetir o que o título e a descrição já dizem. */
         var tempo = s.tempo ? '<p class="folha__tempo">Tempo médio: ' + esc(s.tempo) + '</p>' : '';
         var texto = s.detalhe ? '<p class="folha__texto">' + esc(s.detalhe) + '</p>' : '';
 
@@ -571,48 +572,37 @@
           '<summary>Ver detalhe — ' + esc(s.titulo) + '</summary>' +
           '<div class="ficha__det-corpo">' +
           '<h4 class="folha__tit" tabindex="-1">' + esc(s.titulo) + '</h4>' +
-          '<p class="folha__desc">' + esc(s.descricao) + '</p>' + texto + tempo + listaDet +
+          '<p class="folha__desc">' + esc(s.descricao) + '</p>' + texto + tempo +
           carrossel + '</div></details>';
 
-        /* Um serviço com `ligacao` não abre painel nenhum: leva a outra secção
-           da página. É o caso das Lavagens, que têm tabela de preços própria —
-           repetir aqui o que lá está seria ler duas vezes o mesmo. */
-        var vaiPara = s.ligacao ? String(s.ligacao) : '#detalhe-' + s.id;
-        var textoAccao = s.ligacao ? (s.ligacao_texto || 'Ver mais') : 'Ver detalhe';
-
-        var chips = (s.inclui || []).slice(0, 3).map(function (x) {
-          return '<li>' + esc(x) + '</li>'; }).join('');
+        /* Todos os cartões abrem o painel; o das lavagens leva TAMBÉM um
+           segundo botão para a tabela de preços. Com duas acções no mesmo
+           cartão deixa de fazer sentido a ligação esticada por cima dele: dois
+           alvos sobrepostos são um alvo ambíguo. Os botões passam a ser a
+           única forma de agir, e o título volta a ser só um título. */
+        var accoes =
+          '<div class="serv__accoes">' +
+          '<button class="btn btn--fantasma serv__btn" type="button" ' +
+          'data-abrir="' + esc(s.id) + '">Ver detalhe</button>' +
+          (s.ligacao
+            ? '<a class="btn btn--vermelho serv__btn" href="' + esc(s.ligacao) + '">' +
+              esc(s.ligacao_texto || 'Ver mais') + '</a>'
+            : '') +
+          '</div>';
 
         return '<article class="serv" id="servico-' + esc(s.id) + '" data-reveal>' + alias +
-          /* A capa é decorativa: o texto ao lado já diz tudo, e um alt repetido
+          /* A capa é decorativa: o título ao lado já diz tudo, e um alt repetido
              faz o leitor de ecrã anunciar o serviço duas vezes seguidas. */
           '<div class="serv__capa" aria-hidden="true">' +
           (capa ? '<img src="' + esc(src) + '"' +
-            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:700px) 92vw, (max-width:1100px) 46vw, 22rem"' : '') +
+            (ss ? ' srcset="' + esc(ss) + '" sizes="(max-width:700px) 92vw, (max-width:1100px) 46vw, 24rem"' : '') +
             ' alt="" loading="lazy" decoding="async"' + attrsDim(src) + ' />' : '') +
           '</div>' +
           '<div class="serv__corpo">' +
-          /* Uma só ligação por cartão, esticada por ::after sobre o cartão
-             inteiro: alvo grande no telemóvel, e no teclado continua a ser um
-             único tab-stop com nome próprio.
-             A descrição saiu: o nome do serviço mais os pontos do que inclui já
-             dizem o suficiente num cartão, e o texto todo vive no painel. */
-          '<h3 class="serv__tit"><a class="serv__link" href="' + esc(vaiPara) + '">' +
-          esc(s.titulo) + '</a></h3>' +
-          (chips ? '<ul class="serv__inclui">' + chips + '</ul>' : '') +
-          /* Com ligação para outra secção, a acção é um botão a sério — é uma
-             saída do cartão, não um «abrir para ver mais». */
-          (s.ligacao
-            ? '<span class="btn btn--fantasma serv__botao">' + esc(textoAccao) +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
-              'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-              '<path d="M5 12h13M13 6l6 6-6 6"/></svg></span>'
-            : '<span class="serv__accao" aria-hidden="true">' + esc(textoAccao) +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
-              'stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>' +
-              '</span>') +
+          '<h3 class="serv__tit">' + esc(s.titulo) + '</h3>' +
+          accoes +
           '</div>' +
-          (s.ligacao ? '' : painel) + '</article>';
+          painel + '</article>';
       }).join('');
 
 
@@ -652,11 +642,14 @@
     folhaOrigem = det;
     folhaGatilho = gatilho || null;
     folhaCorpo.appendChild(corpo);
-    ligarCarrossel(corpo);
     var t = corpo.querySelector('.folha__tit');
     folha.setAttribute('aria-label', t ? t.textContent : 'Detalhe do serviço');
     doc.documentElement.classList.add('folha-aberta');
     folha.showModal();
+    /* DEPOIS do showModal(), e não antes: com o <dialog> ainda fechado a pista
+       tem clientWidth 0, e o carrossel estaria a decidir qual é a fotografia
+       corrente a partir de uma caixa sem largura. Acertava por acaso. */
+    ligarCarrossel(corpo);
     /* O showModal() foca o primeiro focável, que é o X — o leitor de ecrã diria
        "Fechar" em vez do nome do serviço. Passa-se o foco para o título.
        Dois frames porque o Safari mexe no foco depois do primeiro; e um
@@ -705,6 +698,16 @@
     /* ESC: o browser dispara `cancel` antes de fechar. Trava-se aí para o fecho
        passar pelo mesmo caminho de todos os outros. */
     folha.addEventListener('cancel', function (e) { e.preventDefault(); fecharFolha(); });
+
+    /* As setas do teclado passam a fotografia a partir de QUALQUER ponto da folha.
+       Ao abrir, o foco está no título — obrigar a andar de Tab até à pista para as
+       setas começarem a valer era um passo que ninguém adivinha. O carrossel trata
+       das teclas que lhe chegam directamente; aqui só se encaminham as outras. */
+    folha.addEventListener('keydown', function (e) {
+      if (e.target.closest && e.target.closest('[data-carrossel]')) return;
+      var car = folhaCorpo.querySelector('[data-carrossel]');
+      if (car && car.__tecla) car.__tecla(e);
+    });
 
     window.addEventListener('popstate', function () {
       if (folha.open) { fecharPorHistorico = true; fecharFolha(); }
@@ -797,15 +800,43 @@
      setas, pontos, e manter os dois em sincronia com o que o dedo fez. */
   function ligarCarrossel(raiz) {
     var car = raiz.querySelector('[data-carrossel]');
-    if (!car || car.dataset.ligado) return;
-    car.dataset.ligado = '1';
+    if (!car) return;
     var pista = car.querySelector('.carrossel__pista');
     var fotos = [].slice.call(pista.children);
     var pontos = [].slice.call(car.querySelectorAll('.carrossel__ponto'));
     var setas = [].slice.call(car.querySelectorAll('.carrossel__seta'));
     if (fotos.length < 2) return;
 
+    /* Já ligado: os listeners sobrevivem à mudança de pai, mas o ESTADO não.
+       Abrir a folha move o nó com appendChild, e mover um scroller no DOM põe-lhe
+       o scrollLeft a zero SEM disparar evento de scroll — medido: 1366 -> 0, zero
+       eventos. Como só o listener de scroll chamava o sincronizar(), as setas e os
+       pontos ficavam a descrever a fotografia onde a pessoa tinha saído.
+
+       Quem fechasse na última fotografia reabria com a seta «seguinte» ainda
+       disabled — e disabled aqui é `opacity: 0; pointer-events: none`, ou seja
+       invisível E sem alvo de clique. Pior, era um beco sem saída: a seta anterior
+       fica presa em 0, um scrollTo(0) com a pista já em 0 não gera evento nenhum,
+       e portanto nada voltava a sincronizar. Só um clique num ponto, um arrasto,
+       ou recarregar a página. Daí o «às vezes deixa de funcionar».
+
+       Repõe-se explicitamente na primeira fotografia em vez de se ler a posição:
+       assim não depende de haver layout, e pode ser chamado antes ou depois de o
+       <dialog> abrir sem mudar de resultado. */
+    if (car.dataset.ligado) {
+      pista.scrollLeft = 0;
+      if (car.__sincronizar) car.__sincronizar(0);
+      return;
+    }
+    car.dataset.ligado = '1';
+
     var suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    /* A fotografia PEDIDA, que não é a mesma coisa que a fotografia por baixo do
+       scroll neste instante. Deduzir o índice da posição a cada clique fazia com
+       que dois cliques seguidos valessem um só: o segundo lia a pista a meio do
+       percurso, concluía que ainda estava na de origem, e mandava-a para o mesmo
+       destino. Guardando o pedido, os cliques encadeiam-se durante o voo. */
+    var alvo = 0;
 
     function actual() {
       var meio = pista.scrollLeft + pista.clientWidth / 2;
@@ -820,27 +851,66 @@
     function irPara(i) {
       i = Math.max(0, Math.min(fotos.length - 1, i));
       pista.scrollTo({ left: fotos[i].offsetLeft, behavior: suave ? 'smooth' : 'auto' });
+      /* Pintar já, sem esperar pelo evento de scroll: se o destino for a posição
+         onde a pista já está, esse evento nunca chega. */
+      sincronizar(i);
     }
-    function sincronizar() {
-      var i = actual();
+    /* Sem argumento, lê a posição — é o caso do dedo e da roda do rato. Com
+       argumento, é um destino pedido, que pode ainda estar a caminho. */
+    function sincronizar(i) {
+      if (i == null) i = actual();
+      alvo = i;
       pontos.forEach(function (p, k) {
         if (k === i) p.setAttribute('aria-current', 'true');
         else p.removeAttribute('aria-current');
       });
       setas.forEach(function (b) {
         var passo = +b.dataset.passo;
-        b.disabled = (passo < 0 && i === 0) || (passo > 0 && i === fotos.length - 1);
+        var desligar = (passo < 0 && i === 0) || (passo > 0 && i === fotos.length - 1);
+        /* Desligar o botão que tem o foco atira o foco para o <body>, e quem
+           navega por teclado fica sem sítio de onde continuar. Passa-se-lhe a
+           seta oposta ANTES: com duas ou mais fotografias, a oposta está sempre
+           activa quando esta deixa de estar. */
+        if (desligar && !b.disabled && doc.activeElement === b) {
+          var outra = setas.filter(function (o) { return o !== b; })[0];
+          if (outra) { try { outra.focus({ preventScroll: true }); } catch (e) { } }
+        }
+        b.disabled = desligar;
       });
     }
+    /* As setas do teclado passam a fotografia. A pista é um scroller com
+       tabindex, e por isso o browser já respondia às setas — mas com uns 40px de
+       cada vez, contra o scroll-snap, o que dava um solavanco e não uma
+       fotografia. Com preventDefault o passo passa a ser uma fotografia inteira.
+       Home e End vão aos extremos, como em qualquer lista. */
+    function tecla(e) {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      var i;
+      if (e.key === 'ArrowRight') i = alvo + 1;
+      else if (e.key === 'ArrowLeft') i = alvo - 1;
+      else if (e.key === 'Home') i = 0;
+      else if (e.key === 'End') i = fotos.length - 1;
+      else return;
+      e.preventDefault();
+      irPara(i);
+    }
+    car.addEventListener('keydown', tecla);
+    car.__tecla = tecla;
+    car.__sincronizar = sincronizar;
+
     setas.forEach(function (b) {
-      b.addEventListener('click', function () { irPara(actual() + (+b.dataset.passo)); });
+      b.addEventListener('click', function () { irPara(alvo + (+b.dataset.passo)); });
     });
     pontos.forEach(function (p) {
       p.addEventListener('click', function () { irPara(+p.dataset.ir); });
     });
     var pendente;
     pista.addEventListener('scroll', function () {
-      clearTimeout(pendente); pendente = setTimeout(sincronizar, 70);
+      clearTimeout(pendente);
+      /* Envolvido de propósito: sincronizar() passou a aceitar um índice, e um
+         setTimeout(sincronizar, 70) arrisca-se a chamá-lo com um argumento que
+         não é um índice. */
+      pendente = setTimeout(function () { sincronizar(); }, 70);
     }, { passive: true });
     sincronizar();
   }
@@ -850,20 +920,21 @@
        abrem no lugar — o serviço nunca fica inacessível. */
     if (!podeFolha()) { doc.documentElement.classList.add('sem-folha'); return; }
     doc.documentElement.classList.add('tem-folha');
-    /* Delegado no contentor: apanha o clique em qualquer ponto do cartão,
-       incluindo a sobreposição esticada da ligação. */
+    /* Delegado no contentor, mas só no botão «Ver detalhe». O cartão inteiro
+       deixou de ser clicável quando passou a ter duas acções: com o botão da
+       tabela de preços ao lado, um clique em qualquer ponto do cartão não tem
+       resposta óbvia — e a ligação esticada ficaria por cima do outro botão. */
     grelha.addEventListener('click', function (e) {
-      var cartao = e.target.closest ? e.target.closest('.serv') : null;
-      if (!cartao) return;
-      var det = cartao.querySelector('.ficha__det');
-      /* Um cartão com ligação para outra secção não tem painel: deixa-se o
-         clique seguir o seu caminho normal até à âncora. */
+      var botao = e.target.closest ? e.target.closest('[data-abrir]') : null;
+      if (!botao) return;
+      var cartao = botao.closest('.serv');
+      var det = cartao && cartao.querySelector('.ficha__det');
       if (!det) return;
       e.preventDefault();
-      abrirFolha(det, cartao.querySelector('.serv__link'));
+      abrirFolha(det, botao);
     });
-    /* Teclado: o <a> do título dispara o clique acima, mas o <summary> do
-       fallback também tem de levar à folha em vez de abrir no lugar. */
+    /* Sem <dialog>, o <summary> do fallback também tem de levar à folha em vez
+       de abrir no lugar. */
     grelha.querySelectorAll('.ficha__det > summary').forEach(function (sum) {
       sum.addEventListener('click', function (e) {
         e.preventDefault();

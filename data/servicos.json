@@ -9,26 +9,25 @@
       "id": "mecanica",
       "titulo": "Mecânica e diagnóstico",
       "descricao": "Diagnóstico antes de orçamento, em vez de trocar peças à sorte.",
-      "inclui": [
-        "Motor e embraiagem",
-        "Avarias elétricas",
-        "Luz de avaria acesa"
-      ],
       "tempo": "",
-      "foto": "bmw-serie5-frente",
-      "legenda_foto": "BMW Série 5 entregue depois de intervenção",
+      "foto": "posto-conducao",
+      "legenda_foto": "Painel de instrumentos — onde começa o diagnóstico",
       "alias": [
         "eletricidade",
         "eletronica"
       ],
       "fotos": [
         {
-          "nome": "bmw-serie5-frente",
-          "legenda": "BMW Série 5 depois de intervenção na oficina"
+          "nome": "posto-conducao",
+          "legenda": "Painel de instrumentos — onde começa o diagnóstico"
         },
         {
-          "nome": "posto-conducao",
-          "legenda": "Painel de instrumentos — ponto de partida do diagnóstico"
+          "nome": "faixa-volante",
+          "legenda": "Posto de condução de um BMW na oficina"
+        },
+        {
+          "nome": "bmw-serie5-frente",
+          "legenda": "BMW Série 5 entregue ao cliente"
         }
       ],
       "detalhe": ""
@@ -37,23 +36,22 @@
       "id": "revisao",
       "titulo": "Revisão completa",
       "descricao": "Consumíveis substituídos e o resto verificado ponto por ponto.",
-      "inclui": [
-        "Óleo e filtros",
-        "Travões e pneus",
-        "Relatório do que foi visto"
-      ],
       "tempo": "",
-      "foto": "mercedes-classe-e-frente",
-      "legenda_foto": "Mercedes Classe E pronto a entregar",
+      "foto": "faixa-jante",
+      "legenda_foto": "Jante e travão à vista, na verificação de travões e pneus",
       "alias": [],
       "fotos": [
+        {
+          "nome": "faixa-jante",
+          "legenda": "Jante e travão à vista, na verificação de travões e pneus"
+        },
         {
           "nome": "mercedes-classe-e-frente",
           "legenda": "Mercedes Classe E pronto a entregar"
         },
         {
-          "nome": "faixa-jante",
-          "legenda": "Jante e travão à vista, na verificação de travões e pneus"
+          "nome": "fachada-oficina",
+          "legenda": "Carro à porta da oficina, na Rua da Liberdade, 53"
         }
       ],
       "detalhe": ""
@@ -62,14 +60,9 @@
       "id": "lavagens",
       "titulo": "Lavagem",
       "descricao": "Por dentro e por fora, higienização do ar condicionado, estofos e cera. Com preço e tempo à frente de cada serviço.",
-      "inclui": [
-        "Exterior e jantes",
-        "Aspiração e estofos",
-        "Ar condicionado"
-      ],
       "tempo": "",
-      "foto": "mercedes-cla-frente",
-      "legenda_foto": "Mercedes CLA depois da lavagem",
+      "foto": "lavagem-espuma-oficina",
+      "legenda_foto": "Espuma activa na box de lavagem",
       "alias": [
         "lavagem-exterior",
         "lavagem-interior",
@@ -77,12 +70,12 @@
       ],
       "fotos": [
         {
-          "nome": "mercedes-cla-frente",
-          "legenda": "Mercedes CLA depois da lavagem exterior"
+          "nome": "lavagem-espuma-oficina",
+          "legenda": "Espuma activa na box de lavagem"
         },
         {
-          "nome": "lavagem-espuma-oficina",
-          "legenda": "Espuma activa na box da oficina"
+          "nome": "mercedes-cla-frente",
+          "legenda": "Mercedes CLA depois da lavagem exterior"
         },
         {
           "nome": "interior-bmw-limpo",

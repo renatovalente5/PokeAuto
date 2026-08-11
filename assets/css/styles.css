@@ -510,8 +510,14 @@ body.menu-aberto .menu { display: flex; }
 }
 
 /* Proporção fixa na capa: é isto que faz os cartões acabarem todos à mesma
-   altura, independentemente de o título ter uma ou duas linhas. */
-.serv__capa { aspect-ratio: 16 / 10; background: #E6E8EC; overflow: hidden; }
+   altura, independentemente de o título ter uma ou duas linhas.
+
+   4:3 e não 16:10. Oito das dez fotografias da oficina são verticais (4:5),
+   tiradas de telemóvel: numa caixa 16:10 o `cover` deitava fora METADE da
+   altura (0,8 / 1,6) e os carros ficavam sem tejadilho. A 4:3 sobra 60%, e é
+   por isso que a capa de cada serviço passou a ser a fotografia que já é
+   horizontal ou que aguenta o corte — painel, jante, espuma. */
+.serv__capa { aspect-ratio: 4 / 3; background: #E6E8EC; overflow: hidden; }
 .serv__capa img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform .5s cubic-bezier(0, 0, 0, 1);
@@ -530,51 +536,32 @@ body.menu-aberto .menu { display: flex; }
   line-height: 1.05; letter-spacing: -.01em;
   color: var(--claro-tinta);
 }
-.serv__link { color: inherit; text-decoration: none; }
-.serv__link::after { content: ''; position: absolute; inset: 0; }
 
-.serv__inclui {
-  display: flex; flex-wrap: wrap; gap: .35rem .4rem;
-  margin-top: .8rem; list-style: none; padding: 0;
+/* Duas acções lado a lado quando cabem, empilhadas quando não cabem. O
+   `margin-top: auto` é o que encosta a fila ao fundo e faz os cartões acabarem
+   todos à mesma altura, com título de uma ou de duas linhas. */
+.serv__accoes {
+  margin-top: auto; padding-top: 1.1rem;
+  display: flex; flex-wrap: wrap; gap: .55rem;
 }
-.serv__inclui li {
-  font-size: .78rem; letter-spacing: .01em;
-  padding: .26rem .6rem; border-radius: 999px;
-  background: #F1F3F6; color: var(--claro-2);
-  border: 1px solid rgba(20, 22, 26, .09);
-}
-
-.serv__accao {
-  margin-top: auto; padding-top: 1rem;
-  display: inline-flex; align-items: center; gap: .4rem;
-  font-family: var(--f-mono); font-size: .76rem;
-  letter-spacing: .04em; text-transform: uppercase; color: var(--vermelho-claro);
-}
-.serv__accao svg { width: 15px; height: 15px; transition: transform var(--t); }
-
-/* O cartão da lavagem sai da secção em vez de abrir um painel, e um botão a
-   sério diz isso melhor do que uma linha de texto. */
-.serv__botao {
-  margin-top: auto; align-self: flex-start;
-  color: var(--claro-tinta); border-color: rgba(20, 22, 26, .28);
-}
-.serv:hover .serv__botao { background: var(--claro-tinta); color: #FFFFFF;
+/* A borda de 1px do botão fantasma conta para a altura (border-box): sem esta
+   linha o botão cheio ficava 2px mais baixo do que o do lado, e no telemóvel,
+   com os dois empilhados, a diferença via-se. */
+.serv__btn { flex: 1 1 auto; justify-content: center; white-space: nowrap;
+  border: 1px solid transparent; }
+.serv__btn.btn--fantasma { color: var(--claro-tinta); border-color: rgba(20, 22, 26, .26); }
+.serv__btn.btn--fantasma:hover { background: var(--claro-tinta); color: #FFFFFF;
   border-color: var(--claro-tinta); }
-.serv__corpo > .serv__inclui + .serv__botao { margin-top: 1rem; }
 
-/* O anel de foco tem de aparecer no CARTÃO, não na ligação: a ligação é um
-   texto de uma linha e a área clicável é o cartão todo. */
-.serv:has(.serv__link:focus-visible) {
-  outline: 2px solid var(--vermelho-claro); outline-offset: 3px;
-}
-.serv__link:focus-visible { outline: none; }
+/* O anel de foco volta a ser de cada botão: com o cartão a deixar de ser
+   clicável, marcar o cartão inteiro passaria a mentir sobre o que está focado. */
+.serv__btn:focus-visible { outline: 2px solid var(--vermelho-claro); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: no-preference) {
   @media (hover: hover) and (pointer: fine) {
     .serv:hover { transform: translateY(-3px); border-color: rgba(20, 22, 26, .2);
       box-shadow: 0 16px 34px -20px rgba(20, 22, 26, .45); }
     .serv:hover .serv__capa img { transform: scale(1.05); }
-    .serv:hover .serv__accao svg { transform: translateX(3px); }
   }
 }
 
@@ -791,11 +778,8 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
   color: var(--dourado); }
 .sem-folha .ficha__det-corpo { padding: .6rem .2rem 0; }
 
-/* Sem <dialog>, os <details> voltam a abrir no lugar e o cartão deixa de ser
-   um alvo — daí o cursor normal acima. Com <dialog>, quem apanha o clique é a
-   delegação no contentor, e a área é o cartão inteiro pela sobreposição
-   esticada do .serv__link. */
-.serv { cursor: pointer; }
+/* Sem <dialog>, os <details> voltam a abrir no lugar; com <dialog>, quem
+   apanha o clique é a delegação no contentor, e só no botão «Ver detalhe». */
 
 /* --- a folha ------------------------------------------------------------ */
 .folha { padding: 0; border: 0; background: transparent; color: var(--branco);
@@ -824,10 +808,6 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 .folha__texto { color: var(--prata); margin-top: .7rem; }
 .folha__tempo { font-family: var(--f-mono); font-size: .82rem; color: var(--legenda);
   margin-top: .6rem; }
-.folha__inclui { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
-.folha__inclui li { font-size: .8rem; color: var(--branco);
-  border: 1px solid rgba(255,255,255,.16); border-radius: 999px;
-  padding: .26rem .7rem; background: rgba(255,255,255,.03); }
 /* ------------------------------------------------------------ CARROSSEL
    A pista é um scroller com scroll-snap: arrasta-se com o dedo, navega-se com
    as setas do teclado, e funciona sem uma linha de JavaScript. As setas e os
@@ -843,13 +823,21 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 .carrossel__pista::-webkit-scrollbar { display: none; }
 .carrossel__pista:focus-visible { outline: 2px solid var(--dourado); outline-offset: 3px; }
 .folha__foto { margin: 0; scroll-snap-align: start; min-width: 0; }
-/* As fotografias têm proporções diferentes (4:5, 3:2, 3:1). Uniformiza-se o
-   recorte para o carrossel não saltar de altura entre uma e outra. */
-.folha__foto img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover;
-  border-radius: var(--raio); display: block; background: var(--carvao); }
-/* No computador a folha tem 46rem de largura: a 4:3 a fotografia ficava com meio
-   ecrã de altura e empurrava tudo o resto para fora da vista. */
-@media (min-width: 48rem) { .folha__foto img { aspect-ratio: 16 / 10; } }
+/* Aqui dentro a fotografia é o assunto, e por isso NÃO se corta: `contain`. As
+   três proporções que existem na oficina (4:5 de telemóvel, 3:2, e as faixas
+   3:1) cabem inteiras na mesma caixa.
+
+   A altura é fixa — e não `aspect-ratio` — porque tem de ser a mesma para
+   todas: com a altura a seguir a proporção de cada uma, o carrossel dava um
+   salto a cada fotografia e a legenda fugia do sítio. Fica em fracções da
+   altura VISÍVEL (svh) para nunca comer o ecrã de um telemóvel alto.
+
+   O fundo é transparente e NÃO uma chapa preta: com `contain`, uma faixa 3:1
+   deixa duas bandas vazias de 170px, e pintadas de preto liam-se como um erro.
+   Assim a fotografia fica só pousada na folha, centrada no espaço que sobra. */
+.folha__foto img { width: 100%; height: 44svh; object-fit: contain;
+  display: block; background: transparent; }
+@media (min-width: 48rem) { .folha__foto img { height: 48svh; } }
 .folha__foto figcaption { font-size: .78rem; color: var(--legenda); margin-top: .45rem;
   min-height: 2.2em; }
 
@@ -932,8 +920,11 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
   .folha { margin: auto; width: min(46rem, 92vw); }
   .folha__caixa { border-radius: var(--raio-g); max-height: 86svh;
     display: flex; flex-direction: column; }
-  .folha__fotos { grid-template-columns: 1fr 1fr; }
-  .folha__foto--larga { grid-column: 1 / -1; }
+  /* Aqui esteve `.folha__foto--larga { grid-column: 1 / -1 }`, do tempo em que
+     as fotografias eram uma grelha de duas colunas. Numa pista de carrossel
+     (grid-auto-flow: column) essa regra atirava a fotografia larga para a
+     PRIMEIRA coluna: no detalhe da revisão a segunda fotografia aparecia à
+     frente da primeira e os pontos ficavam a marcar a errada. */
   .folha { opacity: 0; scale: .97;
     transition: opacity .22s ease-out, scale .22s cubic-bezier(0,0,0,1),
                 display .22s allow-discrete, overlay .22s allow-discrete; }

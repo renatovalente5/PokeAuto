@@ -53,6 +53,12 @@ jobs:
       - name: Verificar termos proibidos
         run: python3 .github/scripts/termos.py
 
+      # Um CSS partido não dá erro nenhum no browser: a regra é descartada em
+      # silêncio e o site sai torto. Já aconteceu duas vezes — um bloco sem
+      # selector e um comentário sem abertura.
+      - name: Verificar a sanidade do CSS
+        run: python3 .github/scripts/css_sao.py
+
       - name: Instalar o Pillow
         run: python3 -m pip install --quiet --disable-pip-version-check Pillow
 
