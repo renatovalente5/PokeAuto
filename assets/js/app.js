@@ -677,10 +677,17 @@
     folhaOrigem = null; folhaGatilho = null;
   }
 
-  /* O fecho é explícito e não depende do evento `close` do <dialog>: medido no
-     Chrome 148, chamar .close() não o dispara, e um site que só arrume o que
-     mexeu nesse evento fica com o scroll travado e o conteúdo fora do sítio.
-     O listener de `close` fica como rede, porque restaurarFolha() é idempotente. */
+  /* O fecho é explícito e não espera pelo evento `close` do <dialog>.
+
+     CORRECÇÃO ao que aqui esteve escrito: o evento DISPARA. A medição que dizia
+     o contrário estava errada — chamava .close() sobre um diálogo que já estava
+     fechado, e aí não dispara mesmo. Sobre um diálogo aberto dispara sempre.
+
+     A razão de não depender dele mantém-se, e é outra: o evento chega depois,
+     e no meio pode acontecer coisa nenhuma ou pode acontecer o utilizador
+     reabrir. Arrumar já, de forma síncrona, deixa o estado certo em qualquer
+     ordem. O listener de `close` fica como rede — restaurarFolha() é
+     idempotente, por isso correr duas vezes não faz mal. */
   function fecharFolha() {
     if (!podeFolha()) return;
     var tinhaHistorico = !fecharPorHistorico && history.state && history.state.folha;
@@ -954,7 +961,14 @@
       /* O site NÃO faz contas com o IVA, a pedido do cliente: mostra o valor
          que está no backoffice, tal e qual, com «+ IVA» ao lado. Já cá esteve
          a conta feita em JavaScript e foi retirada — o que se escreve na
-         tabela é o que aparece. */
+         tabela é o que aparece.
+
+         A única coisa que se mexe no número é o espaço antes do €, que sai:
+         é o que o cliente quer ver, e normaliza-se aqui em vez de depender de
+         ele escrever sempre da mesma maneira no backoffice. */
+      function precoLimpo(txt) {
+        return String(txt || '').replace(/\s+€/g, '€');
+      }
 
       aplicarHead(seccao, d.head);
 
@@ -1046,7 +1060,7 @@
            em letra pequena colado ao número, e não numa linha própria, para a
            célula continuar com duas linhas: número e tipo de carro. */
         function tarifa(valor, rotulo) {
-          return '<span class="lavagem__tarifa"><b>' + esc(valor) +
+          return '<span class="lavagem__tarifa"><b>' + esc(precoLimpo(valor)) +
             '<span class="lavagem__iva"> + IVA</span></b>' +
             '<small>' + rotulo + '</small></span>';
         }
@@ -1063,7 +1077,7 @@
           /* Um preço só vale para qualquer carro, e por isso fica CENTRADO sobre
              as duas colunas em vez de encostado a uma delas. */
           preco = '<span class="lavagem__preco">' +
-            '<b class="lavagem__unico">' + esc(p.preco) +
+            '<b class="lavagem__unico">' + esc(precoLimpo(p.preco)) +
             '<span class="lavagem__iva"> + IVA</span></b>' + nota + '</span>';
         } else {
           preco = '<span class="lavagem__preco">' +
@@ -1076,7 +1090,7 @@
         var msg = encodeURIComponent('Olá! Queria marcar: ' + p.nome +
                   /* A mensagem leva o preço tal como está no site, com o «+ IVA»
                      — senão quem recebe fica a achar que já é o total. */
-                  (p.preco && !p.preco_grande ? ' (' + p.preco + ' + IVA' +
+                  (p.preco && !p.preco_grande ? ' (' + precoLimpo(p.preco) + ' + IVA' +
                     (p.unidade ? ' ' + p.unidade : '') + ')' : ''));
         /* o número vem do backoffice, não escrito à mão — senão mudá-lo em
            Contactos deixava estes botões todos no número antigo */

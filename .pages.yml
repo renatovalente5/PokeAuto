@@ -232,6 +232,15 @@ content:
             label: "Tempo médio (opcional)"
             type: string
             description: 'Ex.: cerca de 1 hora. Deixa vazio se preferires não comprometer.'
+          - name: alias
+            label: "Endereços antigos deste serviço"
+            type: string
+            list: true
+            description: >-
+              Nomes que este serviço já teve, de quando estava separado em vários.
+              Só servem para os links antigos — de um cartão de visita, de uma
+              publicação no Instagram — continuarem a levar ao sítio certo. Não
+              acrescente nem apague nada aqui sem falar connosco.
           - name: foto
             label: "Fotografia de capa (opcional)"
             type: image
