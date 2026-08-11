@@ -257,18 +257,23 @@ body.menu-aberto .menu { display: flex; }
    isso, e só isso, que os faz alinhar de cima a baixo da lista. Com as colunas
    a encolherem ao texto de cada linha, «10 €» e «20 €» ficavam em sítios
    diferentes e um preço único aterrava debaixo da coluna dos SUV. */
+/* Duas colunas IGUAIS. Com larguras diferentes — 5,2rem e 7rem, para caber o
+   rótulo mais comprido — a barra ficava fora do meio e cada preço a uma
+   distância diferente dela: o «10 €» colado à barra e o «15 €» longe. */
 .lavagem__preco {
-  display: grid; grid-template-columns: 5.2rem 7rem; align-items: stretch;
+  display: grid; grid-template-columns: 5.6rem 5.6rem; align-items: stretch;
   font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem;
   color: var(--claro-tinta); white-space: nowrap;
 }
 /* Cada tarifa é o número com o seu rótulo por baixo — a resposta fica ao lado
    do número e não num cabeçalho a dez linhas de distância. A barra separa as
-   duas: sem ela, quatro textos seguidos liam-se como um bloco só. */
-.lavagem__tarifa { display: grid; justify-items: end; align-content: center;
-  line-height: 1.15; padding-right: .75rem; }
-.lavagem__tarifa + .lavagem__tarifa { padding-right: 0; padding-left: .75rem;
-  border-left: 1px solid #E1E5EA; }
+   duas: sem ela, quatro textos seguidos liam-se como um bloco só.
+
+   Centrado dentro da sua coluna, e não encostado a um dos lados: é o que dá o
+   mesmo ar dos dois lados da barra. */
+.lavagem__tarifa { display: grid; justify-items: center; align-content: center;
+  line-height: 1.15; padding: 0 .7rem; }
+.lavagem__tarifa + .lavagem__tarifa { border-left: 1px solid #E1E5EA; }
 .lavagem__tarifa small { font-family: var(--f-corpo); font-weight: 400;
   font-size: .68rem; color: var(--claro-2); }
 /* Um preço só vale para qualquer carro: fica a cavalo das duas colunas, como
@@ -425,10 +430,10 @@ body.menu-aberto .menu { display: flex; }
      O preço à ESQUERDA do botão, na mesma linha, e não por cima dele: com duas
      tarifas, empilhados davam quatro alturas de texto por serviço. */
   .lavagem__dir { grid-column: 1 / -1; }
-  /* As colunas apertam um pouco para os dois caberem lado a lado a 360px. */
-  .lavagem__preco { grid-template-columns: 4.4rem 6.2rem; }
-  .lavagem__tarifa { padding-right: .55rem; }
-  .lavagem__tarifa + .lavagem__tarifa { padding-left: .55rem; }
+  /* As colunas apertam um pouco — iguais na mesma — para o preço e o botão
+     caberem lado a lado a 360px. */
+  .lavagem__preco { grid-template-columns: 5.2rem 5.2rem; }
+  .lavagem__tarifa { padding: 0 .4rem; }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
 }

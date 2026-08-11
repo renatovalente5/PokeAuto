@@ -1041,8 +1041,12 @@
           preco = '<span class="lavagem__preco">' +
             '<span class="lavagem__tarifa"><b>' + esc(p.preco) + '</b>' +
             '<small>Ligeiro</small></span>' +
+            /* «SUV» e não «SUV/carrinha»: com duas colunas iguais, um rótulo com
+               o triplo das letras do outro desequilibra o par outra vez. Quem
+               tem uma carrinha fica a saber pelo subtítulo, mesmo por cima da
+               tabela, que a segunda coluna também é dele. */
             '<span class="lavagem__tarifa"><b>' + esc(p.preco_grande) + '</b>' +
-            '<small>SUV/carrinha</small></span>' + nota + '</span>';
+            '<small>SUV</small></span>' + nota + '</span>';
         } else if (p.preco) {
           /* Um preço só vale para qualquer carro, e por isso fica CENTRADO sobre
              as duas colunas em vez de encostado a uma delas. */
