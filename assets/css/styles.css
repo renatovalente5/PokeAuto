@@ -444,7 +444,11 @@ body.menu-aberto .menu { display: flex; }
    cortado pelo cartão. Aperta-se aqui, e só aqui, em vez de encolher tudo para
    toda a gente por causa do ecrã mais estreito. */
 @media (max-width: 21.5rem) {
-  .lavagem__preco { grid-template-columns: 5rem 5rem; }
+  .lavagem__preco { grid-template-columns: 5rem 5rem;
+    /* Os preços com IVA são «12,30 €» e não «10 €» — quase o dobro dos
+       caracteres. A esta largura sobrava 1px, que não é folga nenhuma: bastava
+       uma fonte de recurso ligeiramente mais larga para o número sair da caixa. */
+    font-size: .95rem; }
   .lavagem__tarifa { padding: 0 .25rem; }
   .lavagem__tarifa small { font-size: .58rem; }
   .lavagem__btn { min-width: 4.8rem; padding-inline: .6rem; }

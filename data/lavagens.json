@@ -2,7 +2,7 @@
   "head": {
     "etiqueta": "Lavagem e estética",
     "titulo": "Deixe o carro como novo",
-    "lead": "Preços com IVA. Onde há dois, o primeiro é para ligeiros e o segundo para SUV e carrinhas."
+    "lead": "Preços finais, com IVA incluído. Onde há dois, o primeiro é para ligeiros e o segundo para SUV e carrinhas."
   },
   "itens": [
     {
@@ -10,8 +10,8 @@
       "categoria": "Lavagens",
       "inclui": "",
       "duracao": "",
-      "preco": "10 €",
-      "preco_grande": "15 €",
+      "preco": "12,30 €",
+      "preco_grande": "18,45 €",
       "unidade": "",
       "foto": ""
     },
@@ -20,8 +20,8 @@
       "categoria": "Lavagens",
       "inclui": "",
       "duracao": "",
-      "preco": "15 €",
-      "preco_grande": "20 €",
+      "preco": "18,45 €",
+      "preco_grande": "24,60 €",
       "unidade": "",
       "foto": ""
     },
@@ -30,8 +30,8 @@
       "categoria": "Lavagens",
       "inclui": "",
       "duracao": "",
-      "preco": "20 €",
-      "preco_grande": "30 €",
+      "preco": "24,60 €",
+      "preco_grande": "36,90 €",
       "unidade": "",
       "foto": ""
     },
@@ -40,7 +40,7 @@
       "categoria": "Extras",
       "inclui": "",
       "duracao": "",
-      "preco": "10 €",
+      "preco": "12,30 €",
       "preco_grande": "",
       "unidade": "",
       "foto": ""
@@ -50,7 +50,7 @@
       "categoria": "Extras",
       "inclui": "",
       "duracao": "",
-      "preco": "20 €",
+      "preco": "24,60 €",
       "preco_grande": "",
       "unidade": "",
       "foto": ""
@@ -60,7 +60,7 @@
       "categoria": "Extras",
       "inclui": "",
       "duracao": "",
-      "preco": "40 €",
+      "preco": "49,20 €",
       "preco_grande": "",
       "unidade": "por unidade",
       "foto": ""
@@ -70,7 +70,7 @@
       "categoria": "Extras",
       "inclui": "Inclui a remoção da jante para limpeza profunda",
       "duracao": "",
-      "preco": "5 €",
+      "preco": "6,15 €",
       "preco_grande": "",
       "unidade": "por jante",
       "foto": ""
@@ -90,7 +90,7 @@
       "categoria": "Interior",
       "inclui": "",
       "duracao": "",
-      "preco": "10 €",
+      "preco": "12,30 €",
       "preco_grande": "",
       "unidade": "por banco",
       "foto": ""
@@ -100,7 +100,7 @@
       "categoria": "Interior",
       "inclui": "Pelo de animais, areia, manchas difíceis, terra ou barro. Cobra-se por cada hora acima do tempo médio de lavagem, que é de 1 h 30",
       "duracao": "",
-      "preco": "10 €",
+      "preco": "12,30 €",
       "preco_grande": "",
       "unidade": "por hora",
       "foto": ""
