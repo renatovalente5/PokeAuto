@@ -600,32 +600,30 @@
            cartão deixa de fazer sentido a ligação esticada por cima dele: dois
            alvos sobrepostos são um alvo ambíguo. Os botões passam a ser a
            única forma de agir, e o título volta a ser só um título. */
+        /* Uma fila só de acções, no fundo do degradê: «Ver detalhe» à esquerda
+           e, quando existe, a saída para a tabela de preços à direita. Nunca ao
+           lado do nome — o nome tem a linha só para ele.
+
+           Tem de continuar a ser um <button> a sério: é ele que a delegação em
+           [data-abrir] apanha, e é por ele que quem usa teclado abre o detalhe.
+           Quando isto aqui esteve pela primeira vez era um <span aria-hidden>,
+           porque o cartão INTEIRO era uma ligação; hoje não é. */
         var accoes =
           '<div class="serv__accoes">' +
-          /* Volta a ser a acção pequena com a seta, e não um botão de caixa
-             cheia. Tem de continuar a ser um <button> a sério — quando isto
-             aqui esteve, era um <span aria-hidden> porque o cartão inteiro era
-             uma ligação; hoje o cartão não é clicável, e um <span> deixava
-             quem usa teclado sem forma de abrir o detalhe. */
           '<button class="serv__accao" type="button" ' +
           'data-abrir="' + esc(s.id) + '">Ver detalhe' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
           'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
           '<path d="M5 12h13M13 6l6 6-6 6"/></svg></button>' +
-          '</div>';
-
-        /* O botão da tabela de preços vai para a MESMA linha do nome do serviço,
-           e não para baixo com a acção pequena: ali ocupa espaço que já estava
-           vazio ao lado de uma palavra curta, e poupa uma linha inteira de
-           altura ao cartão. */
-        var cabeca =
-          '<div class="serv__cabeca">' +
-          '<h3 class="serv__tit">' + esc(s.titulo) + '</h3>' +
           (s.ligacao
             ? '<a class="btn btn--vermelho serv__btn" href="' + esc(s.ligacao) + '">' +
               esc(s.ligacao_texto || 'Ver mais') + '</a>'
             : '') +
           '</div>';
+
+        /* O nome já não partilha linha com nada, por isso não precisa de
+           invólucro: o .serv__cabeca desapareceu. */
+        var cabeca = '<h3 class="serv__tit">' + esc(s.titulo) + '</h3>';
 
         return '<article class="serv" id="servico-' + esc(s.id) + '" data-reveal>' + alias +
           /* A capa é decorativa: o título ao lado já diz tudo, e um alt repetido

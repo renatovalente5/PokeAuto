@@ -542,11 +542,10 @@ body.menu-aberto .menu { display: flex; }
   display: flex; align-items: center; gap: .5rem; }
 .hero__nota::before { content: ''; width: 20px; height: 2px; background: var(--dourado); flex: none; }
 
-/* ------------------------------------------------ CARTÕES DOS SERVIÇOS */
-/* Substituem os cartões 3D com o título por cima da fotografia. Três razões
-   para a mudança: as quatro fotografias eram praticamente a mesma rua, o texto
-   sobre imagem só se lia por causa de um gradiente, e num telemóvel de 375px
-   as duas colunas fixas davam cartões de 166px. */
+/* ================================================ CARTÕES DOS SERVIÇOS
+   «foto-de-fundo»: a fotografia É o cartão. O nome e as acções descem para
+   cima dela, sobre um degradê. A altura do cartão passa a ser SÓ a altura da
+   fotografia — some a faixa branca de 137px que estava por baixo. */
 
 /* auto-fit + minmax: passa sozinha de três colunas para duas e para uma,
    conforme o espaço, sem media queries a decidir números redondos. O
@@ -558,95 +557,110 @@ body.menu-aberto .menu { display: flex; }
   gap: clamp(1rem, 2.2vw, 1.6rem);
 }
 
+/* Pilha de uma célula: fotografia e legenda ocupam a MESMA célula. A altura do
+   cartão é a MAIOR das duas (na prática a da fotografia) e nunca a soma —
+   é isto que corta a altura, e é também a rede de segurança: se algum dia o
+   nome der três linhas, o cartão cresce em vez de o texto sair fora. */
 .serv {
   position: relative;
-  display: flex; flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
-  background: #FFFFFF;
-  border: 1px solid rgba(20, 22, 26, .10);
+  background: #14161A;
+  border: 0;
   border-radius: var(--raio-g);
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(20, 22, 26, .05);
-  transition: transform var(--t), border-color var(--t), box-shadow var(--t);
+  box-shadow: 0 2px 4px rgba(20, 22, 26, .10);
+  transition: transform var(--t), box-shadow var(--t);
 }
+/* Só estes DOIS partilham a célula. Os <span> das âncoras antigas e o
+   <details> — que volta a aparecer sem JavaScript — caem em linhas por baixo,
+   como sempre caíram: sem JavaScript o detalhe abre no lugar e empurra o
+   cartão para baixo, em vez de aterrar por cima da fotografia. */
+.serv__capa, .serv__corpo { grid-area: 1 / 1; }
 
-/* Proporção fixa na capa: é isto que faz os cartões acabarem todos à mesma
-   altura, independentemente de o título ter uma ou duas linhas.
-
-   4:3 e não 16:10. Oito das dez fotografias da oficina são verticais (4:5),
-   tiradas de telemóvel: numa caixa 16:10 o `cover` deitava fora METADE da
-   altura (0,8 / 1,6) e os carros ficavam sem tejadilho. A 4:3 sobra 60%, e é
-   por isso que a capa de cada serviço passou a ser a fotografia que já é
-   horizontal ou que aguenta o corte — painel, jante, espuma. */
-.serv__capa { aspect-ratio: 4 / 3; background: #E6E8EC; overflow: hidden; }
+/* 3:2 é a proporção da fotografia da mecânica (760x507) — essa não é cortada
+   de todo. As outras duas são verticais (4:5) e ficam com 53% da altura: o
+   corte é em CIMA, com object-position a 70%, porque numa fotografia de
+   telemóvel o que está em cima é tecto ou céu e o carro está em baixo. */
+.serv__capa { aspect-ratio: 3 / 2; background: #14161A; overflow: hidden; }
 .serv__capa img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 70%;
+  display: block;
   transition: transform .5s cubic-bezier(0, 0, 0, 1);
 }
 
-/* flex:1 no corpo + margin-top:auto na acção = a acção encosta ao fundo em
-   todos os cartões, mesmo com conteúdos de comprimentos diferentes. */
+/* O degradê. Os valores não são de gosto: são o mínimo de opacidade que ainda
+   passa o contraste no PIOR pixel possível — o pixel branco. Medido com a
+   fotografia substituída por branco puro, o nome dá 10,35:1 e o «Ver detalhe»
+   8,98:1; logo, NENHUMA fotografia deste mundo o pode fazer descer abaixo
+   disso. O terço de cima do degradê é só fotografia a escurecer, para a
+   transição não ser uma barra preta com um bordo. */
 .serv__corpo {
-  flex: 1; display: flex; flex-direction: column;
-  padding: clamp(1.05rem, 2.4vw, 1.4rem);
+  align-self: end;
+  z-index: 1;
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: .45rem;
+  padding: clamp(2.9rem, 6.5vw, 3.9rem) clamp(1rem, 2.1vw, 1.3rem) clamp(1rem, 2vw, 1.2rem);
+  background: linear-gradient(to top,
+    rgba(20, 22, 26, .97) 0%,
+    rgba(20, 22, 26, .95) 30%,
+    rgba(20, 22, 26, .88) 52%,
+    rgba(20, 22, 26, .66) 68%,
+    rgba(20, 22, 26, .34) 84%,
+    rgba(20, 22, 26, 0) 100%);
 }
-/* O nome do serviço é o que se lê primeiro e é a razão de o cartão existir:
-   sem a descrição a competir com ele, ganha corpo e respiração. */
+
+/* O nome ganha corpo: sobre a fotografia pode crescer sem competir com nada,
+   e é o único texto grande do cartão. */
 .serv__tit {
-  font-size: clamp(1.3rem, 2vw, 1.65rem); text-transform: uppercase;
-  line-height: 1.05; letter-spacing: -.01em;
-  color: var(--claro-tinta);
+  color: #FFFFFF;
+  font-size: clamp(1.35rem, 2.1vw, 1.72rem);
+  line-height: 1.03; letter-spacing: -.005em;
+  text-transform: uppercase; text-wrap: balance;
 }
 
-/* Duas acções lado a lado quando cabem, empilhadas quando não cabem. O
-   `margin-top: auto` é o que encosta a fila ao fundo e faz os cartões acabarem
-   todos à mesma altura, com título de uma ou de duas linhas. */
-/* O nome do serviço e, quando existe, o botão da tabela de preços na mesma
-   linha. O botão vive no espaço que já sobrava ao lado de uma palavra curta e
-   poupa uma linha inteira de altura ao cartão. Envolve quando não couber — a
-   360px «Lavagem» mais «Ver mais lavagens» ainda cabem, a 320px não. */
-.serv__cabeca {
-  display: flex; flex-wrap: wrap; align-items: start;
-  justify-content: space-between; gap: .5rem .8rem;
-}
+/* Uma fila só de acções, encostada ao fundo do degradê. O botão das lavagens
+   vai para a DIREITA desta fila — nunca ao lado do nome. */
 .serv__accoes {
-  margin-top: auto; padding-top: .8rem;
-  display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem;
+  margin-top: 0; padding-top: 0; width: 100%;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .9rem;
 }
-/* «Ver detalhe» volta a ser a acção pequena com a seta, e não um botão de caixa
-   cheia. É um <button> sem nada de botão à volta: fundo, borda e padding a zero,
-   porque o que se quer é o texto e a seta.
 
-   O laranja não pode ser o --dourado da marca: sobre o cartão branco dá 1,77:1,
-   ilegível para texto de 12px. Este dá 4,72:1, que passa o mínimo da norma. */
+
+/* «Ver detalhe» continua a ser <button> — foco e teclado inalterados. Sobre
+   escuro pode voltar a ser o dourado da marca (o laranja #C25008 existia só
+   porque o fundo era branco). */
 .serv__accao {
   display: inline-flex; align-items: center; gap: .4rem;
   padding: 0; background: none; border: 0; cursor: pointer;
-  font-family: var(--f-mono); font-size: .76rem;
-  letter-spacing: .04em; text-transform: uppercase; color: #C25008;
+  font-family: var(--f-mono); font-size: .78rem; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--dourado);
 }
 .serv__accao svg { width: 15px; height: 15px; transition: transform var(--t); }
-.serv__accao:hover { color: #9E4106; }
+.serv__accao:hover { color: var(--dourado-luz); }
 .serv__accao:hover svg { transform: translateX(3px); }
-.serv__accao:focus-visible { outline: 2px solid var(--vermelho-claro); outline-offset: 3px;
-  border-radius: 3px; }
-/* O botão da tabela de preços continua a ser um botão a sério: é uma saída do
-   cartão, não um «abrir para ver mais». Mas ao lado de um título tem de ter a
-   medida de um título: com o tamanho de origem ficava com 57px de altura
-   contra os 31px do nome, e o nome — centrado contra ele — caía 25px abaixo
-   dos nomes dos outros dois cartões. */
-.serv__btn { justify-content: center; white-space: nowrap;
-  border: 1px solid transparent;
-  font-size: .82rem; padding: .55em 1.05em; }
 
-/* O anel de foco volta a ser de cada botão: com o cartão a deixar de ser
-   clicável, marcar o cartão inteiro passaria a mentir sobre o que está focado. */
-.serv__btn:focus-visible { outline: 2px solid var(--vermelho-claro); outline-offset: 2px; }
+/* A saída para #lavagens: um botão a sério, mas à medida de uma fila de
+   acções. Fundo opaco — o contraste do texto não depende da fotografia. */
+.serv__btn {
+  margin-left: auto;
+  justify-content: center; white-space: nowrap;
+  border: 0; border-radius: var(--raio);
+  font-size: .8rem; padding: .5em .95em; line-height: 1.1;
+}
+
+/* O anel de foco tem de ser visível sobre escuro: o da secção clara é tinta
+   escura e desaparecia dentro do degradê. */
+.servs .serv__accao:focus-visible,
+.servs .serv__btn:focus-visible {
+  outline: 2px solid var(--dourado-luz); outline-offset: 3px; border-radius: 3px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   @media (hover: hover) and (pointer: fine) {
-    .serv:hover { transform: translateY(-3px); border-color: rgba(20, 22, 26, .2);
-      box-shadow: 0 16px 34px -20px rgba(20, 22, 26, .45); }
+    .serv:hover { transform: translateY(-3px);
+      box-shadow: 0 18px 38px -20px rgba(20, 22, 26, .55); }
     .serv:hover .serv__capa img { transform: scale(1.05); }
   }
 }
