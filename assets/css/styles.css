@@ -601,10 +601,17 @@ body.menu-aberto .menu { display: flex; }
 /* Duas acções lado a lado quando cabem, empilhadas quando não cabem. O
    `margin-top: auto` é o que encosta a fila ao fundo e faz os cartões acabarem
    todos à mesma altura, com título de uma ou de duas linhas. */
+/* O nome do serviço e, quando existe, o botão da tabela de preços na mesma
+   linha. O botão vive no espaço que já sobrava ao lado de uma palavra curta e
+   poupa uma linha inteira de altura ao cartão. Envolve quando não couber — a
+   360px «Lavagem» mais «Ver mais lavagens» ainda cabem, a 320px não. */
+.serv__cabeca {
+  display: flex; flex-wrap: wrap; align-items: start;
+  justify-content: space-between; gap: .5rem .8rem;
+}
 .serv__accoes {
-  margin-top: auto; padding-top: 1.1rem;
+  margin-top: auto; padding-top: .8rem;
   display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem;
-  justify-content: space-between;
 }
 /* «Ver detalhe» volta a ser a acção pequena com a seta, e não um botão de caixa
    cheia. É um <button> sem nada de botão à volta: fundo, borda e padding a zero,
@@ -624,10 +631,13 @@ body.menu-aberto .menu { display: flex; }
 .serv__accao:focus-visible { outline: 2px solid var(--vermelho-claro); outline-offset: 3px;
   border-radius: 3px; }
 /* O botão da tabela de preços continua a ser um botão a sério: é uma saída do
-   cartão, não um «abrir para ver mais». Encosta-se à direita, com a acção
-   pequena à esquerda. */
+   cartão, não um «abrir para ver mais». Mas ao lado de um título tem de ter a
+   medida de um título: com o tamanho de origem ficava com 57px de altura
+   contra os 31px do nome, e o nome — centrado contra ele — caía 25px abaixo
+   dos nomes dos outros dois cartões. */
 .serv__btn { justify-content: center; white-space: nowrap;
-  border: 1px solid transparent; }
+  border: 1px solid transparent;
+  font-size: .82rem; padding: .55em 1.05em; }
 
 /* O anel de foco volta a ser de cada botão: com o cartão a deixar de ser
    clicável, marcar o cartão inteiro passaria a mentir sobre o que está focado. */

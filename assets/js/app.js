@@ -612,6 +612,15 @@
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
           'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
           '<path d="M5 12h13M13 6l6 6-6 6"/></svg></button>' +
+          '</div>';
+
+        /* O botão da tabela de preços vai para a MESMA linha do nome do serviço,
+           e não para baixo com a acção pequena: ali ocupa espaço que já estava
+           vazio ao lado de uma palavra curta, e poupa uma linha inteira de
+           altura ao cartão. */
+        var cabeca =
+          '<div class="serv__cabeca">' +
+          '<h3 class="serv__tit">' + esc(s.titulo) + '</h3>' +
           (s.ligacao
             ? '<a class="btn btn--vermelho serv__btn" href="' + esc(s.ligacao) + '">' +
               esc(s.ligacao_texto || 'Ver mais') + '</a>'
@@ -627,7 +636,7 @@
             ' alt="" loading="lazy" decoding="async"' + attrsDim(src) + ' />' : '') +
           '</div>' +
           '<div class="serv__corpo">' +
-          '<h3 class="serv__tit">' + esc(s.titulo) + '</h3>' +
+          cabeca +
           accoes +
           '</div>' +
           painel + '</article>';
