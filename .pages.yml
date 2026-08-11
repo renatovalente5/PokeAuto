@@ -287,10 +287,17 @@ content:
             label: Subtítulo
             type: text
             description: >-
-              Bom sítio para dizer para que carros valem estes preços. Se os preços
-              da tabela forem só para ligeiros normais, diga-o aqui — anunciar um
+              Bom sítio para dizer para que carros valem estes preços. Anunciar um
               preço que depois não se pratica é prática comercial enganosa
               (DL 57/2008, art. 7.º).
+          - name: iva
+            label: "Taxa de IVA (%)"
+            type: number
+            options: { step: 1, min: 0 }
+            description: >-
+              23 no continente. Os preços dos serviços são escritos SEM IVA e o
+              site acrescenta esta taxa para mostrar o total. Só mexa aqui se a
+              taxa mudar por lei.
       - name: itens
         label: Serviços e preços
         type: object
@@ -319,19 +326,23 @@ content:
               perceber a diferença entre a lavagem de 20 € e a de 30 €.
           - { name: duracao, label: "Quanto tempo demora (opcional)", type: string }
           - name: preco
-            label: "Preço para ligeiros (opcional)"
+            label: "Preço para ligeiros, SEM IVA (opcional)"
             type: string
             description: >-
-              Tem de ser o valor final, com IVA incluído (DL 138/90). Deixe vazio
-              para aparecer «Sob consulta» — não indicar preço é legal, indicar um
-              preço que não se pratica não é.
+              Escreva o valor base, como o tem na sua tabela — por exemplo 10 €.
+              O site acrescenta o IVA sozinho e mostra o total (12,30 €), com o
+              «10 € + IVA» por baixo. NÃO escreva aqui um valor que já leve IVA,
+              senão ele é contado duas vezes. Deixe vazio para aparecer «Sob
+              consulta» — não indicar preço é legal, indicar um preço que não se
+              pratica não é.
           - name: preco_grande
-            label: "Preço para SUV e carrinhas (opcional)"
+            label: "Preço para SUV e carrinhas, SEM IVA (opcional)"
             type: string
             description: >-
-              Só para os serviços em que o preço muda com o tamanho do carro.
-              Preenchido, aparecem os dois valores lado a lado com a etiqueta de
-              cada um. Vazio, aparece só o preço de cima, para todos os carros.
+              Também sem IVA. Só para os serviços em que o preço muda com o
+              tamanho do carro. Preenchido, aparecem os dois valores lado a lado
+              com a etiqueta de cada um. Vazio, aparece só um preço, igual para
+              todos os carros.
           - name: unidade
             label: "A que se refere o preço (opcional)"
             type: string
