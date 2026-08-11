@@ -258,33 +258,27 @@ body.menu-aberto .menu { display: flex; }
    a encolherem ao texto de cada linha, «10 €» e «20 €» ficavam em sítios
    diferentes e um preço único aterrava debaixo da coluna dos SUV. */
 .lavagem__preco {
-  display: grid; grid-template-columns: 4.4rem 6.6rem; column-gap: .3rem;
-  align-items: baseline;
+  display: grid; grid-template-columns: 5.2rem 7rem; align-items: stretch;
   font-family: var(--f-mono); font-weight: 500; font-size: 1.05rem;
   color: var(--claro-tinta); white-space: nowrap;
 }
-.lavagem__tarifa { text-align: right; }
+/* Cada tarifa é o número com o seu rótulo por baixo — a resposta fica ao lado
+   do número e não num cabeçalho a dez linhas de distância. A barra separa as
+   duas: sem ela, quatro textos seguidos liam-se como um bloco só. */
+.lavagem__tarifa { display: grid; justify-items: end; align-content: center;
+  line-height: 1.15; padding-right: .75rem; }
+.lavagem__tarifa + .lavagem__tarifa { padding-right: 0; padding-left: .75rem;
+  border-left: 1px solid #E1E5EA; }
+.lavagem__tarifa small { font-family: var(--f-corpo); font-weight: 400;
+  font-size: .68rem; color: var(--claro-2); }
 /* Um preço só vale para qualquer carro: fica a cavalo das duas colunas, como
    uma célula unida numa tabela, em vez de encostado a uma delas. */
-.lavagem__unico { grid-column: 1 / -1; text-align: center; }
+.lavagem__unico { grid-column: 1 / -1; text-align: center; align-self: center; }
 .lavagem__consulta { font-family: var(--f-corpo); font-weight: 400;
   font-size: .95rem; color: var(--claro-2); }
 .lavagem__nota { grid-column: 1 / -1; text-align: center;
   font-family: var(--f-corpo); font-weight: 400; font-size: .72rem;
   color: var(--claro-2); }
-
-/* Cabeçalho das colunas, uma vez só à cabeça da lista. Recua a largura do botão
-   mais a goteira para as etiquetas caírem mesmo por cima dos números. */
-.lavagens__cab { display: flex; justify-content: flex-end;
-  padding: .7rem 1.1rem .5rem; background: #F7F9FB;
-  border-bottom: 1px solid #EDF0F3; }
-.lavagens__cab[hidden] { display: none; }
-.lavagens__cab-dir { display: grid; grid-template-columns: 4.4rem 6.6rem;
-  column-gap: .3rem; margin-right: calc(5.6rem + .9rem); }
-/* Estes dois rótulos são a chave de leitura da tabela toda — a 11px e em cinza
-   claro eram os primeiros a desaparecer de um ecrã ao sol. */
-.lavagens__cab .lavagem__tarifa { font-family: var(--f-corpo); font-size: .78rem;
-  font-weight: 700; letter-spacing: .02em; color: var(--claro-tinta); }
 /* Largura fixa: é a partir dela que o cabeçalho sabe quanto recuar para as
    etiquetas ficarem por cima dos números. */
 .lavagem__btn {
@@ -432,8 +426,9 @@ body.menu-aberto .menu { display: flex; }
      tarifas, empilhados davam quatro alturas de texto por serviço. */
   .lavagem__dir { grid-column: 1 / -1; }
   /* As colunas apertam um pouco para os dois caberem lado a lado a 360px. */
-  .lavagem__preco, .lavagens__cab-dir { grid-template-columns: 3.6rem 5.6rem; }
-  .lavagens__cab-dir { margin-right: calc(5.6rem + .9rem); }
+  .lavagem__preco { grid-template-columns: 4.4rem 6.2rem; }
+  .lavagem__tarifa { padding-right: .55rem; }
+  .lavagem__tarifa + .lavagem__tarifa { padding-left: .55rem; }
   .faixa img { aspect-ratio: 2 / 1; }
   .faixa__txt { background: linear-gradient(90deg, rgba(11, 11, 13, .92) 40%, rgba(11, 11, 13, .3)); }
 }
