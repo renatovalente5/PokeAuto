@@ -59,6 +59,13 @@ jobs:
       - name: Verificar a sanidade do CSS
         run: python3 .github/scripts/css_sao.py
 
+      # Um comentário HTML que leve a sintaxe de comentário no corpo fecha-se a
+      # meio, e o resto do texto passa a aparecer na página. Não dá erro nenhum:
+      # o HTML é válido. Já foi para produção uma vez, com cinco parágrafos de
+      # notas internas à vista no topo do site.
+      - name: Verificar os comentários do HTML
+        run: python3 .github/scripts/html_sao.py
+
       - name: Instalar o Pillow
         run: python3 -m pip install --quiet --disable-pip-version-check Pillow
 
