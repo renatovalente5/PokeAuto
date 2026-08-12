@@ -1073,12 +1073,19 @@
           ? '<span class="promo__selo promo__selo--pct">&minus;' + esc(String(p.percentagem).replace(/\s*%\s*$/, '')) + '%</span>'
           : '<span class="promo__selo">Oferta</span>';
         /* O «antes» é o preço mais baixo praticado nos 30 dias anteriores, e é
-           um preço final ao consumidor — com IVA. É o único número desta página
-           nessa base, e a nota ao lado diz porquê, para não parecer erro face à
-           tabela das lavagens, que está sem IVA por decisão do cliente. */
+           um preço final ao consumidor — com IVA.
+
+           Aqui esteve, por baixo, a frase «preço mais baixo praticado nos 30
+           dias anteriores, com IVA». Saiu a pedido, e podia sair: o que o DL
+           70/2007 obriga é a INDICAR esse preço, não a explicar o que ele é. O
+           «antes» riscado é a forma corrente de o indicar.
+
+           O VALOR não pode sair. Confirmado com a ASAE: numa redução de preço a
+           percentagem pode substituir o preço NOVO, nunca o anterior. Um cartão
+           só com «−20%» é a prática que a lei deixou de admitir em 2021. */
         var linha = desconto
-          ? '<p class="promo__preco"><span class="promo__antes">' + esc(p.antes) + '</span>' +
-            '<small>preço mais baixo praticado nos 30 dias anteriores, com IVA</small></p>'
+          ? '<p class="promo__preco"><small>antes</small>' +
+            '<span class="promo__antes">' + esc(p.antes) + '</span></p>'
           : '<p class="promo__oferta">' + esc(p.oferta) + '</p>';
         var v = validade(p);
         var msg = encodeURIComponent('Olá! Queria aproveitar a promoção: ' + p.titulo);
