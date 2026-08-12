@@ -409,14 +409,15 @@ content:
             type: string
             description: 'Só o número. Ex.: 20'
           - name: antes
-            label: "Preço mais baixo que praticou nos últimos 30 dias (final, COM IVA)"
+            label: "Preço mais baixo que praticou nos últimos 30 dias"
             type: string
             description: >-
               Este é o campo que a lei obriga a mostrar (DL 70/2007, alterado
-              pelo DL 109-G/2021) e não é o preço da tabela: é o valor mais baixo
-              a que fez mesmo este serviço nos 30 dias antes de a campanha
-              começar. Aqui, e só aqui, o valor é o FINAL, com IVA — é o que a
-              pessoa paga ao balcão. Se a tabela diz 20 €, o final é 24,60 €. Sem
+              pelo DL 109-G/2021) e não é necessariamente o preço da tabela: é o
+              valor mais baixo a que fez mesmo este serviço nos 30 dias antes de
+              a campanha começar. Escreva-o assim, com os dois valores —
+              «20 € + IVA (24,60 €)» — porque o que a lei manda indicar é o valor
+              FINAL, com IVA, e o outro é o que a pessoa reconhece da tabela. Sem
               este campo preenchido, uma campanha de desconto não aparece no
               site: um desconto sem o preço anterior não é anunciável.
           - name: oferta

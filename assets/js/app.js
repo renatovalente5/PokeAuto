@@ -1082,7 +1082,13 @@
 
            O VALOR não pode sair. Confirmado com a ASAE: numa redução de preço a
            percentagem pode substituir o preço NOVO, nunca o anterior. Um cartão
-           só com «−20%» é a prática que a lei deixou de admitir em 2021. */
+           só com «−20%» é a prática que a lei deixou de admitir em 2021.
+
+           O texto vem inteiro do backoffice, e escreve-se «20 € + IVA (24,60 €)»:
+           o valor final tem de lá estar porque é esse que a lei manda indicar, e
+           o outro está porque é o que a pessoa reconhece da tabela. Risca-se a
+           EXPRESSÃO TODA — riscar só a primeira parte e deixar o «(24,60 €)»
+           inteiro fazia parecer que 24,60 € era o preço a pagar. */
         var linha = desconto
           ? '<p class="promo__preco"><small>antes</small>' +
             '<span class="promo__antes">' + esc(p.antes) + '</span></p>'
