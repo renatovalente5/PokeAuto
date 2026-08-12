@@ -4,5 +4,26 @@
     "titulo": "Promoções",
     "lead": ""
   },
-  "itens": []
+  "itens": [
+    {
+      "titulo": "EXEMPLO (apague ou aproveite) — Lavagem interior e exterior",
+      "tipo": "desconto",
+      "percentagem": "20",
+      "antes": "24,60 €",
+      "oferta": "",
+      "inicio": "2026-06-01",
+      "fim": "2026-06-30",
+      "condicoes": "Mediante marcação. Só ligeiros. Não acumulável com outras campanhas."
+    },
+    {
+      "titulo": "EXEMPLO (apague ou aproveite) — Lavagem completa",
+      "tipo": "extra",
+      "percentagem": "",
+      "antes": "",
+      "oferta": "Cera de protecção incluída, sem alterar o preço",
+      "inicio": "2026-06-01",
+      "fim": "2026-06-30",
+      "condicoes": "Mediante marcação."
+    }
+  ]
 }
