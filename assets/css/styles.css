@@ -681,8 +681,8 @@ body.menu-aberto .menu { display: flex; }
    cheio; é o que distingue as duas coisas num relance, sem legenda. */
 .promo {
   position: relative; min-width: 0;
-  display: flex; flex-direction: column; align-items: flex-start; gap: .5rem;
-  padding: clamp(1.1rem, 2.4vw, 1.5rem);
+  display: flex; flex-direction: column; align-items: flex-start; gap: .38rem;
+  padding: clamp(.9rem, 1.8vw, 1.15rem);
   background: var(--carbono);
   border: 1px solid var(--aco); border-left: 4px solid var(--dourado);
   border-radius: var(--raio-g);
@@ -696,21 +696,24 @@ body.menu-aberto .menu { display: flex; }
   font-family: var(--f-display); font-weight: 700; line-height: 1;
   text-transform: uppercase; letter-spacing: .01em;
   background: var(--dourado); color: #0B0B0D;      /* 11,09:1 */
-  padding: .3em .55em; border-radius: var(--raio); font-size: 1.05rem; }
-.promo__selo--pct { font-size: clamp(1.6rem, 4.4vw, 2.2rem); padding: .22em .4em; }
+  padding: .28em .5em; border-radius: var(--raio); font-size: .95rem; }
+.promo__selo--pct { font-size: clamp(1.3rem, 3.4vw, 1.7rem); padding: .2em .38em; }
 .promo__tit { font-family: var(--f-display); font-weight: 700;
-  font-size: clamp(1.15rem, 2vw, 1.4rem); text-transform: uppercase;
+  font-size: clamp(1.05rem, 1.7vw, 1.2rem); text-transform: uppercase;
   line-height: 1.1; color: var(--branco); }
 .promo__preco { display: flex; align-items: baseline; gap: .4rem; }
 /* Riscado porque é o preço que deixou de valer — e a nota por baixo diz o que
    ele é, que a lei obriga a que seja o mais baixo dos 30 dias anteriores. */
-.promo__antes { font-family: var(--f-mono); font-size: 1.15rem;
+.promo__antes { font-family: var(--f-mono); font-size: 1rem;
   color: var(--prata); text-decoration: line-through; }
 .promo__preco small, .promo__validade, .promo__cond {
   font-size: .78rem; color: var(--legenda); }
 .promo__oferta { color: var(--prata); }
 .promo__validade { font-family: var(--f-mono); }
-.promo__btn { margin-top: auto; }
+/* Mais baixo do que um .btn de origem, mas nunca abaixo dos 44px: é um alvo de
+   toque, e encolher o cartão não é razão para o tornar difícil de acertar. */
+.promo__btn { margin-top: auto; padding-top: .25rem;
+  font-size: .82rem; padding-inline: 1.1em; min-height: 44px; }
 
 /* ------------------------------------------------------------- MOVIMENTO */
 @media (prefers-reduced-motion: no-preference) {
