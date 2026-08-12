@@ -357,6 +357,87 @@ content:
               Se não puser fotografia, aparece a ilustração da categoria — não fica
               um quadrado vazio.
 
+  # ---------------------------------------------------------- PROMOÇÕES
+  - name: promocoes
+    label: Promoções
+    type: file
+    path: data/promocoes.json
+    fields:
+      - name: head
+        label: Títulos da secção
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+      - name: itens
+        label: Campanhas
+        type: object
+        list: true
+        description: >-
+          Com a lista vazia, a secção das promoções DESAPARECE do site — é assim
+          que ela fica a maior parte do ano, e não deixa buraco nenhum. Cada
+          campanha desaparece sozinha no dia seguinte ao fim, sem precisar de a
+          apagar daqui.
+        fields:
+          - name: titulo
+            label: "O que está em campanha"
+            type: string
+            description: >-
+              O nome do serviço tal como está na tabela — por exemplo «Lavagem
+              interior e exterior». Não escreva «saldos» nem «liquidação»: são
+              outros regimes legais, com declaração prévia obrigatória à ASAE, e
+              o site recusa-se a mostrar uma campanha que traga essas palavras. A
+              palavra «Promoção» é escrita pelo site.
+          - name: tipo
+            label: "Tipo de campanha"
+            type: select
+            options:
+              values:
+                - { value: desconto, label: "Desconto numa percentagem" }
+                - { value: extra, label: "Oferta de um extra, sem baixar o preço" }
+            description: >-
+              A oferta de um extra («cera incluída») não é uma redução de preço e
+              por isso não obriga a mostrar preços nenhuns. O desconto obriga.
+          - name: percentagem
+            label: "Desconto (%) — só para o tipo desconto"
+            type: string
+            description: 'Só o número. Ex.: 20'
+          - name: antes
+            label: "Preço mais baixo que praticou nos últimos 30 dias (final, COM IVA)"
+            type: string
+            description: >-
+              Este é o campo que a lei obriga a mostrar (DL 70/2007, alterado
+              pelo DL 109-G/2021) e não é o preço da tabela: é o valor mais baixo
+              a que fez mesmo este serviço nos 30 dias antes de a campanha
+              começar. Aqui, e só aqui, o valor é o FINAL, com IVA — é o que a
+              pessoa paga ao balcão. Se a tabela diz 20 €, o final é 24,60 €. Sem
+              este campo preenchido, uma campanha de desconto não aparece no
+              site: um desconto sem o preço anterior não é anunciável.
+          - name: oferta
+            label: "O que está incluído — só para o tipo oferta"
+            type: string
+            description: 'Ex.: cera de protecção incluída na lavagem completa.'
+          - name: inicio
+            label: "Começa em (opcional)"
+            type: date
+            options: { format: yyyy-MM-dd }
+            description: Antes desta data não aparece nada. Vazio, começa já.
+          - name: fim
+            label: "Acaba em — o último dia em que é válida"
+            type: date
+            options: { format: yyyy-MM-dd }
+            description: >-
+              A data fica escrita no cartão e no dia seguinte a campanha
+              desaparece sozinha do site. Não tem de fazer mais nada.
+          - name: condicoes
+            label: "Condições (opcional)"
+            type: text
+            description: >-
+              O que limita a campanha, dito antes de a pessoa se deslocar:
+              «mediante marcação», «só ligeiros», «não acumulável». O que aqui
+              não estiver não pode ser invocado ao balcão.
+
   # ---------------------------------------------------------- TRABALHOS
   - name: trabalhos
     label: "Fotografias para o Google Imagens"

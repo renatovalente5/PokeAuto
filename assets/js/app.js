@@ -1006,6 +1006,96 @@
     });
   }
 
+  /* ========================================================== PROMOÇÕES ====
+     Anunciar uma redução de preço em Portugal é matéria regulada — DL 70/2007,
+     alterado pelo DL 109-G/2021, que transpôs a directiva Omnibus. O art. 2.º
+     estende-o à prestação de serviços, portanto apanha lavagens e mecânica.
+
+     O que isso obriga, e que este código faz cumprir em vez de pedir por favor:
+
+     1. Das três modalidades, esta oficina só pode praticar «Promoção». «Saldos»
+        exige declaração prévia à ASAE e tem tecto anual; «Liquidação» exige um
+        facto justificativo taxativo. A palavra é escrita AQUI, nunca pelo
+        cliente, e uma campanha que traga as outras duas no texto não é desenhada.
+
+     2. Numa redução de preço tem de aparecer o preço mais baixo praticado nos
+        30 dias anteriores. A percentagem pode substituir o preço NOVO — foi
+        confirmado com a ASAE — mas nunca o anterior. Por isso uma campanha de
+        desconto sem esse valor não é desenhada.
+
+     O guard do workflow não serve para isto: o GitHub Pages serve o branch main,
+     por isso o que o cliente grava fica público em segundos e a guarda só
+     chegaria depois, como alarme. Quem tem de recusar é quem desenha — e como a
+     campanha só existe aqui, este é o sítio certo. */
+  var promosLista = el('promocoes-lista');
+  if (promosLista) {
+    getJSON('data/promocoes.json').then(function (d) {
+      var seccao = el('promocoes');
+      aplicarHead(seccao, d && d.head);
+
+      /* A data de hoje em Lisboa, no formato em que o backoffice as grava, para
+         se compararem como texto — sem aritmética de fusos nem parsing. O
+         `sv-SE` dá sempre AAAA-MM-DD. Importa porque o Chrome do pré-render
+         corre em UTC e o telemóvel do cliente não: às 23:30 de 31 de Agosto em
+         UTC já é dia 1 em Lisboa, e é o dia de Lisboa que manda. */
+      var hoje = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Lisbon' }).format(new Date());
+
+      var PROIBIDAS = /\b(saldos?|liquida[çc][ãa]o|liquida[çc][õo]es)\b/i;
+
+      function valida(p) {
+        if (!p || !p.titulo) return false;
+        if (p.fim && p.fim < hoje) return false;          /* acabou */
+        if (p.inicio && p.inicio > hoje) return false;    /* ainda não começou */
+        if (PROIBIDAS.test(p.titulo + ' ' + (p.oferta || '') + ' ' + (p.condicoes || ''))) return false;
+        if (p.tipo === 'desconto') return !!(p.percentagem && p.antes);
+        return !!p.oferta;
+      }
+
+      var itens = ((d && d.itens) || []).filter(valida);
+      if (!itens.length) { promosLista.innerHTML = ''; return; }
+
+      function dia(iso) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+        if (!m) return '';
+        var MES = ['janeiro','fevereiro','março','abril','maio','junho','julho',
+                   'agosto','setembro','outubro','novembro','dezembro'];
+        return String(+m[3]) + ' de ' + MES[+m[2] - 1] + ' de ' + m[1];
+      }
+      function validade(p) {
+        if (p.inicio && p.fim) return 'De ' + dia(p.inicio) + ' a ' + dia(p.fim);
+        if (p.fim) return 'Até ' + dia(p.fim);
+        return '';
+      }
+
+      promosLista.innerHTML = itens.map(function (p) {
+        var desconto = p.tipo === 'desconto';
+        var selo = desconto
+          ? '<span class="promo__selo promo__selo--pct">&minus;' + esc(String(p.percentagem).replace(/\s*%\s*$/, '')) + '%</span>'
+          : '<span class="promo__selo">Oferta</span>';
+        /* O «antes» é o preço mais baixo praticado nos 30 dias anteriores, e é
+           um preço final ao consumidor — com IVA. É o único número desta página
+           nessa base, e a nota ao lado diz porquê, para não parecer erro face à
+           tabela das lavagens, que está sem IVA por decisão do cliente. */
+        var linha = desconto
+          ? '<p class="promo__preco"><span class="promo__antes">' + esc(p.antes) + '</span>' +
+            '<small>preço mais baixo praticado nos 30 dias anteriores, com IVA</small></p>'
+          : '<p class="promo__oferta">' + esc(p.oferta) + '</p>';
+        var v = validade(p);
+        var msg = encodeURIComponent('Olá! Queria aproveitar a promoção: ' + p.titulo);
+        return '<article class="promo" data-reveal>' +
+          '<p class="promo__tag">Promoção</p>' + selo +
+          '<h3 class="promo__tit">' + esc(p.titulo) + '</h3>' + linha +
+          (v ? '<p class="promo__validade">' + esc(v) + '</p>' : '') +
+          (p.condicoes ? '<p class="promo__cond">' + esc(p.condicoes) + '</p>' : '') +
+          '<a class="btn promo__btn" href="https://wa.me/' + (TELEFONE_INTL || '351922022364') +
+          '?text=' + msg + '" target="_blank" rel="noopener" ' +
+          'aria-label="Marcar pelo WhatsApp: ' + esc(p.titulo) + '">Marcar</a>' +
+          '</article>';
+      }).join('');
+      revelar(promosLista);
+    }).catch(function () { });
+  }
+
   /* ================================================== LAVAGEM E ESTÉTICA */
   var lavagensLista = el('lavagens-lista');
   if (lavagensLista) {

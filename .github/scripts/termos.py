@@ -125,6 +125,19 @@ REGRAS = [
      'referência ao universo Pokémon',
      'O logótipo já faz o trocadilho. Escrevê-lo em texto transforma uma '
      'paródia gráfica numa associação declarada a uma marca registada.'),
+
+    # --- modalidades de venda com redução de preço ---
+    # O DL 70/2007 (alterado pelo DL 109-G/2021, que transpôs a directiva
+    # Omnibus) só conhece três: saldos, promoções e liquidação. Das três, esta
+    # oficina só pode praticar PROMOÇÃO sem comunicar nada a ninguém. Saldos
+    # exigem declaração prévia à ASAE e têm tecto anual de dias; liquidação
+    # exige um facto justificativo taxativo — fecho, obras, trespasse — e é,
+    # além disso, uma mensagem ao mercado de que a casa vai fechar.
+    (r'\bsaldos?\b|\bliquida[çc][ãa]o\b|\bliquida[çc][õo]es\b',
+     'modalidade de venda que esta oficina não pode praticar',
+     'O DL 70/2007 só conhece saldos, promoções e liquidação, e as duas '
+     'primeiras obrigam a declaração prévia à ASAE. Escreva «promoção» — a '
+     'palavra é escrita pelo próprio site, no selo da campanha.'),
 ]
 
 def preco_por_unidade(raiz):

@@ -29,7 +29,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/barlow-400.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="assets/css/base.css?v=79c00ab8" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=d76a3801" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=0fed1721" />
   <!-- Sem JavaScript o detalhe de cada serviço abre no lugar, com <details>.
        Com JavaScript passa para a folha; por isso está escondido por omissão. -->
   <noscript><style>.ficha__det{display:block}.ficha__mais{display:none}.ficha{cursor:auto}.carrossel__pista{grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;scroll-snap-type:none}.carrossel__seta,.carrossel__pontos{display:none}.lavagens__ul>.lavagem{display:grid}</style></noscript>
@@ -270,6 +270,36 @@
       </div>
     </section>
 
+
+    <!-- ======================================================= PROMOÇÕES ===
+         Esta secção é desenhada SÓ pelo app.js, no browser de quem visita, e de
+         propósito NÃO tem marcadores <!--pre:…--> nem entra nas ZONAS do
+         prerender.py. É essa decisão que resolve o problema do relógio: o
+         index.html congelado nunca chega a conter uma campanha, e por isso nunca
+         a pode anunciar depois de ela acabar.
+
+         Medido antes de decidir: a ronda diária do workflow, que seria o único
+         relógio deste site, não corre à hora agendada — nas 13 execuções que
+         existem no repositório correu com 58 min a 3h48 de atraso, o que daria
+         uma janela de 8 a 11 horas com uma campanha expirada no ar, mais 10
+         minutos de cache do GitHub Pages. Assim a janela é zero.
+
+         O preço: a campanha nunca é indexada nem aparece nas pré-visualizações
+         de links do WhatsApp e do Facebook. É deliberado.
+
+         A secção fica SEMPRE no ficheiro e é o CSS que a esconde quando não há
+         nada a decorrer — remover secções em runtime já custou caro neste
+         repositório (ver o comentário em app.js, na secção das lavagens). -->
+    <section class="seccao seccao--promo" id="promocoes" aria-labelledby="promocoes-t">
+      <div class="wrap">
+        <div class="cabeca">
+          <p class="etiqueta">A decorrer</p>
+          <div class="filete"></div>
+          <h2 class="h-sec" id="promocoes-t">Promoções</h2>
+        </div>
+        <div class="promos" id="promocoes-lista"></div>
+      </div>
+    </section>
 
     <!-- =================================================== FAIXA-TEXTURA -->
     <div class="faixa" id="faixa" aria-hidden="true"><!--pre:faixa--><img src="assets/img/trabalhos/faixa-jante-1800.webp" srcset="assets/img/trabalhos/faixa-jante-480.webp 480w, assets/img/trabalhos/faixa-jante-640.webp 640w, assets/img/trabalhos/faixa-jante-840.webp 840w, assets/img/trabalhos/faixa-jante-1800.webp 1800w" sizes="100vw" alt="" loading="lazy" width="1800" height="600"><div class="faixa__txt"><p>O detalhe <em>nota-se</em> quando se olha de perto</p></div><!--/pre:faixa-->
@@ -533,6 +563,6 @@
     </div>
   </div>
 
-  <script src="assets/js/app.js?v=61a9a214" defer></script>
+  <script src="assets/js/app.js?v=0d77f7af" defer></script>
 </body>
 </html>

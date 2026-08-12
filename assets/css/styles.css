@@ -665,6 +665,53 @@ body.menu-aberto .menu { display: flex; }
   }
 }
 
+/* ========================================================== PROMOÇÕES ====
+   Sem campanha a decorrer, a secção inteira vale ZERO — não é um buraco nem um
+   cabeçalho a anunciar coisa nenhuma. O `:empty` só casa quando não há um único
+   nó lá dentro, nem sequer um espaço em branco; o app.js escreve '' de
+   propósito, e é isso que faz a página ficar igual à de hoje dez meses por ano. */
+.seccao--promo:has(> .wrap > .promos:empty) { display: none; }
+/* Sem `:has()` — browser antigo — a secção fica visível mas vazia; o cabeçalho
+   sozinho é feio, não é falso. Este é o degrau aceitável. */
+
+.promos { display: grid; gap: clamp(1rem, 2.2vw, 1.6rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+
+/* O dourado cheio é RESERVADO à promoção. O cartão de serviço usa vermelho
+   cheio; é o que distingue as duas coisas num relance, sem legenda. */
+.promo {
+  position: relative; min-width: 0;
+  display: flex; flex-direction: column; align-items: flex-start; gap: .5rem;
+  padding: clamp(1.1rem, 2.4vw, 1.5rem);
+  background: var(--carbono);
+  border: 1px solid var(--aco); border-left: 4px solid var(--dourado);
+  border-radius: var(--raio-g);
+}
+/* A palavra «Promoção» é escrita pelo código e nunca pelo cliente: é a única
+   das três modalidades do DL 70/2007 que esta oficina pode praticar sem
+   declarar nada à ASAE. */
+.promo__tag { font-family: var(--f-mono); font-size: .7rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--dourado); }
+.promo__selo { align-self: flex-start;
+  font-family: var(--f-display); font-weight: 700; line-height: 1;
+  text-transform: uppercase; letter-spacing: .01em;
+  background: var(--dourado); color: #0B0B0D;      /* 11,09:1 */
+  padding: .3em .55em; border-radius: var(--raio); font-size: 1.05rem; }
+.promo__selo--pct { font-size: clamp(1.6rem, 4.4vw, 2.2rem); padding: .22em .4em; }
+.promo__tit { font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(1.15rem, 2vw, 1.4rem); text-transform: uppercase;
+  line-height: 1.1; color: var(--branco); }
+.promo__preco { display: flex; flex-direction: column; gap: .15rem; }
+/* Riscado porque é o preço que deixou de valer — e a nota por baixo diz o que
+   ele é, que a lei obriga a que seja o mais baixo dos 30 dias anteriores. */
+.promo__antes { font-family: var(--f-mono); font-size: 1.15rem;
+  color: var(--prata); text-decoration: line-through; }
+.promo__preco small, .promo__validade, .promo__cond {
+  font-size: .78rem; color: var(--legenda); }
+.promo__oferta { color: var(--prata); }
+.promo__validade { font-family: var(--f-mono); }
+.promo__btn { margin-top: auto; }
+
 /* ------------------------------------------------------------- MOVIMENTO */
 @media (prefers-reduced-motion: no-preference) {
   @media (hover: hover) and (pointer: fine) {
