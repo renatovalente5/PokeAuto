@@ -379,10 +379,11 @@ content:
           que ela fica a maior parte do ano, e não deixa buraco nenhum. Cada
           campanha desaparece sozinha no dia seguinte ao fim, sem precisar de a
           apagar daqui.
-          ESTÃO AQUI DUAS CAMPANHAS DE EXEMPLO, uma de cada tipo, para ver como
-          se preenche. NÃO estão no site: a data de fim delas já passou, e por
-          isso o site não as mostra. Para as usar a sério, mude as datas e o
-          resto; ou apague-as no caixote do lixo à direita de cada uma.
+          ESTÃO AQUI DUAS CAMPANHAS, uma de cada tipo, para servirem de exemplo
+          de como se preenche — e ESTÃO NO AR, visíveis no site. Confirme que são
+          mesmo as que quer praticar: quem anuncia um preço fica obrigado a
+          cumpri-lo. Para as tirar, apague-as no caixote do lixo à direita de
+          cada uma, ou ponha a data de fim para ontem.
         fields:
           - name: titulo
             label: "O que está em campanha"
