@@ -14,8 +14,13 @@
 media:
   - name: fotos
     label: Fotografias
-    input: assets/img/trabalhos
-    output: assets/img/trabalhos
+    # A biblioteca mostra os MESTRES, um por fotografia. As variantes de
+    # tamanho ficam na pasta-mãe e são geradas pelo webp.py — o cliente nunca
+    # precisa de as ver. O Pages CMS não sabe filtrar por nome (o bloco media é
+    # um objecto estrito, sem exclude nem glob), por isso a pasta é a única
+    # forma de separar as duas coisas.
+    input: assets/img/trabalhos/originais
+    output: assets/img/trabalhos/originais
     extensions: [jpg, jpeg, png, webp]
     categories: [image]
   - name: lavagens

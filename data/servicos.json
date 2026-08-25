@@ -10,7 +10,7 @@
       "titulo": "Mecânica e diagnóstico",
       "descricao": "Diagnóstico antes de orçamento, em vez de trocar peças à sorte.",
       "tempo": "",
-      "foto": "assets/img/trabalhos/posto-conducao-1280.webp",
+      "foto": "assets/img/trabalhos/originais/posto-conducao.webp",
       "legenda_foto": "Painel de instrumentos — onde começa o diagnóstico",
       "alias": [
         "eletricidade",
@@ -18,11 +18,11 @@
       ],
       "fotos": [
         {
-          "nome": "assets/img/trabalhos/posto-conducao-1280.webp",
+          "nome": "assets/img/trabalhos/originais/posto-conducao.webp",
           "legenda": "Painel de instrumentos — onde começa o diagnóstico"
         },
         {
-          "nome": "assets/img/trabalhos/bmw-serie5-frente-840.webp",
+          "nome": "assets/img/trabalhos/originais/bmw-serie5-frente.webp",
           "legenda": "BMW Série 5 entregue ao cliente"
         }
       ],
@@ -33,16 +33,16 @@
       "titulo": "Revisão completa",
       "descricao": "Consumíveis substituídos e o resto verificado ponto por ponto.",
       "tempo": "",
-      "foto": "assets/img/trabalhos/mercedes-classe-e-frente-840.webp",
+      "foto": "assets/img/trabalhos/originais/mercedes-classe-e-frente.webp",
       "legenda_foto": "Mercedes Classe E pronto a entregar",
       "alias": [],
       "fotos": [
         {
-          "nome": "assets/img/trabalhos/mercedes-classe-e-frente-840.webp",
+          "nome": "assets/img/trabalhos/originais/mercedes-classe-e-frente.webp",
           "legenda": "Mercedes Classe E pronto a entregar"
         },
         {
-          "nome": "assets/img/trabalhos/fachada-oficina-960.webp",
+          "nome": "assets/img/trabalhos/originais/fachada-oficina.webp",
           "legenda": "Carro à porta da oficina, na Rua da Liberdade, 53"
         }
       ],
@@ -53,7 +53,7 @@
       "titulo": "Lavagem",
       "descricao": "Por dentro e por fora, higienização do ar condicionado, bancos, jantes e cera. Com o preço à frente de cada serviço.",
       "tempo": "",
-      "foto": "assets/img/trabalhos/lavagem-espuma-oficina-760.webp",
+      "foto": "assets/img/trabalhos/originais/lavagem-espuma-oficina.webp",
       "legenda_foto": "Espuma activa na box de lavagem",
       "alias": [
         "lavagem-exterior",
@@ -62,19 +62,19 @@
       ],
       "fotos": [
         {
-          "nome": "assets/img/trabalhos/lavagem-espuma-oficina-760.webp",
+          "nome": "assets/img/trabalhos/originais/lavagem-espuma-oficina.webp",
           "legenda": "Espuma activa na box de lavagem"
         },
         {
-          "nome": "assets/img/trabalhos/mercedes-cla-frente-840.webp",
+          "nome": "assets/img/trabalhos/originais/mercedes-cla-frente.webp",
           "legenda": "Mercedes CLA depois da lavagem exterior"
         },
         {
-          "nome": "assets/img/trabalhos/interior-bmw-limpo-840.webp",
+          "nome": "assets/img/trabalhos/originais/interior-bmw-limpo.webp",
           "legenda": "Habitáculo tratado — tablier, consola e estofos"
         },
         {
-          "nome": "assets/img/trabalhos/interior-mercedes-limpo-840.webp",
+          "nome": "assets/img/trabalhos/originais/interior-mercedes-limpo.webp",
           "legenda": "Posto de condução depois da higienização"
         }
       ],

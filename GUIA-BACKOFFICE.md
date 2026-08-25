@@ -121,6 +121,12 @@ precisa de as preparar** — depois de gravar, acontece tudo sozinho:
 - o telemóvel descarrega a pequena e o computador a grande;
 - as dimensões são registadas, para a página não «saltar» enquanto carrega.
 
+Na biblioteca de imagens vê **uma linha por fotografia**, não as seis versões:
+as versões geradas ficam noutra pasta, que o painel não mostra. Se em vez de
+fotografias vir uma lista de ficheiros com números no fim do nome
+(`fachada-oficina-640`, `fachada-oficina-840`...), está na pasta errada — a
+biblioteca certa chama-se **Fotografias** e mostra `fachada-oficina` uma só vez.
+
 Uma foto de 1,7 MB tirada com o telemóvel passa a servir 36 KB num telemóvel.
 Não mexa nos nomes dos ficheiros nem tente carregar versões já encolhidas: dê a
 foto original, que o site trata do resto.

@@ -78,10 +78,14 @@ def qualidade_para(largura):
     return 72
 
 
-def variantes(caminho, larg_original):
-    """Que ficheiros WebP devem existir para este original."""
+def variantes(caminho, larg_original, destino=None):
+    """Que ficheiros WebP devem existir para este original.
+
+    O `destino` é a pasta-mãe (assets/img/trabalhos), não a do original
+    (assets/img/trabalhos/originais): as variantes continuam exactamente onde
+    sempre estiveram, e por isso o site não muda um único caminho."""
     base = os.path.splitext(os.path.basename(caminho))[0]
-    pasta = os.path.dirname(caminho)
+    pasta = destino or os.path.dirname(caminho)
     larguras = [w for w in LARGURAS if larg_original >= w * 1.1]
     tecto = min(larg_original, MAX_LARGURA)
     if tecto not in larguras:
@@ -106,11 +110,23 @@ def carregar_manifesto():
         return {}
 
 
+SUB_ORIGINAIS = 'originais'
+
+
 def originais(pasta):
-    """Os ficheiros que são fonte, não variantes geradas."""
+    """Os ficheiros que são fonte, não variantes geradas.
+
+    Vivem em <pasta>/originais/ e não ao lado das variantes. É essa separação
+    que deixa a biblioteca do backoffice mostrar UMA entrada por fotografia em
+    vez de seis — o Pages CMS só sabe separar por pasta (o bloco `media:` é um
+    objecto estrito, sem exclude nem glob), portanto a pasta é a única
+    ferramenta que temos."""
+    fonte = os.path.join(pasta, SUB_ORIGINAIS)
+    if not os.path.isdir(fonte):
+        return []
     saida = []
-    for f in sorted(os.listdir(pasta)):
-        caminho = os.path.join(pasta, f)
+    for f in sorted(os.listdir(fonte)):
+        caminho = os.path.join(fonte, f)
         if not os.path.isfile(caminho):
             continue
         if not f.lower().endswith(ORIGEM_EXT):
@@ -119,6 +135,29 @@ def originais(pasta):
             continue
         saida.append(caminho)
     return saida
+
+
+def referidos_nos_dados():
+    """Caminhos de imagem citados em data/*.json.
+
+    Segunda trava: mesmo que a lógica de limpeza se engane, não se apaga o que
+    o site ainda aponta. Vale a pena o custo — é a diferença entre um bug e
+    fotografias do cliente perdidas."""
+    import glob as _glob
+    import re as _re
+    vistos = set()
+    for f in _glob.glob(os.path.join(RAIZ, 'data', '*.json')):
+        if os.path.basename(f) == '_dimensoes.json':
+            continue                       # é um índice de TUDO, não uma referência de uso
+        try:
+            with open(f, encoding='utf-8') as fh:
+                vistos.update(_re.findall(r'assets/img/[^"\s]+', fh.read()))
+        except IOError:
+            pass
+    return vistos
+
+
+EM_USO = referidos_nos_dados()
 
 
 def main():
@@ -149,7 +188,7 @@ def main():
                 continue
             with im:
                 larg = im.size[0]
-                for destino, alvo in variantes(origem, larg):
+                for destino, alvo in variantes(origem, larg, pasta):
                     esperados.add(os.path.basename(destino))
                     if os.path.exists(destino) and not mudou:
                         continue
@@ -166,20 +205,49 @@ def main():
                     antes += os.path.getsize(origem)
                     depois += os.path.getsize(destino)
 
-        # Variantes cujo original desapareceu: sem isto o repositório só cresce.
-        # Só se apaga o que tem um nome-base COM original conhecido — as
-        # fotografias que vieram com o site não têm original no repositório e
-        # não podem ser apagadas por engano.
+        # Variantes cujo original DESAPARECEU: sem isto o repositório só cresce.
+        #
+        # A regra é estreita de propósito: apaga-se uma variante quando a
+        # fotografia deixou de existir em originais/, e NUNCA por a largura não
+        # estar na escada que este script produz hoje. A diferença não é
+        # académica — em disco há larguras (400, 420, 430, 560, 760, 860, 896,
+        # 960, 1200) que este script nunca geraria, porque vieram feitas de
+        # fora, e o srcset do app.js pede-as todas. Uma regra do tipo «apaga o
+        # que não está na escada» levava 22 ficheiros à frente e degradava o
+        # srcset sem partir nada de forma visível.
+        #
+        # Até agora isto estava seguro POR ACIDENTE: trabalhos/ não tinha um
+        # único original, portanto bases_com_original estava sempre vazio. Ao
+        # criar os mestres, essa segurança evaporava-se.
         bases_com_original = set(
             os.path.splitext(os.path.basename(p))[0] for p in originais(pasta))
+        # Só se limpa o que este script assumiu alguma vez como seu.
+        bases_no_manifesto = set()
+        for chave in manifesto:
+            if '/%s/%s/' % (nome, SUB_ORIGINAIS) in chave:
+                bases_no_manifesto.add(os.path.splitext(os.path.basename(chave))[0])
         for f in sorted(os.listdir(pasta)):
             if not E_VARIANTE.search(f):
                 continue
             base = E_VARIANTE.sub('', f)
-            if base in bases_com_original and f not in esperados:
-                apagados.append(os.path.relpath(os.path.join(pasta, f), RAIZ))
-                if not verificar:
-                    os.remove(os.path.join(pasta, f))
+            if base in bases_com_original or base not in bases_no_manifesto:
+                continue
+            alvo = os.path.join(pasta, f)
+            rel = os.path.relpath(alvo, RAIZ).replace(os.sep, '/')
+            if rel in EM_USO:
+                print('  ! %s continua referido em data/*.json — não apago' % rel)
+                continue
+            apagados.append(rel)
+            if not verificar:
+                os.remove(alvo)
+
+    LIMITE = 12
+    if len(apagados) > LIMITE and '--forcar' not in sys.argv:
+        print('webp: RECUSO apagar %d ficheiros de uma vez (limite %d).' % (len(apagados), LIMITE))
+        for p in apagados:
+            print('   ' + p)
+        print('Se for mesmo para apagar, corra outra vez com --forcar.')
+        return 1
 
     if verificar:
         if por_fazer or apagados:
