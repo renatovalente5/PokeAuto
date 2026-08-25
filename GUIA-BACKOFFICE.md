@@ -21,95 +21,55 @@ site. Depois de gravar, espere dois minutos e abra o site com **Ctrl+Shift+R**
 (ou puxe a página para baixo no telemóvel) para ver a versão nova.
 
 ---
-
 ## 2. O que pode editar
 
-### Geral
+O menu da esquerda está por ordem do que costuma mexer mais. Em cada ecrã, o
+que interessa vem primeiro: as listas estão em cima e os títulos da secção
+ficam para o fim.
 
-**Topo da página** — a etiqueta pequena, o título grande, o texto de
-apresentação, os dois botões, a frase por baixo deles e **a fotografia de
-fundo**.
+As listas abrem **fechadas**, uma linha por item, com o nome à frente. Carregue
+na linha para abrir só a que quer.
 
-> O campo **«Palavra do título a dourado»** é uma expressão que também tem de
-> existir no título. Se escrever «melhor cuidado» e o título for «O seu carro
-> merece o melhor cuidado», essas duas palavras ficam a dourado. Se a expressão
-> não existir no título, o título aparece inteiro, sem realce — nunca fica
-> partido a meio de uma palavra.
+### Preços das lavagens
 
-**Contactos** mudam em **todo o site de uma vez** — telefone, morada, Instagram,
-Facebook. Não há sítio nenhum onde o número esteja escrito à mão.
+Cada linha é um serviço: nome, categoria, o que inclui, quanto demora e o
+preço. Há dois preços — o de **ligeiros** e o de **SUV e carrinhas**; se só
+preencher um, aparece só esse. Os preços são **sem IVA** e o site escreve
+«+ IVA» sozinho. Deixar o preço vazio faz aparecer «sob consulta».
 
-- **Morada (linha 2)** tem de ser sempre *código postal e depois a localidade*:
-  `3700-169 São João da Madeira`. Noutro formato a publicação para com um aviso,
-  em vez de publicar uma morada errada.
-- **Indicação do custo da chamada** — não apague. A lei obriga a que apareça ao
-  lado de cada número de telefone.
-- **Link do Facebook** — se deixar vazio, o ícone desaparece sozinho. Não fica
-  um link morto.
+### Promoções
 
-**Títulos da secção «Onde estamos»** e a **faixa larga** entre os Serviços e as
-Peças também se editam aqui, texto e fotografia.
+Com a lista vazia, **a secção desaparece do site**. Uma campanha com data de fim
+desaparece sozinha no dia seguinte — não tem de a apagar.
 
-### Horário
-
-Uma linha por bloco. Por exemplo: uma linha com *Segunda a Sexta, 09:00–18:00* e
-outra com *Sábado, 09:00–13:00*. As horas escrevem-se com dois pontos (`09:00`,
-nunca `9h`).
-
-> **Enquanto estiver vazio, o horário simplesmente não aparece no site.** É de
-> propósito: um horário errado manda gente à porta fechada, o que é pior do que
-> não ter horário nenhum.
-
-Ponha aqui o **mesmo** horário que tiver no perfil de empresa do Google. Se os
-dois disserem coisas diferentes, o Google desconfia dos dois.
+Se puser um desconto em percentagem, a lei obriga a declarar também o **preço
+mais baixo que praticou nos 30 dias anteriores**. O campo está lá por isso, e
+não é opcional para esse tipo de campanha.
 
 ### Serviços
 
-Pode acrescentar, remover e reordenar à vontade. Cada serviço tem:
+Cada linha é um serviço da oficina: nome, descrição, tempo médio, fotografia de
+capa e as fotografias do carrossel que aparece quando alguém abre o serviço.
 
-- **Identificador** — só letras minúsculas e hífens, sem acentos
-  (`ar-condicionado`). É o que faz funcionar o link do menu.
-- **Nome** e **descrição** — o que aparece no cartão e no painel.
-- **O que inclui** — a lista de etiquetas dentro do painel.
-- **Tempo médio** — opcional. Se não quiser comprometer-se, deixe vazio.
-- **Texto do detalhe** — opcional, aparece quando se abre o serviço. É aqui que
-  pode escrever com calma o que faz e como faz.
-- **Fotografia de capa** — a que se vê no cartão.
-- **Fotografias do detalhe** — as que passam no carrossel quando se clica.
-  Duas ou três chegam.
+Dois campos aparecem a cinzento e não se editam — o **identificador** e os
+**endereços antigos**. São o que faz os links de fora (um cartão de visita, uma
+publicação antiga) continuarem a dar ao sítio certo. Estão à vista para saber
+que existem, não para mexer.
 
-> No site, o cartão mostra só o nome do serviço. Todo o resto aparece quando o
-> visitante clica. É de propósito: um cartão limpo dá vontade de abrir; um
-> cartão cheio já disse tudo e não dá vontade nenhuma.
+### Contactos, horário e textos da página
 
-### Balcão de peças
+O **telefone, o email, a morada e as redes sociais** mudam em todo o site de uma
+vez — estão num sítio só. O mesmo para o horário.
 
-**Enquanto a lista estiver vazia**, o site mostra um convite a telefonar em vez
-de um espaço em branco.
+Mais abaixo, no mesmo ecrã, ficam os textos do topo da página, a faixa do meio e
+os **dados legais**. Os campos marcados «só sociedade» ficam vazios enquanto a
+empresa for em nome individual; se um dia mudar de forma jurídica, é aqui que
+se preenchem.
 
-Cada peça tem nome, referência, categoria, compatibilidade, estado, preço e
-foto. Só o **nome** é obrigatório — uma peça com três campos preenchidos
-continua a parecer bem.
+### Fotografias só para o Google
 
-- Os **filtros por categoria** aparecem sozinhos a partir de 9 peças. Com menos,
-  seriam ruído.
-- **Preço:** se puser, tem de ser o valor final **com IVA incluído**. Se deixar
-  vazio, aparece «Sob consulta». Não indicar preço é legal; indicar mal não é.
-
-> ⚠️ **Airbags e pré-tensores de cinto não podem ser listados.** São considerados
-> artigos pirotécnicos e a lei proíbe vendê-los ao público. Se algum aparecer na
-> lista, **a publicação falha** e o site continua com a versão anterior.
-
-> ⚠️ **Peças usadas** só podem ser vendidas com documento que comprove a origem.
-> Se não tiver esse documento, não liste a peça.
-
-### Perguntas frequentes
-
-Acrescente, edite ou remova à vontade. Estas perguntas também são lidas pelo
-Google e podem aparecer directamente nos resultados de pesquisa, por isso vale a
-pena responder como responderia ao balcão.
-
----
+Estas legendas **não aparecem no site**. Servem para o Google Imagens perceber o
+que está em cada fotografia. Se não lhes tocar, não acontece nada.
 
 ## 3. Fotografias
 

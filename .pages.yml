@@ -31,283 +31,23 @@ media:
     categories: [image]
 
 content:
-  # ---------------------------------------------------------------- GERAL
-  - name: site
-    label: "Geral — topo da página, contactos, horário e dados legais"
-    type: file
-    path: data/site.json
-    fields:
-      - name: seo
-        label: "Título e descrição no Google"
-        type: object
-        description: >-
-          São os dois textos que aparecem no resultado de pesquisa. É o que faz
-          alguém clicar ou passar à frente.
-        fields:
-          - name: titulo
-            label: Título da página
-            type: string
-            description: >-
-              Até cerca de 60 caracteres, senão o Google corta. Comece pelo que a
-              pessoa procura ("Oficina auto em São João da Madeira") e deixe o
-              nome da empresa para o fim.
-          - name: descricao
-            label: Descrição
-            type: text
-            description: >-
-              Até cerca de 155 caracteres. Diga o que faz e onde. Não é um slogan,
-              é uma frase informativa.
-
-      - name: og
-        label: "Imagem de partilha (WhatsApp, Facebook)"
-        type: object
-        description: >-
-          O cartão que aparece quando alguém partilha o link do site numa
-          conversa. É gerado sozinho a partir do que puser aqui.
-        fields:
-          - { name: titulo, label: Título no cartão, type: string }
-          - name: subtitulo
-            label: Linha de serviços
-            type: string
-            description: 'Separe com «·». Ex.: Mecânica · Eletricidade · Revisões'
-          - name: foto
-            label: Fotografia de fundo do cartão
-            type: image
-            options: { media: fotos }
-            description: Aparece escurecida por trás do texto. Um grande plano funciona melhor.
-
-      - name: hero
-        label: Topo da página
-        type: object
-        fields:
-          - { name: etiqueta, label: Etiqueta pequena, type: string }
-          - { name: titulo, label: Título grande, type: string }
-          - name: destaque
-            label: Palavra do título a dourado
-            type: string
-            description: Escreve aqui uma expressão que exista no título acima; fica realçada a dourado.
-          - { name: lead, label: Texto de apresentação, type: text }
-          - { name: cta_principal, label: "Botão principal", type: string }
-          - { name: cta_secundario, label: "Botão secundário", type: string }
-          - name: nota
-            label: Frase pequena por baixo dos botões
-            type: string
-          - name: foto
-            label: Fotografia de fundo
-            type: image
-            options: { media: fotos }
-            description: >-
-              É a primeira coisa que se vê. Escolha uma horizontal e com boa luz;
-              o texto assenta no lado esquerdo, por isso funciona melhor se essa
-              parte da fotografia for escura.
-
-      - name: contactos
-        label: Contactos (mudam em todo o site de uma vez)
-        type: object
-        fields:
-          - { name: telefone, label: "Telefone (como se lê)", type: string }
-          - name: telefone_intl
-            label: "Telefone internacional (ex.: 351922022364)"
-            type: string
-            description: Sem espaços nem +. É o que faz funcionar os botões de ligar e de WhatsApp.
-          - name: custo_chamada
-            label: Indicação do custo da chamada
-            type: string
-            description: >-
-              Obrigatório por lei ao lado de cada número (DL 59/2021). Número 9xx =
-              "Chamada para a rede móvel nacional". Não apagar.
-          - { name: email, label: Email, type: string }
-          - { name: morada_linha1, label: "Morada (rua e número)", type: string }
-          - name: morada_linha2
-            label: "Morada (código postal e localidade)"
-            type: string
-            description: 'Tem de ser código postal e depois localidade, ex.: 3700-169 São João da Madeira.'
-          - { name: instagram_url, label: Link do Instagram, type: string }
-          - { name: instagram_handle, label: "Nome do Instagram (ex.: @pokeauto2026)", type: string }
-          - name: facebook_url
-            label: Link do Facebook
-            type: string
-            description: Deixa vazio se não houver — o ícone desaparece sozinho, não fica link morto.
-          - name: maps_url
-            label: Link do Google Maps da oficina
-            type: string
-            description: No perfil de empresa do Google, botão Partilhar, copiar o link.
-
-      - name: horario
-        label: Horário de funcionamento
-        type: object
-        list: true
-        description: >-
-          Uma linha por bloco. Ex.: Segunda a Sexta, 09:00–18:00; outra linha para Sábado.
-          Os dias que não constarem ficam como fechado. Põe aqui o MESMO horário que
-          estiver no perfil de empresa do Google — se forem diferentes, o Google desconfia.
-        fields:
-          - name: dias
-            label: Dias
-            type: select
-            options:
-              multiple: true
-              values:
-                - { value: Monday, label: Segunda }
-                - { value: Tuesday, label: Terça }
-                - { value: Wednesday, label: Quarta }
-                - { value: Thursday, label: Quinta }
-                - { value: Friday, label: Sexta }
-                - { value: Saturday, label: Sábado }
-                - { value: Sunday, label: Domingo }
-          - { name: abre, label: "Abre (24h, ex.: 09:00)", type: string }
-          - { name: fecha, label: "Fecha (24h, ex.: 18:00)", type: string }
-
-      - name: legal
-        label: Dados legais (obrigatórios no rodapé)
-        type: object
-        description: >-
-          Isto não é opcional: o DL 7/2004 art.10 obriga a identificar quem é o
-          responsável pelo site. O que aparece no rodapé muda conforme a forma jurídica.
-        fields:
-          - name: forma_juridica
-            label: Forma jurídica
-            type: select
-            options:
-              values:
-                - { value: eni, label: "Empresário em Nome Individual" }
-                - { value: sociedade, label: "Sociedade (Lda / Unipessoal Lda)" }
-            description: >-
-              Se for sociedade, o Código das Sociedades Comerciais art.171 obriga a
-              publicar também NIPC, conservatória, matrícula e capital social nos
-              sítios na Internet. Não é escolha.
-          - { name: nome_titular, label: "Nome completo do titular (ou firma, se sociedade)", type: string }
-          - { name: designacao_comercial, label: Designação comercial, type: string }
-          - { name: nif, label: "NIF (empresário individual)", type: string }
-          - { name: nipc, label: "NIPC (só sociedade)", type: string }
-          - { name: conservatoria, label: "Conservatória do Registo Comercial (só sociedade)", type: string }
-          - { name: matricula, label: "N.º de matrícula (só sociedade)", type: string }
-          - { name: capital_social, label: "Capital social (só sociedade)", type: string }
-
-      - name: contactos_head
-        label: "Títulos da secção «Onde estamos»"
-        type: object
-        fields:
-          - { name: etiqueta, label: Etiqueta, type: string }
-          - { name: titulo, label: Título, type: string }
-          - { name: lead, label: Subtítulo, type: text }
-
-      - name: faixa
-        label: Faixa larga entre os Serviços e as Peças
-        type: object
-        fields:
-          - { name: texto, label: Frase, type: string }
-          - name: destaque
-            label: Parte da frase a itálico
-            type: string
-            description: Escreva uma expressão que exista na frase acima.
-          - name: foto
-            label: Fotografia da faixa
-            type: image
-            options: { media: fotos }
-            description: Aparece muito larga e baixa. Um grande plano funciona melhor do que um carro inteiro.
-
-      - { name: rodape_frase, label: Frase do rodapé, type: text }
-
-  # ------------------------------------------------------------- SERVIÇOS
-  - name: servicos
-    label: Serviços
-    type: file
-    path: data/servicos.json
-    fields:
-      - name: head
-        label: Títulos da secção
-        type: object
-        fields:
-          - { name: etiqueta, label: Etiqueta, type: string }
-          - { name: titulo, label: Título, type: string }
-          - { name: lead, label: Subtítulo, type: text }
-      - name: itens
-        label: Lista de serviços
-        type: object
-        list: true
-        fields:
-          - name: id
-            label: "Identificador (para o link do menu)"
-            type: string
-            description: Só letras minúsculas e hífens, sem acentos. Ex.- ar-condicionado
-          - { name: titulo, label: Nome do serviço, type: string }
-          - { name: descricao, label: Descrição, type: text }
-          - name: tempo
-            label: "Tempo médio (opcional)"
-            type: string
-            description: 'Ex.: cerca de 1 hora. Deixa vazio se preferires não comprometer.'
-          - name: alias
-            label: "Endereços antigos deste serviço"
-            type: string
-            list: true
-            description: >-
-              Nomes que este serviço já teve, de quando estava separado em vários.
-              Só servem para os links antigos — de um cartão de visita, de uma
-              publicação no Instagram — continuarem a levar ao sítio certo. Não
-              acrescente nem apague nada aqui sem falar connosco.
-          - name: foto
-            label: "Fotografia de capa (opcional)"
-            type: image
-            options: { media: fotos }
-            description: É a que aparece no cartão, antes de se clicar.
-          - { name: legenda_foto, label: Legenda da fotografia de capa, type: string }
-          - name: detalhe
-            label: "Texto do detalhe (opcional)"
-            type: text
-            description: >-
-              Aparece quando se abre o serviço. Escreva como fala ao balcão.
-              Se deixar vazio, o detalhe mostra só a descrição e o que inclui.
-          - name: fotos
-            label: "Fotografias do detalhe (carrossel)"
-            type: object
-            list: true
-            description: >-
-              As fotografias que passam no carrossel quando se abre o serviço.
-              Duas ou três chegam. Se deixar vazio, aparece só a de capa.
-            fields:
-              - name: nome
-                label: Fotografia
-                type: image
-                options: { media: fotos }
-              - { name: legenda, label: Legenda, type: string }
-          - name: ligacao
-            label: "Segundo botão, para outra secção (opcional)"
-            type: string
-            description: >-
-              Se preencher com uma âncora — por exemplo #lavagens — o cartão
-              ganha um segundo botão, ao lado do «Ver detalhe», que leva a essa
-              secção da página. É assim que o cartão das Lavagens leva à tabela
-              de preços sem deixar de ter o seu próprio detalhe.
-          - name: ligacao_texto
-            label: "Texto da acção dessa ligação"
-            type: string
-            description: >-
-              Só conta se preencher o campo acima. Por omissão diz «Ver mais».
-
-  # ------------------------------------------------------ BALCÃO DE PEÇAS
   - name: lavagens
-    label: Lavagem e estética
+    label: "Preços das lavagens"
     type: file
     path: data/lavagens.json
     fields:
-      - name: head
-        label: Títulos da secção
-        type: object
-        fields:
-          - { name: etiqueta, label: Etiqueta, type: string }
-          - { name: titulo, label: Título, type: string }
-          - name: lead
-            label: Subtítulo
-            type: text
-            description: >-
-              Bom sítio para dizer para que carros valem estes preços. Anunciar um
-              preço que depois não se pratica é prática comercial enganosa
-              (DL 57/2008, art. 7.º).
       - name: itens
         label: Serviços e preços
         type: object
-        list: true
+        # Fechada por omissão e com uma linha de resumo por item: sem isto o
+        # cliente abre a lista e leva com todos os blocos abertos ao mesmo tempo.
+        # Na versão 2.1.8 o `collapsible` é obrigatório na forma-objecto do
+        # `list` (o validador é estrito e a chave não é opcional), por isso vai
+        # sempre escrito, mesmo quando só se quer o resumo.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{nome} — {preco}"
         description: >-
           Com a lista vazia, a secção mostra um convite a pedir orçamento em vez de
           um espaço em branco. O preço que puser aqui é o que a pessoa vai esperar
@@ -361,24 +101,39 @@ content:
             description: >-
               Se não puser fotografia, aparece a ilustração da categoria — não fica
               um quadrado vazio.
-
-  # ---------------------------------------------------------- PROMOÇÕES
-  - name: promocoes
-    label: Promoções
-    type: file
-    path: data/promocoes.json
-    fields:
       - name: head
         label: Títulos da secção
         type: object
         fields:
           - { name: etiqueta, label: Etiqueta, type: string }
           - { name: titulo, label: Título, type: string }
-          - { name: lead, label: Subtítulo, type: text }
+          - name: lead
+            label: Subtítulo
+            type: text
+            description: >-
+              Bom sítio para dizer para que carros valem estes preços. Anunciar um
+              preço que depois não se pratica é prática comercial enganosa
+              (DL 57/2008, art. 7.º).
+
+  # ---------------------------------------------------------- PROMOÇÕES
+
+  - name: promocoes
+    label: Promoções
+    type: file
+    path: data/promocoes.json
+    fields:
       - name: itens
         label: Campanhas
         type: object
-        list: true
+        # Fechada por omissão e com uma linha de resumo por item: sem isto o
+        # cliente abre a lista e leva com todos os blocos abertos ao mesmo tempo.
+        # Na versão 2.1.8 o `collapsible` é obrigatório na forma-objecto do
+        # `list` (o validador é estrito e a chave não é opcional), por isso vai
+        # sempre escrito, mesmo quando só se quer o resumo.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{titulo}"
         description: >-
           Com a lista vazia, a secção das promoções DESAPARECE do site — é assim
           que ela fica a maior parte do ano, e não deixa buraco nenhum. Cada
@@ -447,24 +202,329 @@ content:
               O que limita a campanha, dito antes de a pessoa se deslocar:
               «mediante marcação», «só ligeiros», «não acumulável». O que aqui
               não estiver não pode ser invocado ao balcão.
-
-  # ---------------------------------------------------------- TRABALHOS
-  - name: trabalhos
-    label: "Fotografias para o Google Imagens"
-    type: file
-    path: data/trabalhos.json
-    fields:
       - name: head
-        label: "Títulos (não aparecem no site)"
+        label: Títulos da secção
         type: object
         fields:
           - { name: etiqueta, label: Etiqueta, type: string }
           - { name: titulo, label: Título, type: string }
           - { name: lead, label: Subtítulo, type: text }
+
+  # ---------------------------------------------------------- TRABALHOS
+
+  - name: servicos
+    label: Serviços
+    type: file
+    path: data/servicos.json
+    fields:
+      - name: itens
+        label: Lista de serviços
+        type: object
+        # Fechada por omissão e com uma linha de resumo por item: sem isto o
+        # cliente abre a lista e leva com todos os blocos abertos ao mesmo tempo.
+        # Na versão 2.1.8 o `collapsible` é obrigatório na forma-objecto do
+        # `list` (o validador é estrito e a chave não é opcional), por isso vai
+        # sempre escrito, mesmo quando só se quer o resumo.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{titulo}"
+        fields:
+          - name: id
+            # Mostra-se e não se edita: o cliente vê que existe e não lhe mexe.
+            readonly: true
+            label: "Identificador (para o link do menu)"
+            type: string
+            description: Só letras minúsculas e hífens, sem acentos. Ex.- ar-condicionado
+          - { name: titulo, label: Nome do serviço, type: string }
+          - { name: descricao, label: Descrição, type: text }
+          - name: tempo
+            label: "Tempo médio (opcional)"
+            type: string
+            description: 'Ex.: cerca de 1 hora. Deixa vazio se preferires não comprometer.'
+          - name: alias
+            # Mostra-se e não se edita: o cliente vê que existe e não lhe mexe.
+            readonly: true
+            label: "Endereços antigos deste serviço"
+            type: string
+            list: true
+            description: >-
+              Nomes que este serviço já teve, de quando estava separado em vários.
+              Só servem para os links antigos — de um cartão de visita, de uma
+              publicação no Instagram — continuarem a levar ao sítio certo. Não
+              acrescente nem apague nada aqui sem falar connosco.
+          - name: foto
+            label: "Fotografia de capa (opcional)"
+            type: image
+            options: { media: fotos }
+            description: É a que aparece no cartão, antes de se clicar.
+          - { name: legenda_foto, label: Legenda da fotografia de capa, type: string }
+          - name: detalhe
+            label: "Texto do detalhe (opcional)"
+            type: text
+            description: >-
+              Aparece quando se abre o serviço. Escreva como fala ao balcão.
+              Se deixar vazio, o detalhe mostra só a descrição e o que inclui.
+          - name: fotos
+            label: "Fotografias do detalhe (carrossel)"
+            type: object
+            # Fechada por omissão e com uma linha de resumo por item: sem isto o
+            # cliente abre a lista e leva com todos os blocos abertos ao mesmo tempo.
+            # Na versão 2.1.8 o `collapsible` é obrigatório na forma-objecto do
+            # `list` (o validador é estrito e a chave não é opcional), por isso vai
+            # sempre escrito, mesmo quando só se quer o resumo.
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{legenda}"
+            description: >-
+              As fotografias que passam no carrossel quando se abre o serviço.
+              Duas ou três chegam. Se deixar vazio, aparece só a de capa.
+            fields:
+              - name: nome
+                label: Fotografia
+                type: image
+                options: { media: fotos }
+              - { name: legenda, label: Legenda, type: string }
+          - name: ligacao
+            # Fora do formulário, mas continua no esquema: o Pages CMS reescreve os
+            # valores tal como estavam. Tirá-lo do esquema é que os apagaria.
+            hidden: true
+            label: "Segundo botão, para outra secção (opcional)"
+            type: string
+            description: >-
+              Se preencher com uma âncora — por exemplo #lavagens — o cartão
+              ganha um segundo botão, ao lado do «Ver detalhe», que leva a essa
+              secção da página. É assim que o cartão das Lavagens leva à tabela
+              de preços sem deixar de ter o seu próprio detalhe.
+          - name: ligacao_texto
+            # Fora do formulário, mas continua no esquema: o Pages CMS reescreve os
+            # valores tal como estavam. Tirá-lo do esquema é que os apagaria.
+            hidden: true
+            label: "Texto da acção dessa ligação"
+            type: string
+            description: >-
+              Só conta se preencher o campo acima. Por omissão diz «Ver mais».
+      - name: head
+        label: Títulos da secção
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+
+  # ------------------------------------------------------ BALCÃO DE PEÇAS
+
+  - name: site
+    label: "Contactos, horário e textos da página"
+    type: file
+    path: data/site.json
+    fields:
+      - name: contactos
+        label: Contactos (mudam em todo o site de uma vez)
+        type: object
+        fields:
+          - { name: telefone, label: "Telefone (como se lê)", type: string }
+          - name: telefone_intl
+            # Fora do formulário, mas continua no esquema: o Pages CMS reescreve os
+            # valores tal como estavam. Tirá-lo do esquema é que os apagaria.
+            hidden: true
+            label: "Telefone internacional (ex.: 351922022364)"
+            type: string
+            description: Sem espaços nem +. É o que faz funcionar os botões de ligar e de WhatsApp.
+          - name: custo_chamada
+            label: Indicação do custo da chamada
+            type: string
+            description: >-
+              Obrigatório por lei ao lado de cada número (DL 59/2021). Número 9xx =
+              "Chamada para a rede móvel nacional". Não apagar.
+          - { name: email, label: Email, type: string }
+          - { name: morada_linha1, label: "Morada (rua e número)", type: string }
+          - name: morada_linha2
+            label: "Morada (código postal e localidade)"
+            type: string
+            description: 'Tem de ser código postal e depois localidade, ex.: 3700-169 São João da Madeira.'
+          - { name: instagram_url, label: Link do Instagram, type: string }
+          - { name: instagram_handle, label: "Nome do Instagram (ex.: @pokeauto2026)", type: string }
+          - name: facebook_url
+            label: Link do Facebook
+            type: string
+            description: Deixa vazio se não houver — o ícone desaparece sozinho, não fica link morto.
+          - name: maps_url
+            label: Link do Google Maps da oficina
+            type: string
+            description: No perfil de empresa do Google, botão Partilhar, copiar o link.
+
+      - name: horario
+        label: Horário de funcionamento
+        type: object
+        # Fechada por omissão e com uma linha de resumo por item: sem isto o
+        # cliente abre a lista e leva com todos os blocos abertos ao mesmo tempo.
+        # Na versão 2.1.8 o `collapsible` é obrigatório na forma-objecto do
+        # `list` (o validador é estrito e a chave não é opcional), por isso vai
+        # sempre escrito, mesmo quando só se quer o resumo.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{dias}: {abre} – {fecha}"
+        description: >-
+          Uma linha por bloco. Ex.: Segunda a Sexta, 09:00–18:00; outra linha para Sábado.
+          Os dias que não constarem ficam como fechado. Põe aqui o MESMO horário que
+          estiver no perfil de empresa do Google — se forem diferentes, o Google desconfia.
+        fields:
+          - name: dias
+            label: Dias
+            type: select
+            options:
+              multiple: true
+              values:
+                - { value: Monday, label: Segunda }
+                - { value: Tuesday, label: Terça }
+                - { value: Wednesday, label: Quarta }
+                - { value: Thursday, label: Quinta }
+                - { value: Friday, label: Sexta }
+                - { value: Saturday, label: Sábado }
+                - { value: Sunday, label: Domingo }
+          - { name: abre, label: "Abre (24h, ex.: 09:00)", type: string }
+          - { name: fecha, label: "Fecha (24h, ex.: 18:00)", type: string }
+
+      - name: hero
+        label: Topo da página
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta pequena, type: string }
+          - { name: titulo, label: Título grande, type: string }
+          - name: destaque
+            # Fora do formulário, mas continua no esquema: o Pages CMS reescreve os
+            # valores tal como estavam. Tirá-lo do esquema é que os apagaria.
+            hidden: true
+            label: Palavra do título a dourado
+            type: string
+            description: Escreve aqui uma expressão que exista no título acima; fica realçada a dourado.
+          - { name: lead, label: Texto de apresentação, type: text }
+          - { name: cta_principal, label: "Botão principal", type: string }
+          - { name: cta_secundario, label: "Botão secundário", type: string }
+          - name: nota
+            label: Frase pequena por baixo dos botões
+            type: string
+          - name: foto
+            label: Fotografia de fundo
+            type: image
+            options: { media: fotos }
+            description: >-
+              É a primeira coisa que se vê. Escolha uma horizontal e com boa luz;
+              o texto assenta no lado esquerdo, por isso funciona melhor se essa
+              parte da fotografia for escura.
+
+      - name: faixa
+        label: Faixa larga entre os Serviços e as Peças
+        type: object
+        fields:
+          - { name: texto, label: Frase, type: string }
+          - name: destaque
+            label: Parte da frase a itálico
+            type: string
+            description: Escreva uma expressão que exista na frase acima.
+          - name: foto
+            label: Fotografia da faixa
+            type: image
+            options: { media: fotos }
+            description: Aparece muito larga e baixa. Um grande plano funciona melhor do que um carro inteiro.
+
+      - { name: rodape_frase, label: Frase do rodapé, type: text }
+
+  # ------------------------------------------------------------- SERVIÇOS
+
+      - name: contactos_head
+        label: "Títulos da secção «Onde estamos»"
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
+
+      - name: legal
+        label: Dados legais (obrigatórios no rodapé)
+        type: object
+        description: >-
+          Isto não é opcional: o DL 7/2004 art.10 obriga a identificar quem é o
+          responsável pelo site. O que aparece no rodapé muda conforme a forma jurídica.
+        fields:
+          - name: forma_juridica
+            label: Forma jurídica
+            type: select
+            options:
+              values:
+                - { value: eni, label: "Empresário em Nome Individual" }
+                - { value: sociedade, label: "Sociedade (Lda / Unipessoal Lda)" }
+            description: >-
+              Se for sociedade, o Código das Sociedades Comerciais art.171 obriga a
+              publicar também NIPC, conservatória, matrícula e capital social nos
+              sítios na Internet. Não é escolha.
+          - { name: nome_titular, label: "Nome completo do titular (ou firma, se sociedade)", type: string }
+          - { name: designacao_comercial, label: Designação comercial, type: string }
+          - { name: nif, label: "NIF (empresário individual)", type: string }
+          - { name: nipc, label: "NIPC (só sociedade)", type: string }
+          - { name: conservatoria, label: "Conservatória do Registo Comercial (só sociedade)", type: string }
+          - { name: matricula, label: "N.º de matrícula (só sociedade)", type: string }
+          - { name: capital_social, label: "Capital social (só sociedade)", type: string }
+
+      - name: seo
+        label: "Título e descrição no Google"
+        type: object
+        description: >-
+          São os dois textos que aparecem no resultado de pesquisa. É o que faz
+          alguém clicar ou passar à frente.
+        fields:
+          - name: titulo
+            label: Título da página
+            type: string
+            description: >-
+              Até cerca de 60 caracteres, senão o Google corta. Comece pelo que a
+              pessoa procura ("Oficina auto em São João da Madeira") e deixe o
+              nome da empresa para o fim.
+          - name: descricao
+            label: Descrição
+            type: text
+            description: >-
+              Até cerca de 155 caracteres. Diga o que faz e onde. Não é um slogan,
+              é uma frase informativa.
+
+      - name: og
+        label: "Imagem de partilha (WhatsApp, Facebook)"
+        type: object
+        description: >-
+          O cartão que aparece quando alguém partilha o link do site numa
+          conversa. É gerado sozinho a partir do que puser aqui.
+        fields:
+          - { name: titulo, label: Título no cartão, type: string }
+          - name: subtitulo
+            label: Linha de serviços
+            type: string
+            description: 'Separe com «·». Ex.: Mecânica · Eletricidade · Revisões'
+          - name: foto
+            label: Fotografia de fundo do cartão
+            type: image
+            options: { media: fotos }
+            description: Aparece escurecida por trás do texto. Um grande plano funciona melhor.
+
+  - name: trabalhos
+    label: "Fotografias só para o Google"
+    type: file
+    path: data/trabalhos.json
+    fields:
       - name: items
         label: "Fotografias a submeter ao Google Imagens"
         type: object
-        list: true
+        # Fechada por omissão e com uma linha de resumo por item: sem isto o
+        # cliente abre a lista e leva com todos os blocos abertos ao mesmo tempo.
+        # Na versão 2.1.8 o `collapsible` é obrigatório na forma-objecto do
+        # `list` (o validador é estrito e a chave não é opcional), por isso vai
+        # sempre escrito, mesmo quando só se quer o resumo.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{cap}"
         fields:
           - name: img
             label: Imagem
@@ -476,3 +536,10 @@ content:
             description: >-
               Diz o que a foto mostra em concreto (que carro, que serviço). Uma
               legenda factual vale mais do que um adjectivo.
+      - name: head
+        label: "Títulos (não aparecem no site)"
+        type: object
+        fields:
+          - { name: etiqueta, label: Etiqueta, type: string }
+          - { name: titulo, label: Título, type: string }
+          - { name: lead, label: Subtítulo, type: text }
