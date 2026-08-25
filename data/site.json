@@ -6,7 +6,7 @@
   "og": {
     "titulo": "Oficina auto em São João da Madeira",
     "subtitulo": "Mecânica · Eletricidade · Eletrónica · Revisões · Lavagens",
-    "foto": "faixa-jante"
+    "foto": "assets/img/trabalhos/faixa-jante-840.webp"
   },
   "hero": {
     "etiqueta": "Oficina multimarca · São João da Madeira",
@@ -15,7 +15,7 @@
     "lead": "",
     "cta_principal": "Ligar agora",
     "cta_secundario": "WhatsApp",
-    "foto": "posto-conducao",
+    "foto": "assets/img/trabalhos/posto-conducao-1280.webp",
     "nota": ""
   },
   "contactos": {
@@ -38,7 +38,7 @@
   "faixa": {
     "texto": "O detalhe nota-se quando se olha de perto",
     "destaque": "nota-se",
-    "foto": "faixa-jante"
+    "foto": "assets/img/trabalhos/faixa-jante-840.webp"
   },
   "horario": [
     {
