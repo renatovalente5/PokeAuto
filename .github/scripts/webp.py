@@ -35,6 +35,11 @@ Regras:
     fica sempre com data anterior à variante e uma comparação de datas nunca
     dispara — uma foto substituída com o mesmo nome serviria a variante antiga
     para sempre, e mostrava fotos diferentes conforme o ecrã.
+  - PRIMEIRO O PLANO, DEPOIS AS MÃOS: decide-se tudo (as variantes a fazer, as
+    órfãs a apagar) sem tocar em nada, confere-se o limite de apagadas, e só
+    então se escreve e se apaga. Antes, as órfãs iam sendo apagadas à medida
+    que se encontravam e o limite só se conferia no fim: quando recusava,
+    já as tinha apagado todas — a trava avisava de um estrago já feito.
 
 Corre antes do dimensoes.py e do prerender.py, no mesmo workflow.
 
@@ -160,50 +165,38 @@ def referidos_nos_dados():
 EM_USO = referidos_nos_dados()
 
 
-def main():
-    verificar = '--verificar' in sys.argv
-    qual_base = QUALIDADE
-    if '--qualidade' in sys.argv:
-        qual_base = int(sys.argv[sys.argv.index('--qualidade') + 1])
+LIMITE = 12
 
-    manifesto = carregar_manifesto()
+
+def planear(manifesto):
+    """O QUE HÁ A FAZER, sem escrever nem apagar nada.
+
+    → (gerar, apagar, novo_manifesto)
+        gerar   [(origem, destino, largura)] — as variantes por fazer
+        apagar  [rel] — as variantes órfãs (o original desapareceu)
+    """
     novo_manifesto = {}
-    por_fazer, feitos, apagados = [], 0, []
-    antes = depois = 0
+    gerar, apagar = [], []
 
     for nome in PASTAS:
         pasta = os.path.join(IMGS, nome)
         if not os.path.isdir(pasta):
             continue
-        esperados = set()
         for origem in originais(pasta):
             rel = os.path.relpath(origem, RAIZ).replace(os.sep, '/')
             sha = digerir(origem)
             novo_manifesto[rel] = sha
             mudou = manifesto.get(rel) != sha
             try:
-                im = Image.open(origem)
+                with Image.open(origem) as im:   # só lê o cabeçalho: a largura
+                    larg = im.size[0]
             except Exception as e:            # ficheiro corrompido a meio do upload
                 print('  ! %s ignorado: %s' % (rel, e))
                 continue
-            with im:
-                larg = im.size[0]
-                for destino, alvo in variantes(origem, larg, pasta):
-                    esperados.add(os.path.basename(destino))
-                    if os.path.exists(destino) and not mudou:
-                        continue
-                    por_fazer.append(os.path.relpath(destino, RAIZ))
-                    if verificar:
-                        continue
-                    copia = im.convert('RGB')
-                    if copia.size[0] > alvo:
-                        h = round(copia.size[1] * alvo / copia.size[0])
-                        copia = copia.resize((alvo, h), Image.LANCZOS)
-                    q = min(qual_base, qualidade_para(alvo))
-                    copia.save(destino, 'WEBP', quality=q, method=6)
-                    feitos += 1
-                    antes += os.path.getsize(origem)
-                    depois += os.path.getsize(destino)
+            for destino, alvo in variantes(origem, larg, pasta):
+                if os.path.exists(destino) and not mudou:
+                    continue
+                gerar.append((origem, destino, alvo))
 
         # Variantes cujo original DESAPARECEU: sem isto o repositório só cresce.
         #
@@ -232,44 +225,84 @@ def main():
             base = E_VARIANTE.sub('', f)
             if base in bases_com_original or base not in bases_no_manifesto:
                 continue
-            alvo = os.path.join(pasta, f)
-            rel = os.path.relpath(alvo, RAIZ).replace(os.sep, '/')
+            rel = os.path.relpath(os.path.join(pasta, f), RAIZ).replace(os.sep, '/')
             if rel in EM_USO:
                 print('  ! %s continua referido em data/*.json — não apago' % rel)
                 continue
-            apagados.append(rel)
-            if not verificar:
-                os.remove(alvo)
+            apagar.append(rel)
 
-    LIMITE = 12
-    if len(apagados) > LIMITE and '--forcar' not in sys.argv:
-        print('webp: RECUSO apagar %d ficheiros de uma vez (limite %d).' % (len(apagados), LIMITE))
-        for p in apagados:
+    return gerar, apagar, novo_manifesto
+
+
+def fazer_variantes(origem, destinos, qual_base):
+    """As variantes de um original: descodifica-o uma vez, e cada largura sai
+    da imagem inteira (nunca de outra variante)."""
+    with Image.open(origem) as im:
+        inteira = im.convert('RGB')
+    for destino, alvo in destinos:
+        copia = inteira
+        if copia.size[0] > alvo:
+            h = round(copia.size[1] * alvo / copia.size[0])
+            copia = copia.resize((alvo, h), Image.LANCZOS)
+        q = min(qual_base, qualidade_para(alvo))
+        copia.save(destino, 'WEBP', quality=q, method=6)
+
+
+def main():
+    verificar = '--verificar' in sys.argv
+    qual_base = QUALIDADE
+    if '--qualidade' in sys.argv:
+        qual_base = int(sys.argv[sys.argv.index('--qualidade') + 1])
+
+    manifesto = carregar_manifesto()
+    gerar, apagar, novo_manifesto = planear(manifesto)
+
+    # O limite confere-se com o plano na mão, ANTES de qualquer escrita: uma
+    # recusa deixa o repositório exactamente como estava.
+    if len(apagar) > LIMITE and '--forcar' not in sys.argv:
+        print('webp: RECUSO apagar %d ficheiros de uma vez (limite %d). Não apaguei nem escrevi nada.' % (len(apagar), LIMITE))
+        for p in apagar:
             print('   ' + p)
         print('Se for mesmo para apagar, corra outra vez com --forcar.')
         return 1
 
     if verificar:
-        if por_fazer or apagados:
-            print('webp: por gerar %d, por apagar %d' % (len(por_fazer), len(apagados)))
-            for p in (por_fazer + apagados)[:12]:
+        por_fazer = [os.path.relpath(destino, RAIZ) for _, destino, _ in gerar]
+        if por_fazer or apagar:
+            print('webp: por gerar %d, por apagar %d' % (len(por_fazer), len(apagar)))
+            for p in (por_fazer + apagar)[:12]:
                 print('   ' + p)
             return 1
         print('webp: em dia.')
         return 0
+
+    # Primeiro o que acrescenta (as variantes), depois o que apaga (as
+    # órfãs), por fim o manifesto: um erro a meio de uma conversão pára o
+    # script antes de apagar seja o que for.
+    antes = depois = 0
+    por_original = {}
+    for origem, destino, alvo in gerar:
+        por_original.setdefault(origem, []).append((destino, alvo))
+    for origem, destinos in por_original.items():
+        fazer_variantes(origem, destinos, qual_base)
+        for destino, _ in destinos:
+            antes += os.path.getsize(origem)
+            depois += os.path.getsize(destino)
+    for rel in apagar:
+        os.remove(os.path.join(RAIZ, *rel.split('/')))
 
     manifesto.update(novo_manifesto)
     with open(MANIFESTO, 'w', encoding='utf-8') as f:
         json.dump(manifesto, f, ensure_ascii=False, indent=1, sort_keys=True)
         f.write('\n')
 
-    if feitos:
+    if gerar:
         print('webp: %d variantes geradas (%.1f MB de originais → %.1f MB)'
-              % (feitos, antes / 1048576.0, depois / 1048576.0))
+              % (len(gerar), antes / 1048576.0, depois / 1048576.0))
     else:
         print('webp: nada a fazer.')
-    if apagados:
-        print('webp: %d variantes órfãs apagadas' % len(apagados))
+    if apagar:
+        print('webp: %d variantes órfãs apagadas' % len(apagar))
     return 0
 
 
