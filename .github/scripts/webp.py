@@ -59,7 +59,15 @@ IMGS = os.path.join(RAIZ, 'assets', 'img')
 
 # Só as pastas cujas imagens são emitidas com srcset. Logótipos e ícones ficam
 # de fora: já são pequenos e alguns precisam de transparência exacta.
-PASTAS = ['trabalhos', 'pecas']
+#
+# As LAVAGENS entram como as outras: o app.js já resolve a fotografia de cada
+# linha da tabela pelas variantes (resolverFoto(…, 'lavagens')), mas a pasta
+# não estava aqui — o site servia o original tal e qual, num quadrado de 64
+# px. Os originais vivem em lavagens/originais/ e as variantes na pasta-mãe,
+# como em trabalhos/. As ilustrações das categorias (cat-<categoria>-128.webp
+# e -192.webp), que estão na pasta-mãe, têm nome de variante e nunca foram
+# deste script (não estão no manifesto): a limpeza das órfãs não lhes toca.
+PASTAS = ['trabalhos', 'pecas', 'lavagens']
 ORIGEM_EXT = ('.jpg', '.jpeg', '.png', '.webp')
 
 # As larguras que o site pede. 320-840 cobrem os cartões e o carrossel; 1280 e

@@ -108,15 +108,14 @@ export const ficheiroDe = (caminho) => ORDEM.find((k) => FICHEIROS[k] === caminh
 
 /* AS BIBLIOTECAS DAS FOTOGRAFIAS. Para o dono, uma fotografia é um ORIGINAL:
    o ficheiro que se carregou. O webp.py faz de cada original de
-   assets/img/trabalhos/originais/ as variantes que o site serve
-   (<nome>-320.webp … -1800.webp), na pasta-mãe; elas e as ilustrações das
-   categorias das lavagens (cat-<categoria>-128.webp) nunca se mostram nem se
-   escolhem. A das lavagens não tem variantes (o webp.py só trata
-   «trabalhos»): o site serve o ficheiro tal e qual, num quadrado de 64 px —
-   por isso o painel reduz as fotografias dela a 640 px. */
+   assets/img/<trabalhos|lavagens>/originais/ as variantes que o site serve
+   (<nome>-320.webp … -1800.webp, até à largura do original), na pasta-mãe;
+   elas e as ilustrações das categorias das lavagens (cat-<categoria>-128.webp)
+   nunca se mostram nem se escolhem. As das lavagens aparecem num quadrado de
+   64 px: o painel reduz as novas a 640 px, e o site serve a variante de 320. */
 export const BIBLIOTECAS = Object.freeze({
   fotos: Object.freeze({ pasta: 'assets/img/trabalhos/originais', variantes: 'assets/img/trabalhos', site: 'trabalhos', nome: 'Fotografias' }),
-  lavagens: Object.freeze({ pasta: 'assets/img/lavagens', variantes: 'assets/img/lavagens', site: 'lavagens', nome: 'Fotografias das lavagens' }),
+  lavagens: Object.freeze({ pasta: 'assets/img/lavagens/originais', variantes: 'assets/img/lavagens', site: 'lavagens', nome: 'Fotografias das lavagens' }),
 });
 export const EXTENSOES_FOTO = Object.freeze(['jpg', 'jpeg', 'png', 'webp']);
 /* As larguras que o app.js procura (LARGURAS_FOTO): uma fotografia está
@@ -195,7 +194,10 @@ export function fotoNoSite(valor, pasta, existe) {
   if (!cru.includes('/')) return { estado: 'falta' };
   const c = noRepositorio(cru);
   if (!existe(c)) return { estado: 'falta', caminho: c };
-  return { estado: pasta === 'trabalhos' && bibliotecaDe(c) === 'fotos' && nomeSeguro(c) ? 'por-preparar' : 'tal-e-qual', caminho: c };
+  /* Um original da biblioteca desta pasta, com um nome que o site serve
+     bem, ganha as variantes na publicação (o webp.py trata as duas). */
+  const b = bibliotecaDe(c);
+  return { estado: b && BIBLIOTECAS[b].site === pasta && nomeSeguro(c) ? 'por-preparar' : 'tal-e-qual', caminho: c };
 }
 
 /* O cartão de partilha (og.py, escolher_foto): a maior variante do nome base

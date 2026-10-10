@@ -20,6 +20,11 @@ O que prova:
     antes apagava-as uma a uma e só depois conferia o limite, e quando recusava
     já não havia nada para salvar; com --forcar apaga; até 12 apaga sem
     pedir; o --verificar nunca apaga.
+  · webp.py, as fotografias das lavagens: um original em
+    assets/img/lavagens/originais/ ganha as mesmas variantes WebP que os das
+    outras fotografias, na pasta-mãe (onde o resolverFoto do app.js as
+    procura); sem o original, as variantes dele saem; as ilustrações das
+    categorias (cat-*-128.webp) nunca se tocam.
 """
 import json
 import os
@@ -165,6 +170,47 @@ try:
     with open(caminho(d, 'assets/img/.webp.json'), encoding='utf-8') as f:
         m = json.load(f)
     certo('assets/img/trabalhos/originais/nova.jpg' in m, 'e o manifesto passa a conhecer a fotografia nova')
+finally:
+    shutil.rmtree(d, ignore_errors=True)
+
+
+grupo('webp.py: as fotografias das lavagens ganham as variantes das outras')
+
+d = site_de_ensaio()
+try:
+    os.makedirs(caminho(d, 'assets/img/lavagens/originais'))
+    ilustracoes = []
+    for cat in ('lavagens', 'interior', 'tratamentos'):
+        for w in (128, 192):
+            rel = 'assets/img/lavagens/cat-%s-%d.webp' % (cat, w)
+            with open(caminho(d, rel), 'wb') as f:
+                f.write(('ilustração %s %d' % (cat, w)).encode('utf-8'))
+            ilustracoes.append(rel)
+    antes = dict((r, ler(d, r)) for r in ilustracoes)
+    fotografia(d, 'assets/img/lavagens/originais/lavagem-1a2b3c4d.jpg', 640, 480)
+    r = correr_webp(d)
+    variantes_l = sorted(f for f in os.listdir(caminho(d, 'assets/img/lavagens')) if f.startswith('lavagem-1a2b3c4d-'))
+    certo(r.returncode == 0 and variantes_l == ['lavagem-1a2b3c4d-320.webp', 'lavagem-1a2b3c4d-480.webp', 'lavagem-1a2b3c4d-640.webp'],
+          'um original de 640 px em lavagens/originais/ ganha as variantes de 320, 480 e 640 na pasta-mãe (antes não ganhava nenhuma: o site servia o original)',
+          (r.returncode, variantes_l, r.stdout[-200:], r.stderr[-300:]))
+    from PIL import Image
+    v320 = caminho(d, 'assets/img/lavagens/lavagem-1a2b3c4d-320.webp')
+    if os.path.exists(v320):
+        with Image.open(v320) as im:
+            certo(im.format == 'WEBP' and im.size == (320, 240), 'e são WebP, à largura certa, com a proporção do original', (im.format, im.size))
+    else:
+        certo(False, 'e são WebP, à largura certa, com a proporção do original', 'não há variante de 320')
+    certo(all(ler(d, x) == antes[x] for x in ilustracoes), 'as ilustrações das categorias ficam como estavam')
+    with open(caminho(d, 'assets/img/.webp.json'), encoding='utf-8') as f:
+        m = json.load(f)
+    certo('assets/img/lavagens/originais/lavagem-1a2b3c4d.jpg' in m, 'e o manifesto conhece o original das lavagens')
+    r2 = correr_webp(d, '--verificar')
+    certo(r2.returncode == 0, 'a seguir, o --verificar diz que está em dia', r2.stdout[-200:])
+    os.remove(caminho(d, 'assets/img/lavagens/originais/lavagem-1a2b3c4d.jpg'))
+    r3 = correr_webp(d)
+    sobram = sorted(f for f in os.listdir(caminho(d, 'assets/img/lavagens')) if f.startswith('lavagem-1a2b3c4d-'))
+    certo(r3.returncode == 0 and not sobram and all(os.path.exists(caminho(d, x)) for x in ilustracoes),
+          'apagado o original, as variantes dele saem (como as das outras), e as ilustrações ficam', (r3.returncode, sobram))
 finally:
     shutil.rmtree(d, ignore_errors=True)
 

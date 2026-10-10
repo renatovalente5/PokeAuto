@@ -25,8 +25,10 @@ media:
     categories: [image]
   - name: lavagens
     label: Fotografias de lavagens
-    input: assets/img/lavagens
-    output: assets/img/lavagens
+    # Como a de cima: os mestres em originais/, as variantes que o webp.py faz
+    # (e as ilustrações das categorias) na pasta-mãe, fora da biblioteca.
+    input: assets/img/lavagens/originais
+    output: assets/img/lavagens/originais
     extensions: [jpg, jpeg, png, webp]
     categories: [image]
 

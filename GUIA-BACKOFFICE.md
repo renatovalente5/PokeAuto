@@ -95,6 +95,9 @@ precisa de as preparar** — depois de gravar, acontece tudo sozinho:
 - o telemóvel descarrega a pequena e o computador a grande;
 - as dimensões são registadas, para a página não «saltar» enquanto carrega.
 
+Vale também para as fotografias das lavagens, que aparecem pequenas na tabela
+dos preços: o site serve uma versão leve, e não a fotografia inteira.
+
 Para usar uma fotografia que já está no site, carregue em **Escolher da
 biblioteca**: vê **uma fotografia de cada**, nunca as seis versões. Em «Mais» ›
 **Fotografias** vê a biblioteca inteira e onde é usada cada uma; as que não são

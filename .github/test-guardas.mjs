@@ -19,6 +19,8 @@
  *   · OS TERMOS PROIBIDOS: as regras do regras.mjs acham o mesmo que o
  *     termos.py — a mesma regra, no mesmo sítio — num corpus de centenas de
  *     textos (maiúsculas, acentos, fronteiras de palavra, espaços estranhos);
+ *   · as bibliotecas das fotografias: os originais em originais/ nas duas (as
+ *     lavagens também), o que o webp.py e o Pages CMS usam;
  *   · cada «bloqueia» que importa tem um caso, com a classe e o ecrã certos;
  *   · a guarda: 0 com os dados de hoje, 1 com um «bloqueia» (e a anotação
  *     ::error), 2 com uma chamada errada; numa cópia em /tmp corre na mesma
@@ -66,6 +68,26 @@ parte('o dia de hoje em Lisboa, à mão, é o do Intl');
   let n = 0; let mal = 0;
   for (let t = Date.UTC(2024, 0, 1); t < Date.UTC(2032, 0, 1); t += 15 * 60000) { n++; const d = new Date(t); if (R.hojeEmLisboa(d) !== intl.format(d)) mal++; }
   certo(mal === 0, `o hojeEmLisboa dá o dia do Intl em cada quarto de hora de 2024 a 2031 (${n} instantes, ${mal} diferentes)`);
+}
+
+/* ------------------------------------- 2c. as bibliotecas das fotografias -- */
+parte('as bibliotecas das fotografias: os originais em originais/, nas duas');
+{
+  const ORIGINAL_L = 'assets/img/lavagens/originais/lavagem-1a2b3c4d.jpg';
+  certo(R.bibliotecaDe('assets/img/trabalhos/originais/mecanica-1a2b3c4d.jpg') === 'fotos', 'um original das fotografias vive em trabalhos/originais/');
+  certo(R.bibliotecaDe(ORIGINAL_L) === 'lavagens', 'um original das lavagens vive em lavagens/originais/ (onde o webp.py o vai buscar)');
+  certo([ 'assets/img/lavagens/lavagem-1a2b3c4d.jpg', 'assets/img/lavagens/cat-lavagens-128.webp', 'assets/img/lavagens/lavagem-1a2b3c4d-320.webp'].every((c) => R.bibliotecaDe(c) === null),
+    'na pasta-mãe das lavagens só há variantes e ilustrações: nada disso é da biblioteca');
+  const so = (...cs) => (c) => cs.includes(c);
+  certo(R.fotoNoSite(ORIGINAL_L, 'lavagens', so(ORIGINAL_L)).estado === 'por-preparar', 'uma fotografia nova das lavagens fica «por preparar» (o webp.py faz-lhe as variantes), e não «tal e qual»');
+  certo(R.fotoNoSite(ORIGINAL_L, 'lavagens', so(ORIGINAL_L, 'assets/img/lavagens/lavagem-1a2b3c4d-320.webp')).estado === 'pronta', 'com as variantes feitas, está «pronta»');
+  certo(R.aApagarCom(ORIGINAL_L, [ORIGINAL_L, 'assets/img/lavagens/lavagem-1a2b3c4d-320.webp', 'assets/img/lavagens/lavagem-1a2b3c4d-640.webp', 'assets/img/lavagens/cat-lavagens-128.webp']).join() === [ORIGINAL_L, 'assets/img/lavagens/lavagem-1a2b3c4d-320.webp', 'assets/img/lavagens/lavagem-1a2b3c4d-640.webp'].join(),
+    '«Apagar da biblioteca» de uma das lavagens leva as variantes dela, e não as ilustrações');
+  const webp = readFileSync(join(RAIZ, '.github/scripts/webp.py'), 'utf8');
+  certo(/^PASTAS = \[[^\]]*'lavagens'[^\]]*\]/m.test(webp), 'o webp.py trata a pasta das lavagens');
+  const pages = readFileSync(join(RAIZ, '.pages.yml'), 'utf8');
+  certo(/input: assets\/img\/lavagens\/originais\n\s+output: assets\/img\/lavagens\/originais\n/.test(pages) && !/input: assets\/img\/lavagens\n/.test(pages),
+    'a biblioteca das lavagens do Pages CMS é a pasta dos originais (as variantes ficam fora dela)');
 }
 
 /* ---------------------------------- 3. os termos: paridade com o termos.py -- */
