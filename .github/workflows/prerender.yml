@@ -17,7 +17,14 @@ on:
       - 'assets/js/**'
       - 'assets/css/**'
       - '.github/scripts/**'
-  workflow_dispatch:        # permite correr à mão a partir do separador Actions
+      # A guarda do conteúdo e as regras que ela corre (as mesmas do painel).
+      - '.github/regras.mjs'
+      - '.github/guardas.mjs'
+      - '.github/consola.mjs'
+  # Permite correr à mão a partir do separador Actions, e é o que o botão
+  # «Publicar outra vez» do painel (backoffice.pokeauto.pt) dispara: sempre no
+  # main, sem inputs.
+  workflow_dispatch:
   schedule:
     # Ronda diária: confirma que o HTML servido continua a bater com os dados.
     # Apanha qualquer dessincronização que tenha escapado (push perdido, execução
@@ -47,9 +54,25 @@ jobs:
         with:
           fetch-depth: 0          # o <lastmod> do sitemap vem do histórico do git
 
-      # PRIMEIRO passo, antes de tudo: se o cliente escreveu no backoffice alguma
-      # coisa que não pode ir para um site com o nome e a morada da empresa, a
-      # publicação falha aqui e o site continua a servir a versão anterior.
+      # A GUARDA DO CONTEÚDO, antes de tudo o que lê os dados: as regras de
+      # .github/regras.mjs — as mesmas que o painel mostra por baixo dos campos e
+      # que o Worker do painel confere antes de gravar. Pára só o que não se
+      # pode publicar (a forma dos ficheiros, a morada, o NIF, uma hora que o
+      # prerender.py não lê, um termo proibido); o resto fica nas anotações e no
+      # resumo da corrida. O que o painel grava já passou por estas regras: isto
+      # é para o que chega por outro lado (um commit à mão, o Pages CMS).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Conferir o conteúdo
+        run: node .github/guardas.mjs --relatorio-em "$RUNNER_TEMP/guarda.json"
+
+      # Se o cliente escreveu no backoffice alguma coisa que não pode ir para um
+      # site com o nome e a morada da empresa, a publicação falha aqui (o HTML
+      # para os motores de busca e o cartão de partilha ficam como estavam). As
+      # regras da guarda já os procuram, traduzidas deste script; este continua
+      # a ser a última palavra.
       - name: Verificar termos proibidos
         run: python3 .github/scripts/termos.py
 

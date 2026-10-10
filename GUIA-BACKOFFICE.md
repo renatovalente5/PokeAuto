@@ -1,8 +1,9 @@
 # Guia do site — PokeAuto
 
 O site é **gerido por si, sem programação**. Todos os textos e todas as
-fotografias — incluindo a do topo da página — mudam num painel simples e
-gratuito. Aqui fica explicado como.
+fotografias — incluindo a do topo da página — mudam no painel da oficina, em
+**https://backoffice.pokeauto.pt**. Aqui fica explicado como. (Dentro do
+painel há também uma «Ajuda», com as perguntas mais comuns.)
 
 Site: **https://pokeauto.pt/**
 
@@ -10,25 +11,37 @@ Site: **https://pokeauto.pt/**
 
 ## 1. Entrar no painel
 
-1. Vá a **https://app.pagescms.org** e entre com a conta do **GitHub**.
-2. Autorize o acesso ao repositório **PokeAuto**.
-3. Escolha o repositório e já está.
+1. Vá a **https://backoffice.pokeauto.pt** — ou carregue em **Gestão**, no
+   rodapé do site.
+2. Escreva o seu email e carregue em **Enviar código**.
+3. Chega um email de **painel@pokeauto.pt** com um código de 8 algarismos.
+   Escreva-o no painel. O código vale 15 minutos e só funciona no browser onde
+   o pediu.
 
-No rodapé do site há um link **Gestão** que o leva directamente ao painel.
+Depois de entrar, o painel fica aberto nesse aparelho durante 30 dias (ou até
+carregar em **Sair**, em «Conta»). No telemóvel pode juntá-lo ao ecrã
+principal (no iPhone: **Partilhar** › **Adicionar ao ecrã principal**); nesse
+caso, peça e escreva o código dentro da app do ecrã principal.
 
-Cada gravação é publicada sozinha. Demora entre um e três minutos a aparecer no
-site. Depois de gravar, espere dois minutos e abra o site com **Ctrl+Shift+R**
-(ou puxe a página para baixo no telemóvel) para ver a versão nova.
+As alterações ficam **por gravar** até carregar em **Gravar e publicar**, na
+barra de baixo — mesmo que feche a página, ficam guardadas neste aparelho.
+Cada gravação é publicada sozinha: aparece no site em um ou dois minutos, e a
+faixa no topo do painel mostra o caminho (Gravado ✓ → A publicar →
+Publicado ✓). Se tinha o site aberto, recarregue-o com **Ctrl+Shift+R** (ou
+puxe a página para baixo no telemóvel) para ver a versão nova.
 
 ---
 ## 2. O que pode editar
 
-O menu da esquerda está por ordem do que costuma mexer mais. Em cada ecrã, o
-que interessa vem primeiro: as listas estão em cima e os títulos da secção
-ficam para o fim.
+Os ecrãs estão por ordem do que costuma mexer mais: no telemóvel, na barra de
+baixo (Início, Preços, Promoções, Serviços e «Mais»); no computador, na barra
+da esquerda. O **Início** diz o que pede atenção — uma campanha que já acabou,
+um campo que a lei pede.
 
 As listas abrem **fechadas**, uma linha por item, com o nome à frente. Carregue
-na linha para abrir só a que quer.
+na linha para abrir só a que quer. Em cada linha há **Subir**, **Descer** e
+**Apagar**. O painel avisa por baixo de cada campo do que o site não aceita,
+antes de gravar.
 
 ### Preços das lavagens
 
@@ -51,12 +64,11 @@ não é opcional para esse tipo de campanha.
 Cada linha é um serviço da oficina: nome, descrição, tempo médio, fotografia de
 capa e as fotografias do carrossel que aparece quando alguém abre o serviço.
 
-Dois campos aparecem a cinzento e não se editam — o **identificador** e os
-**endereços antigos**. São o que faz os links de fora (um cartão de visita, uma
-publicação antiga) continuarem a dar ao sítio certo. Estão à vista para saber
-que existem, não para mexer.
+O **identificador** e os **endereços antigos** de cada serviço não se editam
+(estão em «Os endereços deste serviço»). São o que faz os links de fora (um
+cartão de visita, uma publicação antiga) continuarem a dar ao sítio certo.
 
-### Contactos, horário e textos da página
+### Página: contactos, horário e textos
 
 O **telefone, o email, a morada e as redes sociais** mudam em todo o site de uma
 vez — estão num sítio só. O mesmo para o horário.
@@ -81,11 +93,11 @@ precisa de as preparar** — depois de gravar, acontece tudo sozinho:
 - o telemóvel descarrega a pequena e o computador a grande;
 - as dimensões são registadas, para a página não «saltar» enquanto carrega.
 
-Na biblioteca de imagens vê **uma linha por fotografia**, não as seis versões:
-as versões geradas ficam noutra pasta, que o painel não mostra. Se em vez de
-fotografias vir uma lista de ficheiros com números no fim do nome
-(`fachada-oficina-640`, `fachada-oficina-840`...), está na pasta errada — a
-biblioteca certa chama-se **Fotografias** e mostra `fachada-oficina` uma só vez.
+Para usar uma fotografia que já está no site, carregue em **Escolher da
+biblioteca**: vê **uma fotografia de cada**, nunca as seis versões. Em «Mais» ›
+**Fotografias** vê a biblioteca inteira e onde é usada cada uma; as que não são
+usadas em lado nenhum podem apagar-se dali. Tirar uma fotografia de um sítio
+não a apaga: pode estar a servir outro.
 
 Uma foto de 1,7 MB tirada com o telemóvel passa a servir 36 KB num telemóvel.
 Não mexa nos nomes dos ficheiros nem tente carregar versões já encolhidas: dê a
@@ -122,9 +134,9 @@ sem querer:
 
 ## 5. Coisas que a publicação recusa
 
-Há um verificador automático que corre antes de cada publicação. Se encontrar
-alguma destas coisas, **o site não é actualizado** e continua a servir a versão
-anterior:
+O painel não grava um texto com alguma destas coisas: diz qual é e o que fazer,
+por baixo do campo. E há um verificador automático que corre em cada
+publicação, para o que chegue por outro lado:
 
 | O que | Porquê |
 |---|---|
@@ -135,8 +147,10 @@ anterior:
 | «Somos os melhores», «preços imbatíveis» | Alegações que não se conseguem demonstrar são consideradas publicidade enganosa. |
 | Referências ao universo Pokémon em texto | O logótipo já faz o trocadilho. Escrevê-lo transforma uma piada gráfica numa associação declarada a uma marca registada. |
 
-Se isto acontecer, o painel mostra a mensagem em português, com o campo e o que
-fazer para corrigir.
+Se uma publicação parar, o ecrã **Publicação** do painel diz porquê e leva ao
+campo a corrigir. Uma avaria técnica (do GitHub, onde o site vive) tem o botão
+**Publicar outra vez**; para tudo o que o painel não resolve, a «Ajuda» tem o
+contacto do Renato.
 
 ---
 
