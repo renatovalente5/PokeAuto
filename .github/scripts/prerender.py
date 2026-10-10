@@ -299,14 +299,22 @@ def escapar(t):
 
 
 # Etiqueta/título/subtítulo de cada secção: que ficheiro os manda. O app.js faz
-# isto em runtime (applyHead, app.js:28); aqui grava-se no ficheiro para o
-# rastreador não ficar com a versão antiga quando o cliente editar.
+# isto em runtime (aplicarHead); aqui grava-se no ficheiro para o rastreador
+# não ficar com a versão antiga quando o cliente editar.
 CABECALHOS = [
     ('servicos', 'servicos.json', 'head'),
     ('lavagens', 'lavagens.json', 'head'),
     ('contactos', 'site.json', 'contactos_head'),
 ]
 CLASSES = [('etiqueta', 'etiqueta'), ('h-sec', 'titulo'), ('lead', 'lead')]
+
+# O TÍTULO DE UMA SECÇÃO QUE CHEGA VAZIO é o nome dela no menu. Uma secção sem
+# título deixava a lista debaixo do título da secção de cima — para quem lê
+# com um leitor de ecrã (o aria-labelledby da secção aponta para ele), para o
+# Google e para quem chega pelo menu. O app.js tem os mesmos nomes
+# (TITULOS_POR_OMISSAO, com as promoções, que não se congelam), e as regras do
+# painel também (.github/regras.mjs): o .github/test-app.mjs confere os três.
+TITULO_POR_OMISSAO = {'servicos': 'Serviços', 'lavagens': 'Lavagens', 'contactos': 'Contactos'}
 
 
 def aplicar_dominio(html, rel):
@@ -391,16 +399,41 @@ def aplicar_seo(html, raiz):
     return html, trocas
 
 
+def com_hidden(abre):
+    """A tag de abertura com o atributo hidden (uma vez só)."""
+    if re.search(r'\shidden(?=[\s=>])', abre):
+        return abre
+    return abre[:-1] + ' hidden>'
+
+
+def sem_hidden(abre):
+    return re.sub(r'\shidden(?:="[^"]*")?(?=[\s>])', '', abre)
+
+
 def aplicar_cabecalhos(html, raiz):
-    """Escreve os cabeçalhos de secção a partir dos data/*.json."""
-    import json as _js
+    """Escreve os cabeçalhos de secção a partir dos data/*.json.
+
+    UM TEXTO APAGADO SAI DO SITE. Antes só se escrevia quando havia texto: um
+    título ou um subtítulo esvaziado no backoffice ficava no HTML com o texto
+    antigo, e o cliente ficava convencido de que o tinha apagado. Agora:
+      · a etiqueta e o subtítulo vazios saem — o elemento fica vazio e com
+        hidden (a regra que o app.js já seguia nos [data-site]); escritos
+        outra vez, voltam;
+      · o título vazio passa a ser o nome da secção no menu
+        (TITULO_POR_OMISSAO);
+      · uma chave que nem existe no head conta como vazia (há editores que
+        tiram a chave em vez de a deixar vazia); um head que não existe no
+        ficheiro deixa a secção como está, como o app.js faz.
+    Com os textos preenchidos, escreve exactamente o que escrevia."""
     cache, trocas = {}, 0
 
     for id_seccao, ficheiro, chave in CABECALHOS:
         if ficheiro not in cache:
             cache[ficheiro] = ler_json(os.path.join(raiz, 'data', ficheiro),
                                        'data/' + ficheiro)
-        head = (cache[ficheiro] or {}).get(chave) or {}
+        head = (cache[ficheiro] or {}).get(chave)
+        if not isinstance(head, dict):
+            continue
         m = re.search(r'\bid="%s"' % re.escape(id_seccao), html)
         if not m:
             print('AVISO: secção %s não existe no HTML' % id_seccao)
@@ -411,18 +444,31 @@ def aplicar_cabecalhos(html, raiz):
         fim = m.end() + (seguinte.start() if seguinte else 4000)
 
         for classe, campo in CLASSES:
-            valor = head.get(campo)
-            if not valor:
-                continue
             padrao = re.compile(
                 r'(<(\w+)[^>]*class="[^"]*\b%s\b[^"]*"[^>]*>)(.*?)(</\2>)' % classe, re.S)
             m2 = padrao.search(html, m.end(), fim)
             if not m2:
                 continue
-            atual = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', m2.group(3))).strip()
-            if atual == re.sub(r'\s+', ' ', str(valor)).strip():
+            abre, corpo = m2.group(1), m2.group(3)
+            valor = head.get(campo)
+            texto = '' if valor is None else str(valor)
+            if texto.strip():
+                novo_abre, novo_corpo = sem_hidden(abre), escapar(texto)
+                igual = (re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', corpo)).strip()
+                         == re.sub(r'\s+', ' ', texto).strip())
+            elif campo == 'titulo':
+                omissao = TITULO_POR_OMISSAO.get(id_seccao)
+                if not omissao:
+                    continue
+                novo_abre, novo_corpo = sem_hidden(abre), escapar(omissao)
+                igual = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', corpo)).strip() == omissao
+            else:
+                novo_abre, novo_corpo = com_hidden(abre), ''
+                igual = corpo == ''
+            if igual and novo_abre == abre:
                 continue
-            html = html[:m2.start()] + m2.group(1) + escapar(str(valor)) + m2.group(4) + html[m2.end():]
+            fim += len(novo_abre) + len(novo_corpo) - len(abre) - len(corpo)
+            html = html[:m2.start()] + novo_abre + novo_corpo + m2.group(4) + html[m2.end():]
             trocas += 1
 
     return html, trocas

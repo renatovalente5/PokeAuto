@@ -43,6 +43,11 @@ na linha para abrir só a que quer. Em cada linha há **Subir**, **Descer** e
 **Apagar**. O painel avisa por baixo de cada campo do que o site não aceita,
 antes de gravar.
 
+No fim de cada ecrã estão os **títulos da secção**: a etiqueta pequena, o
+título e o subtítulo. Apagar a etiqueta ou o subtítulo tira-os do site. O
+título não pode ficar vazio; se alguma vez ficar, o site mostra o nome da
+secção no menu («Serviços», «Lavagens», «Contactos» ou «Promoções»).
+
 ### Preços das lavagens
 
 Cada linha é um serviço: nome, categoria, o que inclui, quanto demora e o

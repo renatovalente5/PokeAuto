@@ -1397,11 +1397,29 @@
     'M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/></svg>';
 
   /* ------------------------------------------------------------ auxiliares */
+  /* OS TÍTULOS DE UMA SECÇÃO. Um texto apagado no backoffice sai do site — a
+     mesma regra dos [data-site], lá em cima. Antes só se escrevia o que tinha
+     texto, e um título ou um subtítulo apagado ficava com o que lá estava:
+       · a etiqueta e o subtítulo vazios escondem-se (e voltam quando se
+         escrevem);
+       · o título vazio passa a ser o nome da secção no menu. Uma secção sem
+         título deixava a lista debaixo do título da secção de cima — para o
+         leitor de ecrã (o aria-labelledby da secção aponta para ele), para o
+         Google e para quem chega pelo menu.
+     Sem head nenhum (o ficheiro não abriu) fica o que está. O prerender.py faz
+     o mesmo no HTML congelado (TITULO_POR_OMISSAO), e as regras do painel dizem
+     os mesmos nomes: o .github/test-app.mjs confere os três. */
+  var TITULOS_POR_OMISSAO = { servicos: 'Serviços', promocoes: 'Promoções', lavagens: 'Lavagens', contactos: 'Contactos' };
   function aplicarHead(escopo, head) {
-    if (!escopo || !head) return;
-    if (head.etiqueta) { var e = escopo.querySelector('.etiqueta'); if (e) e.textContent = head.etiqueta; }
-    if (head.titulo) { var t = escopo.querySelector('.h-sec'); if (t) t.textContent = head.titulo; }
-    if (head.lead) { var l = escopo.querySelector('.lead'); if (l) l.textContent = head.lead; }
+    if (!escopo || !head || typeof head !== 'object') return;
+    [['.etiqueta', 'etiqueta'], ['.h-sec', 'titulo'], ['.lead', 'lead']].forEach(function (par) {
+      var n = escopo.querySelector(par[0]);
+      if (!n) return;
+      var v = head[par[1]] == null ? '' : String(head[par[1]]);
+      if (v.trim()) { n.textContent = v; n.hidden = false; }
+      else if (par[1] === 'titulo') { n.textContent = TITULOS_POR_OMISSAO[escopo.id] || n.textContent; n.hidden = false; }
+      else { n.textContent = ''; n.hidden = true; }
+    });
   }
 
   /* ano do rodapé */

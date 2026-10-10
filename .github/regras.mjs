@@ -776,12 +776,21 @@ function conferirTextos(juntar, o, campos, { prefixo, chave, ecra, extra = {} })
 /* OS TÍTULOS DE UMA SECÇÃO (etiqueta, título, subtítulo). O app.js só os
    escreve quando têm texto (aplicarHead): um título apagado deixa no site o
    que lá estava. */
-function conferirHead(juntar, f, h, { campo = 'head', ecra = ecraDoHead(f), chave = 'head', visivel = true } = {}) {
+/* O TÍTULO DE UMA SECÇÃO QUE CHEGA VAZIO: o site mostra o nome dela no menu (o
+   app.js e o prerender.py têm os mesmos nomes; o .github/test-app.mjs confere
+   os três). A etiqueta e o subtítulo vazios saem do site. Pela secção do
+   index.html: 'contactos' é o contactos_head do site.json. */
+export const TITULOS_POR_OMISSAO = Object.freeze({ servicos: 'Serviços', promocoes: 'Promoções', lavagens: 'Lavagens', contactos: 'Contactos' });
+
+function conferirHead(juntar, f, h, { campo = 'head', ecra = ecraDoHead(f), chave = 'head', visivel = true, seccao = f } = {}) {
   if (ausente(h)) return;
   if (!eObjecto(h)) { juntar('bloqueia', `${chave}:forma`, ecra, 'Os títulos da secção não têm a forma de sempre: o site não se consegue gerar. Só o Renato o pode corrigir.', { campo }); return; }
   conferirTextos(juntar, h, [['etiqueta', TAMANHOS.etiqueta, 'Etiqueta'], ['titulo', TAMANHOS.tituloSeccao, 'Título'], ['lead', TAMANHOS.lead, 'Subtítulo']], { prefixo: `${campo}.`, chave, ecra });
   if (visivel && (ausente(h.titulo) || (typeof h.titulo === 'string' && !h.titulo.trim()))) {
-    juntar('avisa', `${chave}:titulo:vazio`, ecra, 'O título da secção está vazio: o site continua a mostrar o que lá estava. Escreva o título que quer.', { campo: `${campo}.titulo` });
+    const omissao = TITULOS_POR_OMISSAO[seccao];
+    juntar('avisa', `${chave}:titulo:vazio`, ecra, omissao
+      ? `O título da secção está vazio: no site aparece «${omissao}» no lugar dele (o nome da secção no menu). Escreva o título que quer.`
+      : 'O título da secção está vazio. Escreva o título que quer.', { campo: `${campo}.titulo` });
   }
 }
 
@@ -1090,7 +1099,7 @@ export function problemasDoSite(o, { existe = null, listarPasta = null } = {}) {
 
   /* «Onde estamos» ----------------------------------------------------------- */
   const ch = o.contactos_head;
-  if (!ausente(ch)) conferirHead(juntar, f, ch, { campo: 'contactos_head', ecra: ecraDaParte('contactos_head'), chave: 'contactos_head' });
+  if (!ausente(ch)) conferirHead(juntar, f, ch, { campo: 'contactos_head', ecra: ecraDaParte('contactos_head'), chave: 'contactos_head', seccao: 'contactos' });
 
   /* Rodapé -------------------------------------------------------------------- */
   if (!ausente(o.rodape_frase)) conferirTextos(juntar, o, [['rodape_frase', TAMANHOS.rodape, 'Frase do rodapé']], { prefixo: '', chave: 'rodape', ecra: ecraDaParte('rodape_frase') });

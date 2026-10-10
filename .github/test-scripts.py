@@ -25,6 +25,11 @@ O que prova:
     outras fotografias, na pasta-mãe (onde o resolverFoto do app.js as
     procura); sem o original, as variantes dele saem; as ilustrações das
     categorias (cat-*-128.webp) nunca se tocam.
+  · prerender.py, os títulos das secções no HTML congelado: a etiqueta e o
+    subtítulo apagados saem (o elemento fica vazio e escondido) e voltam
+    quando se escrevem; o título apagado passa a ser o nome da secção no
+    menu, igual ao do app.js e ao das regras do painel; com os dados de hoje
+    o index.html não muda um byte.
 """
 import json
 import os
@@ -213,6 +218,107 @@ try:
           'apagado o original, as variantes dele saem (como as das outras), e as ilustrações ficam', (r3.returncode, sobram))
 finally:
     shutil.rmtree(d, ignore_errors=True)
+
+
+grupo('prerender.py: um texto apagado dos títulos de uma secção não fica no HTML com o que lá estava')
+
+sys.path.insert(0, SCRIPTS)
+import prerender  # noqa: E402  (só a biblioteca-padrão: o Chrome não arranca)
+
+HTML = '''<section class="seccao" id="servicos" aria-labelledby="servicos-t">
+  <div class="cabeca">
+    <p class="etiqueta">O que fazemos</p>
+    <div class="filete"></div>
+    <h2 class="h-sec" id="servicos-t">Os nossos serviços</h2>
+    <p class="lead">Um subtítulo antigo.</p>
+  </div>
+</section>
+<section class="seccao" id="lavagens" aria-labelledby="lavagens-t">
+  <div class="cabeca">
+    <p class="etiqueta">Lavagem e estética</p>
+    <h2 class="h-sec" id="lavagens-t">Deixe o carro como novo</h2>
+    <p class="lead">Preços sem IVA.</p>
+  </div>
+</section>
+<section class="seccao" id="contactos" aria-labelledby="contactos-t">
+  <div class="cabeca">
+    <p class="etiqueta">Onde estamos</p>
+    <h2 class="h-sec" id="contactos-t">Na Rua da Liberdade, 53</h2>
+    <p class="lead">Na zona pedonal.</p>
+  </div>
+</section>'''
+
+
+def com_dados(servicos, lavagens, contactos):
+    d = tempfile.mkdtemp(prefix='pokeauto-heads-')
+    os.makedirs(os.path.join(d, 'data'))
+    for nome, conteudo in (('servicos.json', {'head': servicos, 'itens': []}),
+                           ('lavagens.json', {'head': lavagens, 'itens': []}),
+                           ('site.json', {'contactos_head': contactos})):
+        with open(os.path.join(d, 'data', nome), 'w', encoding='utf-8') as f:
+            json.dump(conteudo, f, ensure_ascii=False)
+    return d
+
+
+def cabeca(html, seccao):
+    import re as _re
+    i = html.index('id="%s"' % seccao)
+    return html[i:html.index('</section>', i)]
+
+
+CHEIO_C = {'etiqueta': 'Onde estamos', 'titulo': 'Na Rua da Liberdade, 53', 'lead': 'Na zona pedonal.'}
+d = com_dados({'etiqueta': '', 'titulo': '', 'lead': ''},
+              {'etiqueta': 'Lavagem', 'titulo': 'Preços', 'lead': ''},
+              CHEIO_C)
+try:
+    novo, n = prerender.aplicar_cabecalhos(HTML, d)
+    sv = cabeca(novo, 'servicos')
+    certo('<p class="etiqueta" hidden></p>' in sv and 'O que fazemos' not in sv,
+          'a etiqueta apagada sai: o elemento fica vazio e escondido (antes ficava «O que fazemos»)', sv)
+    certo('<p class="lead" hidden></p>' in sv and 'subtítulo antigo' not in sv,
+          'o subtítulo apagado sai da mesma maneira', sv)
+    certo('<h2 class="h-sec" id="servicos-t">Serviços</h2>' in sv and 'Os nossos serviços' not in sv,
+          'o título apagado passa a ser o nome da secção no menu («Serviços»), e não o texto antigo', sv)
+    lv = cabeca(novo, 'lavagens')
+    certo('<p class="etiqueta">Lavagem</p>' in lv and '<h2 class="h-sec" id="lavagens-t">Preços</h2>' in lv and '<p class="lead" hidden></p>' in lv,
+          'nas lavagens: a etiqueta e o título novos, o subtítulo apagado sai', lv)
+    certo(cabeca(novo, 'contactos') == cabeca(HTML, 'contactos'), 'os contactos, sem nada apagado, ficam byte a byte como estavam')
+    certo(n == 6, 'e conta 6 mudanças (3 nos serviços, 3 nas lavagens)', n)
+    outra, n2 = prerender.aplicar_cabecalhos(novo, d)
+    certo(outra == novo and n2 == 0, 'outra vez, com os mesmos dados: nada muda (o --verificar não acusa nada)', n2)
+finally:
+    shutil.rmtree(d, ignore_errors=True)
+
+d = com_dados({'etiqueta': 'Voltou', 'titulo': 'Serviços da oficina', 'lead': 'E o subtítulo também.'},
+              {'titulo': 'Preços'}, CHEIO_C)
+try:
+    escondido = HTML.replace('<p class="etiqueta">O que fazemos</p>', '<p class="etiqueta" hidden></p>').replace('<p class="lead">Um subtítulo antigo.</p>', '<p class="lead" hidden></p>')
+    novo, n = prerender.aplicar_cabecalhos(escondido, d)
+    sv = cabeca(novo, 'servicos')
+    certo('<p class="etiqueta">Voltou</p>' in sv and '<p class="lead">E o subtítulo também.</p>' in sv and 'hidden' not in sv,
+          'escritos outra vez, a etiqueta e o subtítulo voltam (sem o hidden)', sv)
+    lv = cabeca(novo, 'lavagens')
+    certo('<p class="etiqueta" hidden></p>' in lv and '<p class="lead" hidden></p>' in lv,
+          'um head sem a etiqueta nem o subtítulo (as chaves nem existem): saem, como se estivessem vazios', lv)
+finally:
+    shutil.rmtree(d, ignore_errors=True)
+
+d = com_dados({'etiqueta': 'O que fazemos', 'titulo': '   ', 'lead': 'x'}, {'titulo': 'Preços'}, CHEIO_C)
+try:
+    novo, _ = prerender.aplicar_cabecalhos(HTML, d)
+    certo('<h2 class="h-sec" id="servicos-t">Serviços</h2>' in cabeca(novo, 'servicos'), 'um título só com espaços conta como vazio')
+finally:
+    shutil.rmtree(d, ignore_errors=True)
+
+TITULOS = getattr(prerender, 'TITULO_POR_OMISSAO', None)
+certo(TITULOS == {'servicos': 'Serviços', 'lavagens': 'Lavagens', 'contactos': 'Contactos'},
+      'os títulos por omissão são os nomes do menu: Serviços, Lavagens, Contactos', TITULOS)
+
+RAIZ_SITE = os.path.dirname(AQUI)
+with open(os.path.join(RAIZ_SITE, 'index.html'), encoding='utf-8') as f:
+    pagina = f.read()
+mesma, n = prerender.aplicar_cabecalhos(pagina, RAIZ_SITE)
+certo(mesma == pagina and n == 0, 'com os dados de hoje, o index.html do site não muda um byte', n)
 
 
 print('\n%s test-scripts: %d certas, %d falhadas' % ('✗' if falhas else '✓', certas, falhas))

@@ -21,6 +21,8 @@
  *     textos (maiúsculas, acentos, fronteiras de palavra, espaços estranhos);
  *   · as bibliotecas das fotografias: os originais em originais/ nas duas (as
  *     lavagens também), o que o webp.py e o Pages CMS usam;
+ *   · um título de secção vazio: o aviso diz o nome que o site mostra no lugar
+ *     dele (a etiqueta e o subtítulo vazios saem do site, e não são problema);
  *   · cada «bloqueia» que importa tem um caso, com a classe e o ecrã certos;
  *   · a guarda: 0 com os dados de hoje, 1 com um «bloqueia» (e a anotação
  *     ::error), 2 com uma chamada errada; numa cópia em /tmp corre na mesma
@@ -88,6 +90,21 @@ parte('as bibliotecas das fotografias: os originais em originais/, nas duas');
   const pages = readFileSync(join(RAIZ, '.pages.yml'), 'utf8');
   certo(/input: assets\/img\/lavagens\/originais\n\s+output: assets\/img\/lavagens\/originais\n/.test(pages) && !/input: assets\/img\/lavagens\n/.test(pages),
     'a biblioteca das lavagens do Pages CMS é a pasta dos originais (as variantes ficam fora dela)');
+}
+
+/* ------------------------------------ 2d. um título de secção vazio -- */
+parte('um título de secção vazio: o aviso diz o que o site mostra no lugar dele');
+{
+  const ps = R.problemasDosServicos({ head: { etiqueta: '', titulo: '', lead: '' }, itens: [] });
+  const p = ps.find((x) => x.chave === 'servicos:head:titulo:vazio');
+  certo(p?.classe === 'avisa' && /no site aparece «Serviços» no lugar dele/.test(p.mensagem) && !/continua a mostrar o que lá estava/.test(p.mensagem),
+    `nos serviços: «no site aparece «Serviços»» (e não «continua a mostrar o que lá estava») — ${p?.mensagem}`);
+  certo(!ps.some((x) => /etiqueta|lead/.test(x.chave)), 'a etiqueta e o subtítulo vazios não são problema (saem do site)');
+  const c = R.problemasDoSite({ contactos_head: { etiqueta: 'Onde estamos', titulo: '  ', lead: '' } }).find((x) => x.chave === 'site:contactos_head:titulo:vazio');
+  certo(c?.classe === 'avisa' && /no site aparece «Contactos»/.test(c.mensagem), `nos contactos: «Contactos» — ${c?.mensagem}`);
+  const l = R.problemasDasLavagens({ head: { titulo: '' }, itens: [] }).find((x) => x.chave === 'lavagens:head:titulo:vazio');
+  const pr = R.problemasDasPromocoes({ head: { titulo: '' }, itens: [] }).find((x) => x.chave === 'promocoes:head:titulo:vazio');
+  certo(/«Lavagens»/.test(l?.mensagem ?? '') && /«Promoções»/.test(pr?.mensagem ?? ''), 'nas lavagens, «Lavagens»; nas promoções, «Promoções»');
 }
 
 /* ---------------------------------- 3. os termos: paridade com o termos.py -- */
