@@ -47,8 +47,10 @@ antes de gravar.
 
 Cada linha é um serviço: nome, categoria, o que inclui, quanto demora e o
 preço. Há dois preços — o de **ligeiros** e o de **SUV e carrinhas**; se só
-preencher um, aparece só esse. Os preços são **sem IVA** e o site escreve
-«+ IVA» sozinho. Deixar o preço vazio faz aparecer «sob consulta».
+preencher o de ligeiros, aparece só esse, para qualquer carro (o de SUV e
+carrinhas sozinho não aparece: fica «sob consulta»). Os preços são **sem IVA**
+e o site escreve «+ IVA» sozinho. Deixar o preço vazio faz aparecer «sob
+consulta».
 
 ### Promoções
 
