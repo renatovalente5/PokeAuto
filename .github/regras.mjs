@@ -362,11 +362,21 @@ export function igual(a, b) {
   return a === b;
 }
 
-/* O DIA DE HOJE EM LISBOA, AAAA-MM-DD, como o app.js o calcula (o sv-SE dá
-   sempre esse formato): as campanhas comparam-se como texto. O Chrome do CI
-   corre em UTC; é o dia de Lisboa que manda. */
+/* O DIA DE HOJE EM LISBOA, AAAA-MM-DD, o que o app.js calcula com o Intl
+   (sv-SE, Europe/Lisbon): as campanhas comparam-se como texto. O Chrome do CI
+   corre em UTC; é o dia de Lisboa que manda.
+   AQUI FAZ-SE À MÃO, com a regra da UE: o Intl.DateTimeFormat com timeZone
+   custa ~10 ms de CPU a frio, e o Worker do painel corre estas regras em cada
+   «Gravar», quase sempre a frio, com 10 ms no plano gratuito (memória
+   cpu-a-frio-no-worker). Lisboa está em UTC no inverno e em UTC+1 da 01:00 UTC
+   do último domingo de março à 01:00 UTC do último domingo de outubro. As
+   baterias comparam-no com o Intl em cada quarto de hora de oito anos. */
+const ultimoDomingo = (ano, mes) => { const d = new Date(Date.UTC(ano, mes + 1, 0)); return Date.UTC(ano, mes, d.getUTCDate() - d.getUTCDay(), 1); };
 export function hojeEmLisboa(agora = new Date()) {
-  return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Lisbon' }).format(agora);
+  const t = agora.getTime();
+  const ano = agora.getUTCFullYear();
+  const verao = t >= ultimoDomingo(ano, 2) && t < ultimoDomingo(ano, 9);
+  return new Date(t + (verao ? 3600000 : 0)).toISOString().slice(0, 10);
 }
 const RE_DATA = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 export const dataValida = (s) => typeof s === 'string' && RE_DATA.test(s) && !Number.isNaN(Date.parse(`${s}T12:00:00Z`)) && new Date(`${s}T12:00:00Z`).toISOString().slice(0, 10) === s;
@@ -578,8 +588,46 @@ export function doPython(src) {
   if (classe) throw new Error('doPython: classe por fechar');
   return new RegExp(out, 'iu');
 }
+/* OS CRIVOS DOS TERMOS: uma conta barata que deixa de fora os textos que a
+   regra nunca acharia, para não se compilar a expressão a sério quando não é
+   preciso. As expressões traduzidas do Python têm as classes de palavra do
+   Unicode dentro das fronteiras (\b vira quatro classes \p{L}\p{N}), e o V8
+   leva ~35 ms de CPU a compilar as treze — num Worker que corre quase sempre
+   a frio, com 10 ms por pedido no plano gratuito (memória
+   cpu-a-frio-no-worker). Cada crivo é uma lista de alternativas; cada
+   alternativa, uma lista de expressões simples (só letras, sem fronteiras nem
+   classes do Unicode) que têm TODAS de casar. É uma condição NECESSÁRIA: todo
+   o texto que a regra acha tem, sem olhar a maiúsculas e com as mesmas
+   bandeiras (iu), uma destas palavras — tiradas das partes que a regra exige
+   sempre (ou a própria regra sem as fronteiras, com o espaço do Python —
+   [\s\x1c-\x1f\x85] é o \s do JavaScript mais o que só o do Python tem —
+   no lugar do \s: casa com tudo o que a regra casa). Um crivo nunca acha nada
+   sozinho: só deixa passar para a regra. As baterias provam-no no corpus da
+   paridade com o termos.py (o crivo nunca deixa de fora um texto que a regra
+   acha), e que os treze compilam e correm em pouco mais de 1 ms. Uma regra
+   sem crivo (null) é barata de compilar. */
+const CRIVOS = Object.freeze([
+  [[/anul|remo|retira|elimina|desac?tiv|desligar|inibi|by-?pass|delete|off|supress|corte/iu, /fap|dpf|egr|catali[sz]|adblue|scr|sonda[\s\x1c-\x1f\x85]+lambda|filtro[\s\x1c-\x1f\x85]+de[\s\x1c-\x1f\x85]+part[íi]culas/iu]],
+  [[/fap|dpf|egr|adblue|catalisador|filtro[\s\x1c-\x1f\x85]+de[\s\x1c-\x1f\x85]+part[íi]culas/iu, /anul|remo|retirad|elimina|off|delete|desac?tiv|programa/iu]],
+  [[/descarboniza|stage|chip|remap|reprograma/iu]],
+  null,
+  null,
+  [[/sem[\s\x1c-\x1f\x85]+(?:qualquer[\s\x1c-\x1f\x85]+)?garantia|n[ãa]o[\s\x1c-\x1f\x85]+t[eê]m?[\s\x1c-\x1f\x85]+garantia|garantia[\s\x1c-\x1f\x85]*[:=]?[\s\x1c-\x1f\x85]*(?:n[ãa]o|nenhuma|0)/iu]],
+  [[/ecol[óo]gic|eco-?friendly|sustent[áa]ve|biodegrad[áa]vel|verde/iu], [/amig/iu, /do[\s\x1c-\x1f\x85]+ambiente/iu], [/carbono[\s\x1c-\x1f\x85]+neutro|em[\s\x1c-\x1f\x85]+carbono/iu], [/zero[\s\x1c-\x1f\x85]+emiss[õo]es/iu], [/100%[\s\x1c-\x1f\x85]*natural/iu]],
+  [[/(?:somos|s[ãa]o)[\s\x1c-\x1f\x85]+(?:os[\s\x1c-\x1f\x85]+)?(?:melhor|l[íi]der|n[ºo°]?[\s\x1c-\x1f\x85]*1)/iu], [/melhor/iu, /oficina|mec[âa]nic|servi[çc]|pre[çc]|empresa|equipa/iu],
+    [/l[íi]der[\s\x1c-\x1f\x85]+(?:de|do|na)[\s\x1c-\x1f\x85]+(?:mercado|sector|regi[ãa]o)/iu], [/os[\s\x1c-\x1f\x85]+mais[\s\x1c-\x1f\x85]+barat/iu], [/pre[çc]os?[\s\x1c-\x1f\x85]+imbat/iu], [/garantia[\s\x1c-\x1f\x85]+vital/iu], [/satisfa[çc][ãa]o[\s\x1c-\x1f\x85]+garantida/iu]],
+  null,
+  [[/arbitragem/iu], [/casa[\s\x1c-\x1f\x85]*[-–—][\s\x1c-\x1f\x85]*centro/iu]],
+  [[/cniacc/iu]],
+  [[/pok[ée]mon|pok[ée][\s\S]?bola|poke[\s\S]?ball|nintendo|game[\s\S]?freak|pikachu/iu]],
+  [[/saldo|liquida/iu]],
+]);
+const passaNoCrivo = (i, texto) => !CRIVOS[i] || CRIVOS[i].some((alt) => alt.every((re) => re.test(texto)));
 let termosJs = null;
-const regrasDosTermos = () => (termosJs ??= TERMOS.map(([p, nome, remedio]) => ({ re: doPython(p), nome, remedio })));
+const regrasDosTermos = () => (termosJs ??= TERMOS.map(([p, nome, remedio]) => {
+  let re = null;
+  return { get re() { return (re ??= doPython(p)); }, nome, remedio };
+}));
 
 /**
  * OS TERMOS NUM TEXTO, como o termos.py os acha (re.search: o primeiro de cada
@@ -589,6 +637,7 @@ export function termosEm(texto) {
   if (typeof texto !== 'string' || !texto) return [];
   const out = [];
   regrasDosTermos().forEach((r, i) => {
+    if (!passaNoCrivo(i, texto)) return;
     const m = r.re.exec(texto);
     if (!m) return;
     const trecho = texto.slice(Math.max(0, m.index - 40), m.index + m[0].length + 40).replace(/\n/g, ' ').trim();

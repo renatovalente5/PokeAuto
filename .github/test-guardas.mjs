@@ -59,6 +59,15 @@ for (const f of R.ORDEM) {
 }
 console.log(`  ${hoje.lista.length} problema(s) hoje, todos lembretes ou avisos: ${hoje.lista.map((p) => p.ecra).join(', ') || 'nenhum'}`);
 
+/* ------------------------------------------- 2b. o dia de hoje em Lisboa -- */
+parte('o dia de hoje em Lisboa, à mão, é o do Intl');
+{
+  const intl = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Lisbon' });
+  let n = 0; let mal = 0;
+  for (let t = Date.UTC(2024, 0, 1); t < Date.UTC(2032, 0, 1); t += 15 * 60000) { n++; const d = new Date(t); if (R.hojeEmLisboa(d) !== intl.format(d)) mal++; }
+  certo(mal === 0, `o hojeEmLisboa dá o dia do Intl em cada quarto de hora de 2024 a 2031 (${n} instantes, ${mal} diferentes)`);
+}
+
 /* ---------------------------------- 3. os termos: paridade com o termos.py -- */
 parte('os termos proibidos: o regras.mjs e o termos.py acham o mesmo');
 const BASE = [
