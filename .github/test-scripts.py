@@ -29,7 +29,12 @@ O que prova:
     subtítulo apagados saem (o elemento fica vazio e escondido) e voltam
     quando se escrevem; o título apagado passa a ser o nome da secção no
     menu, igual ao do app.js e ao das regras do painel; com os dados de hoje
-    o index.html não muda um byte.
+    o index.html não muda um byte;
+  · prerender.py, os textos do topo no HTML congelado ([data-site]: a
+    etiqueta, o texto de apresentação, a frase pequena): apagados (ou só com
+    espaços, ou sem a chave) saem — vazios e escondidos —, e voltam quando se
+    escrevem; com os dados de hoje, só os dois que já estão vazios (o texto de
+    apresentação e a frase pequena) ganham o hidden.
 """
 import json
 import os
@@ -319,6 +324,42 @@ with open(os.path.join(RAIZ_SITE, 'index.html'), encoding='utf-8') as f:
     pagina = f.read()
 mesma, n = prerender.aplicar_cabecalhos(pagina, RAIZ_SITE)
 certo(mesma == pagina and n == 0, 'com os dados de hoje, o index.html do site não muda um byte', n)
+
+
+grupo('prerender.py: os textos do topo apagados saem do HTML congelado (e voltam quando se escrevem)')
+
+TOPO = '''<div class="hero__copy">
+  <p class="etiqueta" data-site="hero.etiqueta">Oficina multimarca · São João da Madeira</p>
+  <h1 class="h-hero" id="hero-titulo">O seu carro merece o melhor cuidado</h1>
+  <p class="lead hero__lead" data-site="hero.lead">Um texto de apresentação antigo.</p>
+  <a class="btn" href="tel:+351922022364" data-tel><span data-site="hero.cta_principal">Ligar agora</span></a>
+  <p class="hero__nota" data-site="hero.nota">Uma frase pequena antiga.</p>
+</div>'''
+vazio, contas = prerender.aplicar_site(TOPO, {'hero': {'etiqueta': '', 'lead': '', 'nota': '   ', 'cta_principal': 'Ligar agora'}, 'contactos': {}})
+certo('<p class="etiqueta" data-site="hero.etiqueta" hidden></p>' in vazio and 'Oficina multimarca' not in vazio,
+      'a etiqueta apagada sai: vazia e escondida (antes ficava «Oficina multimarca…» no HTML congelado)', vazio)
+certo('<p class="lead hero__lead" data-site="hero.lead" hidden></p>' in vazio and 'apresentação antigo' not in vazio,
+      'o texto de apresentação apagado sai da mesma maneira', vazio)
+certo('<p class="hero__nota" data-site="hero.nota" hidden></p>' in vazio and 'frase pequena antiga' not in vazio,
+      'a frase pequena só com espaços conta como vazia, e sai', vazio)
+certo('<span data-site="hero.cta_principal">Ligar agora</span>' in vazio and contas.get('data-site') == 3,
+      'o que tem texto fica como estava, e contam-se 3 mudanças', contas)
+de_volta, c2 = prerender.aplicar_site(vazio, {'hero': {'etiqueta': 'Oficina', 'lead': 'Voltou.', 'nota': 'Frase.', 'cta_principal': 'Ligar agora'}, 'contactos': {}})
+certo('<p class="etiqueta" data-site="hero.etiqueta">Oficina</p>' in de_volta and '<p class="lead hero__lead" data-site="hero.lead">Voltou.</p>' in de_volta
+      and '<p class="hero__nota" data-site="hero.nota">Frase.</p>' in de_volta and 'hidden' not in de_volta,
+      'escritos outra vez, voltam (e o hidden sai)', de_volta)
+outra, c3 = prerender.aplicar_site(de_volta, {'hero': {'etiqueta': 'Oficina', 'lead': 'Voltou.', 'nota': 'Frase.', 'cta_principal': 'Ligar agora'}, 'contactos': {}})
+certo(outra == de_volta and not c3.get('data-site'), 'outra vez com os mesmos dados: nada muda', c3)
+sem_chave, _ = prerender.aplicar_site(TOPO, {'hero': {'etiqueta': 'Oficina multimarca · São João da Madeira', 'cta_principal': 'Ligar agora'}, 'contactos': {}})
+certo('<p class="lead hero__lead" data-site="hero.lead" hidden></p>' in sem_chave and '<p class="hero__nota" data-site="hero.nota" hidden></p>' in sem_chave,
+      'sem a chave no ficheiro (o app.js lê undefined): sai, como vazia', sem_chave)
+
+with open(os.path.join(RAIZ_SITE, 'data', 'site.json'), encoding='utf-8') as f:
+    site_hoje = json.load(f)
+hoje, c_hoje = prerender.aplicar_site(pagina, site_hoje)
+mudou = [(a, b) for a, b in zip(pagina.split('\n'), hoje.split('\n')) if a != b]
+certo(len(pagina.split('\n')) == len(hoje.split('\n')) and [b.strip() for _, b in mudou] == ['<p class="lead hero__lead" data-site="hero.lead" hidden></p>', '<p class="hero__nota" data-site="hero.nota" hidden></p>'],
+      'com os dados de hoje, só os dois que já estão vazios (o texto de apresentação e a frase pequena) ganham o hidden', mudou)
 
 
 print('\n%s test-scripts: %d certas, %d falhadas' % ('✗' if falhas else '✓', certas, falhas))

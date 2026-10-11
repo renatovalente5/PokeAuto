@@ -317,11 +317,9 @@
     }
     /* Um campo apagado no backoffice TEM de desaparecer do site. Antes o
        `if (v)` deixava lá o texto antigo, e o cliente ficava convencido de que
-       tinha apagado. Se o valor vier vazio, o nó é escondido. */
+       tinha apagado. Se o valor vier vazio, o nó é escondido (aplicarTexto). */
     doc.querySelectorAll('[data-site]').forEach(function (n) {
-      var v = val(n.getAttribute('data-site'));
-      if (v == null || v === '') { n.textContent = ''; n.hidden = true; }
-      else { n.textContent = v; n.hidden = false; }
+      aplicarTexto(n, val(n.getAttribute('data-site')));
     });
 
     if (c.telefone_intl) {
@@ -1397,6 +1395,17 @@
     'M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/></svg>';
 
   /* ------------------------------------------------------------ auxiliares */
+  /* UM TEXTO QUE O DONO ESCREVE NO BACKOFFICE (os [data-site]; a etiqueta e o
+     subtítulo de uma secção): com texto, aparece; vazio — ou só espaços, ou a
+     chave nem existe — o nó fica vazio e escondido, e volta quando se escreve.
+     O prerender.py faz o mesmo no HTML congelado (aplicar_site e
+     aplicar_cabecalhos), e o .github/test-app.mjs confere que dizem o mesmo. */
+  function aplicarTexto(n, v) {
+    var t = v == null ? '' : String(v);
+    if (t.trim()) { n.textContent = t; n.hidden = false; }
+    else { n.textContent = ''; n.hidden = true; }
+  }
+
   /* OS TÍTULOS DE UMA SECÇÃO. Um texto apagado no backoffice sai do site — a
      mesma regra dos [data-site], lá em cima. Antes só se escrevia o que tinha
      texto, e um título ou um subtítulo apagado ficava com o que lá estava:
@@ -1416,9 +1425,8 @@
       var n = escopo.querySelector(par[0]);
       if (!n) return;
       var v = head[par[1]] == null ? '' : String(head[par[1]]);
-      if (v.trim()) { n.textContent = v; n.hidden = false; }
-      else if (par[1] === 'titulo') { n.textContent = TITULOS_POR_OMISSAO[escopo.id] || n.textContent; n.hidden = false; }
-      else { n.textContent = ''; n.hidden = true; }
+      if (par[1] === 'titulo' && !v.trim()) { n.textContent = TITULOS_POR_OMISSAO[escopo.id] || n.textContent; n.hidden = false; }
+      else aplicarTexto(n, v);
     });
   }
 

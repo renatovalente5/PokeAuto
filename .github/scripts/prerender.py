@@ -171,17 +171,28 @@ def aplicar_site(html, site):
     # [data-site] -> textContent. Nota: se o HTML tiver markup lá dentro e o
     # texto já bater com o JSON, deixa-se estar — achatá-lo só tiraria ênfase
     # ao rastreador sem mudar nada para quem vê a página.
+    #
+    # UM TEXTO APAGADO SAI DO HTML CONGELADO, como sai do ecrã: o app.js
+    # (aplicarTexto) esconde o nó de um valor vazio, mas aqui deixava-se o que
+    # lá estava — quem lê sem JavaScript (e a primeira passagem do Google) via o
+    # texto antigo. Vazio (ou só espaços, ou a chave nem existe), o nó fica
+    # vazio e com hidden; escrito outra vez, volta e o hidden sai. A mesma
+    # regra dos cabeçalhos das secções (aplicar_cabecalhos); o
+    # .github/test-app.mjs confere que o app.js e isto dizem o mesmo.
     def troca_texto(m):
-        abre, tag, corpo = m.group(0), m.group(1), m.group(3)
+        inteiro, tag, corpo = m.group(0), m.group(1), m.group(3)
+        abre = inteiro[:m.start(3) - m.start(0)]
         v = valor(m.group(2))
-        if v is None or v == '':
-            return abre
-        limpo = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', corpo)).strip()
-        if limpo == re.sub(r'\s+', ' ', str(v)).strip():
-            return abre
-        contas['data-site'] = contas.get('data-site', 0) + 1
-        cabeca = m.group(0)[:m.start(3) - m.start(0)]
-        return cabeca + escapar(str(v)) + '</%s>' % tag
+        texto = '' if v is None else str(v)
+        if not texto.strip():
+            novo = com_hidden(abre) + '</%s>' % tag
+        else:
+            limpo = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', corpo)).strip()
+            igual = limpo == re.sub(r'\s+', ' ', texto).strip()
+            novo = sem_hidden(abre) + (corpo if igual else escapar(texto)) + '</%s>' % tag
+        if novo != inteiro:
+            contas['data-site'] = contas.get('data-site', 0) + 1
+        return novo
 
     html = re.sub(r'<(\w+)[^>]*\bdata-site="([^"]+)"[^>]*>(.*?)</\1>',
                   troca_texto, html, flags=re.S)

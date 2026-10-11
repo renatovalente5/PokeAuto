@@ -85,6 +85,9 @@ os **dados legais**. Os campos marcados «só sociedade» ficam vazios enquanto 
 empresa for em nome individual; se um dia mudar de forma jurídica, é aqui que
 se preenchem.
 
+Nos textos do topo, apagar a etiqueta pequena, o texto de apresentação ou a
+frase por baixo dos botões tira-os do site — também da cópia que o Google lê.
+
 ### Fotografias só para o Google
 
 Estas legendas **não aparecem no site**. Servem para o Google Imagens perceber o
