@@ -22,6 +22,7 @@
  *   · os títulos das secções: a etiqueta e o subtítulo vazios escondem-se, o
  *     título vazio passa a ser o nome da secção no menu; um head que não
  *     chegou (o ficheiro não abriu) não mexe em nada;
+ *   · as promoções têm o subtítulo no cabeçalho, como as outras secções;
  *   · os títulos por omissão são os mesmos no app.js, no prerender.py (o HTML
  *     congelado) e nas regras do painel (.github/regras.mjs). */
 import { readFileSync } from 'node:fs';
@@ -125,10 +126,12 @@ const ver = (s) => Object.fromEntries(Object.entries(s.partes).map(([k, n]) => [
   certo(v['.etiqueta'] === '(escondido)' && v['.lead'] === '(escondido)' && v['.h-sec'] === 'Preços', 'um head sem a etiqueta nem o subtítulo (as chaves nem existem): saem como se estivessem vazios', v);
 }
 {
-  const s = seccao('promocoes', { semLead: true });
-  aplicarHead(s, { etiqueta: 'A decorrer', titulo: '   ', lead: 'sem sítio onde aparecer' });
+  const s = seccao('promocoes', { lead: '' });
+  s.partes['.lead'].hidden = true;
+  aplicarHead(s, { etiqueta: 'A decorrer', titulo: '   ', lead: 'Só com marcação, até ao fim do mês.' });
   const v = ver(s);
-  certo(v['.h-sec'] === 'Promoções' && v['.etiqueta'] === 'A decorrer', 'nas promoções (que só o app.js desenha): o título só com espaços passa a «Promoções»', v);
+  certo(v['.h-sec'] === 'Promoções' && v['.etiqueta'] === 'A decorrer' && v['.lead'] === 'Só com marcação, até ao fim do mês.',
+    'nas promoções (que só o app.js desenha): o título só com espaços passa a «Promoções», e o subtítulo escrito aparece', v);
 }
 {
   const s = seccao('contactos');
@@ -139,6 +142,16 @@ const ver = (s) => Object.fromEntries(Object.entries(s.partes).map(([k, n]) => [
   aplicarHead(s, { etiqueta: 'Onde estamos', titulo: 'Na Rua da Liberdade, 53', lead: 'Na zona pedonal.' });
   const v = ver(s);
   certo(v['.etiqueta'] === 'Onde estamos' && v['.h-sec'] === 'Na Rua da Liberdade, 53' && v['.lead'] === 'Na zona pedonal.', 'com os textos preenchidos, escreve-os tal e qual', v);
+}
+
+parte('o index.html: as promoções têm o subtítulo no cabeçalho, como as outras secções');
+{
+  const pagina = readFileSync(join(RAIZ, 'index.html'), 'utf8');
+  const cabecaDe = (id) => { const i = pagina.indexOf(`id="${id}"`); const j = pagina.indexOf('</section>', i); const k = pagina.indexOf('<div class="cabeca">', i); return k > i && k < j ? pagina.slice(k, pagina.indexOf('</div>\n', pagina.indexOf('class="h-sec"', k)) + 7) : ''; };
+  const promo = cabecaDe('promocoes');
+  certo(/<h2 class="h-sec" id="promocoes-t">[^<]*<\/h2>\s*<p class="lead" hidden><\/p>/.test(promo),
+    'o cabeçalho das promoções tem o <p class="lead">, a seguir ao título — vazio e escondido até o app.js o escrever (antes não havia onde o subtítulo aparecer)', promo);
+  for (const id of ['servicos', 'lavagens', 'contactos']) certo(/<p class="lead"/.test(cabecaDe(id)), `e as outras secções continuam com o dele (${id})`);
 }
 
 parte('os títulos por omissão: o app.js, o prerender.py e as regras do painel dizem o mesmo');
