@@ -29,7 +29,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/barlow-400.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="assets/css/base.css?v=79c00ab8" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=a049d0f9" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=ac8171dc" />
   <!-- Sem JavaScript o detalhe de cada serviço abre no lugar, com <details>.
        Com JavaScript passa para a folha; por isso está escondido por omissão. -->
   <noscript><style>.ficha__det{display:block}.ficha__mais{display:none}.ficha{cursor:auto}.carrossel__pista{grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;scroll-snap-type:none}.carrossel__seta,.carrossel__pontos{display:none}.lavagens__ul>.lavagem{display:grid}</style></noscript>
@@ -194,7 +194,10 @@
         <a class="nav__link" href="#servicos">Serviços</a>
         <a class="nav__link" href="#lavagens">Lavagens</a>
         <a class="nav__link" href="#contactos">Contactos</a>
-        <a class="btn btn--vermelho nav__cta" href="tel:+351922022364" data-tel>Ligar</a>
+        <div class="nav__cta">
+          <a class="btn btn--vermelho" href="tel:+351922022364" data-tel>Ligar</a>
+          <!-- legal-comum:nota-chamada v1.1.0 --><small class="nota-chamada">(Chamada para a rede móvel nacional)</small><!-- /legal-comum:nota-chamada -->
+        </div>
       </nav>
 
       <button class="nav__toggle" id="nav-toggle" type="button"
@@ -221,6 +224,7 @@
     <div class="menu__acoes">
       <a class="btn btn--vermelho" href="tel:+351922022364" data-tel>Ligar agora</a>
       <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener">WhatsApp</a>
+      <!-- legal-comum:nota-chamada v1.1.0 --><small class="nota-chamada">(Chamada para a rede móvel nacional)</small><!-- /legal-comum:nota-chamada -->
     </div>
     <div class="menu__rodape">
       <a class="menu__tel" href="tel:+351922022364" data-tel>
@@ -249,6 +253,7 @@
               <span data-site="hero.cta_principal">Ligar agora</span>
             </a>
             <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener"><span data-site="hero.cta_secundario">WhatsApp</span></a>
+            <!-- legal-comum:nota-chamada v1.1.0 --><small class="nota-chamada">(Chamada para a rede móvel nacional)</small><!-- /legal-comum:nota-chamada -->
           </div>
           <p class="hero__nota" data-site="hero.nota" hidden></p>
         </div>
@@ -392,6 +397,17 @@
               </div>
             </div>
 
+            <!-- O email, quando existir em «Página › Contactos» (DL 7/2004, art. 10.º).
+                 Vazio, o [data-site] fica com hidden (app.js e prerender.py) e o
+                 item inteiro esconde-se pelo CSS (.contacto-item--email:has(...)). -->
+            <div class="contacto-item contacto-item--email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>
+              <div>
+                <strong><a href="mailto:" data-mail><span data-site="contactos.email" hidden></span></a></strong>
+                <span class="meta">Email</span>
+              </div>
+            </div>
+
             <div class="contacto-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 6.5-9 12-9 12s-9-5.5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               <div>
@@ -418,6 +434,13 @@
             <div class="hero__acoes" style="margin-top:.4rem">
               <a class="btn btn--vermelho" href="tel:+351922022364" data-tel>Ligar</a>
               <a class="btn btn--fantasma" href="https://wa.me/351922022364" target="_blank" rel="noopener">WhatsApp</a>
+              <!-- legal-comum:nota-chamada v1.1.0 --><small class="nota-chamada">(Chamada para a rede móvel nacional)</small><!-- /legal-comum:nota-chamada -->
+            </div>
+            <!-- O Livro de Reclamações também nos contactos: o manual da DGC
+                 pede-o na página de entrada e, como boa prática, na de apoio ao
+                 cliente. A peça vem da biblioteca legal-comum (.github/legal.mjs). -->
+            <div class="contactos__livro">
+              <!-- legal-comum:livro v1.1.0 --><a class="lr-discreto" href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener" lang="pt"><svg class="lr-icone" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="currentColor"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 0v20h1.2V2H7Zm3.8 5.2h5.4a.8.8 0 0 1 0 1.6h-5.4a.8.8 0 0 1 0-1.6Zm0 4h5.4a.8.8 0 0 1 0 1.6h-5.4a.8.8 0 0 1 0-1.6Zm0 4h3.4a.8.8 0 0 1 0 1.6h-3.4a.8.8 0 0 1 0-1.6Z"/></svg><span>Livro de Reclamações</span><span class="lr-sr"> (abre numa nova janela)</span></a><!-- /legal-comum:livro -->
             </div>
           </div>
 
@@ -517,10 +540,7 @@
         <div class="rodape__barra">
           <p class="rodape__copy">&copy; <span data-ano>2026</span> PokeAuto</p>
           <div class="rodape__links">
-            <a class="selo-lr" href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5h13a2 2 0 0 1 2 2v13H6a2 2 0 0 1-2-2Z"/><path d="M8 9h7M8 13h5"/></svg>
-              Livro de Reclamações
-            </a>
+            <!-- legal-comum:livro v1.1.0 --><a class="lr-discreto" href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener" lang="pt"><svg class="lr-icone" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="currentColor"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 0v20h1.2V2H7Zm3.8 5.2h5.4a.8.8 0 0 1 0 1.6h-5.4a.8.8 0 0 1 0-1.6Zm0 4h5.4a.8.8 0 0 1 0 1.6h-5.4a.8.8 0 0 1 0-1.6Zm0 4h3.4a.8.8 0 0 1 0 1.6h-3.4a.8.8 0 0 1 0-1.6Z"/></svg><span>Livro de Reclamações</span><span class="lr-sr"> (abre numa nova janela)</span></a><!-- /legal-comum:livro -->
             <a href="legal/termos.html#identificacao">Informação legal</a>
             <a href="legal/privacidade.html">Privacidade</a>
             <a href="legal/termos.html">Termos</a>
@@ -567,6 +587,6 @@
     </div>
   </div>
 
-  <script src="assets/js/app.js?v=f0a4c5b7" defer></script>
+  <script src="assets/js/app.js?v=e8604125" defer></script>
 </body>
 </html>

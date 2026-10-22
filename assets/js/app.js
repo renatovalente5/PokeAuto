@@ -474,16 +474,28 @@
   var painel = el('cookies');
   var focoAnterior = null;
 
+  /* O aviso fica preso ao fundo do ecrã e, sem mais nada, tapava o fim da
+     página — o rodapé, com o botão do Livro de Reclamações, que a lei quer
+     «visível» (DL 156/2005, art. 5.º-B). Enquanto está aberto, a página ganha
+     por baixo a altura dele (--cookies-alto, no CSS), e o rodapé sobe acima. */
+  function medirPainel() {
+    if (!painel || painel.hidden) return;
+    doc.documentElement.style.setProperty('--cookies-alto', painel.offsetHeight + 'px');
+  }
+  window.addEventListener('resize', medirPainel);
+
   function mostrarPainel() {
     if (!painel) return;
     focoAnterior = doc.activeElement;
     painel.hidden = false;
+    medirPainel();
     var b = el('cookies-aceitar');
     if (b) b.focus({ preventScroll: true });
   }
   function fecharPainel() {
     if (!painel) return;
     painel.hidden = true;
+    doc.documentElement.style.removeProperty('--cookies-alto');
     if (focoAnterior && focoAnterior.focus) focoAnterior.focus({ preventScroll: true });
   }
   function decidir(v) {

@@ -885,7 +885,11 @@ export function problemasDasPromocoes(o, { hoje = hojeEmLisboa() } = {}) {
       if (oferta !== null && !oferta.trim()) esconder('sem_oferta', 'Uma oferta que não diz o que se oferece não aparece no site: escreva o que está incluído.', 'oferta');
     }
     const ini = textoDe(x.inicio); const fim = textoDe(x.fim);
-    if (ini && ini.trim() && !dataValida(ini.trim())) juntar('avisa', `${quem}:inicio:data`, ecra, 'A data de início não está certa: escolha-a outra vez.', { campo: campo('inicio') });
+    /* A data de início é obrigatória (DL 70/2007, art. 5.º: a campanha diz quando
+       começa e quanto dura). No painel é erro de campo, como a do fim: não grava
+       sem ela; o site não esconde nada por isso (o CI avisa: .github/legal.mjs). */
+    if (ini !== null && !ini.trim()) juntar('avisa', `${quem}:inicio:vazio`, ecra, 'Escolha o primeiro dia da campanha: a lei obriga a dizer quando começa (DL 70/2007).', { campo: campo('inicio') });
+    else if (ini && !dataValida(ini.trim())) juntar('avisa', `${quem}:inicio:data`, ecra, 'A data de início não está certa: escolha-a outra vez.', { campo: campo('inicio') });
     if (fim !== null && !fim.trim()) juntar('avisa', `${quem}:fim:vazio`, ecra, 'Escolha o último dia da campanha: sem ele, fica no site para sempre.', { campo: campo('fim') });
     else if (fim && !dataValida(fim.trim())) juntar('avisa', `${quem}:fim:data`, ecra, 'A data de fim não está certa: escolha-a outra vez.', { campo: campo('fim') });
     const di = ini && dataValida(ini.trim()) ? ini.trim() : ''; const df = fim && dataValida(fim.trim()) ? fim.trim() : '';

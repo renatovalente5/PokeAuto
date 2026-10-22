@@ -21,6 +21,9 @@ on:
       - '.github/regras.mjs'
       - '.github/guardas.mjs'
       - '.github/consola.mjs'
+      # As peças legais comuns (o Livro, a nota da chamada, a privacidade).
+      - '.github/legal.mjs'
+      - 'legal-comum/**'
   # Permite correr à mão a partir do separador Actions, e é o que o botão
   # «Publicar outra vez» do painel (backoffice.pokeauto.pt) dispara: sempre no
   # main, sem inputs.
@@ -89,6 +92,15 @@ jobs:
       - name: Verificar os comentários do HTML
         run: python3 .github/scripts/html_sao.py
 
+      # As peças legais comuns (biblioteca legal-comum, cópia em legal-comum/):
+      # o botão do Livro de Reclamações, a nota do custo da chamada junto de cada
+      # botão «Ligar», os destinatários e os direitos da política de
+      # privacidade, escritos entre os marcadores <!-- legal-comum:… -->. Corre
+      # antes do prerender.py, que congela o index.html. As guardas da
+      # identificação, das promoções e dos preços só avisam (::warning).
+      - name: Escrever as peças legais
+        run: node .github/legal.mjs
+
       - name: Instalar o Pillow
         run: python3 -m pip install --quiet --disable-pip-version-check Pillow
 
@@ -119,7 +131,7 @@ jobs:
         id: publicar
         run: |
           set -euo pipefail
-          ALVOS="index.html legal/ sitemap.xml sitemap-imagens.xml data/_dimensoes.json assets/img"
+          ALVOS="index.html legal/ sitemap.xml sitemap-imagens.xml data/_dimensoes.json assets/img assets/css/styles.css"
           if git diff --quiet -- $ALVOS && [ -z "$(git status --porcelain -- $ALVOS)" ]; then
             echo "Nada a fazer — o HTML já estava em dia."
             echo "publicado=false" >> "$GITHUB_OUTPUT"
@@ -149,12 +161,14 @@ jobs:
           publicado=false
           for tentativa in 1 2 3; do
             if git pull --rebase --autostash origin main; then
-              if ! ( python3 .github/scripts/webp.py --verificar \
+              if ! ( node .github/legal.mjs --verificar \
+                  && python3 .github/scripts/webp.py --verificar \
                   && python3 .github/scripts/og.py --verificar \
                   && python3 .github/scripts/dimensoes.py --verificar \
                   && CHROME_PATH="${{ steps.chrome.outputs.chrome-path }}" \
                      python3 .github/scripts/prerender.py --verificar ); then
                 echo "O rebase trouxe dados novos — a regenerar."
+                node .github/legal.mjs
                 python3 .github/scripts/webp.py
                 python3 .github/scripts/og.py
                 python3 .github/scripts/dimensoes.py

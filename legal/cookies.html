@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png" />
   <link rel="stylesheet" href="../assets/css/fonts.css?v=83131796" />
   <link rel="stylesheet" href="../assets/css/base.css?v=79c00ab8" />
-  <link rel="stylesheet" href="../assets/css/styles.css?v=a049d0f9" />
+  <link rel="stylesheet" href="../assets/css/styles.css?v=ac8171dc" />
 </head>
 <body>
   <header class="legalhead">
@@ -28,8 +28,11 @@
       <p class="meta">Última actualização: agosto de 2026</p>
       <div class="doc__caixa">
         <p><strong>Identificação (DL n.º 7/2004, art. 10.º)</strong></p>
-        <p>Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira.<br>
-        Telefone: 922 022 364 (chamada para a rede móvel nacional).</p>
+        <!-- O mesmo bloco gerado do rodapé e dos Termos: o prerender.py escreve-o
+             em todos os nós com este id (nome, designação, morada, NIF e o email,
+             quando existir), em vez de uma versão escrita à mão que divergia. -->
+        <p id="bloco-legal">Rui Couto, Empresário em Nome Individual, que usa a designação comercial «PokeAuto» · Estabelecimento: Rua da Liberdade, n.º 53, 3700-169 São João da Madeira · NIF 271128330</p>
+        <p>Telefone: 922 022 364 (chamada para a rede móvel nacional).</p>
       </div>
 
       <h2>1. O que este site faz</h2>
@@ -114,7 +117,7 @@
         <div class="rodape__barra">
           <p class="rodape__copy">&copy; <span data-ano>2026</span> PokeAuto</p>
           <div class="rodape__links">
-            <a class="selo-lr" href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener">Livro de Reclamações</a>
+            <!-- legal-comum:livro v1.1.0 --><a class="lr-discreto" href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener" lang="pt"><svg class="lr-icone" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="currentColor"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 0v20h1.2V2H7Zm3.8 5.2h5.4a.8.8 0 0 1 0 1.6h-5.4a.8.8 0 0 1 0-1.6Zm0 4h5.4a.8.8 0 0 1 0 1.6h-5.4a.8.8 0 0 1 0-1.6Zm0 4h3.4a.8.8 0 0 1 0 1.6h-3.4a.8.8 0 0 1 0-1.6Z"/></svg><span>Livro de Reclamações</span><span class="lr-sr"> (abre numa nova janela)</span></a><!-- /legal-comum:livro -->
             <a href="termos.html#identificacao">Informação legal</a>
             <a href="privacidade.html">Privacidade</a>
             <a href="termos.html">Termos</a>
@@ -152,6 +155,6 @@
     </div>
   </div>
 
-  <script src="../assets/js/app.js?v=f0a4c5b7" defer></script>
+  <script src="../assets/js/app.js?v=e8604125" defer></script>
 </body>
 </html>

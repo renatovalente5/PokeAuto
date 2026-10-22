@@ -869,6 +869,10 @@ body.menu-aberto .menu { display: flex; }
 body.menu-aberto .wa-flutua { display: none; }
 /* não tapar o banner de cookies enquanto ele estiver aberto */
 body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
+/* e o banner não tapa o fim da página (o rodapé, com o Livro de Reclamações):
+   enquanto está aberto, a página ganha por baixo a altura dele (app.js,
+   medirPainel). */
+body:has(#cookies:not([hidden])) { padding-bottom: var(--cookies-alto, 0px); }
 
 /* ======================================================== RODAPÉ NOVO */
 .rodape__topo { display: grid; grid-template-columns: 1.35fr auto auto; gap: 2.5rem;
@@ -1196,3 +1200,52 @@ body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
 .seccao--claro .lavagens__btn-mais { color: var(--claro-tinta); border-color: rgba(20,22,26,.28); }
 .seccao--claro .lavagens__btn-mais:hover { background: var(--claro-tinta); color: #FFFFFF;
   border-color: var(--claro-tinta); }
+
+/* ===================================================== LEGAL-COMUM ===== */
+/* As peças legais comuns aos sites do Renato (a biblioteca legal-comum, com a
+   cópia em legal-comum/): o Livro de Reclamações e a nota do custo da chamada
+   junto de cada botão «Ligar». O HTML das peças é escrito pelo
+   .github/legal.mjs, entre marcadores, e o CSS também — o bloco a seguir é o
+   livroCss() da biblioteca. O Livro é a variante DISCRETA (.lr-discreto, v1.1.0,
+   a pedido do Renato): ícone de livro e texto, com a letra, o tamanho e a cor
+   das outras ligações do rodapé — sem caixa nem fundo; o ícone é o destaque.
+   (As regras .lr-botao que o livroCss() também escreve não se usam.) Não
+   editar à mão: é reescrito a cada publicação. */
+/* legal-comum:livro-css v1.1.0 */
+.lr-botao{display:inline-flex;align-items:center;gap:.5em;min-height:44px;min-width:44px;padding:.5em 1em;border:1px solid transparent;border-radius:.5em;background:#F5B921;color:#0B0B0D;font-family:inherit;font-size:max(14px,.95rem);font-weight:600;line-height:1.2;text-decoration:none;white-space:nowrap;cursor:pointer}
+.lr-botao:hover,.lr-botao:focus-visible{text-decoration:underline;text-underline-offset:.15em}
+.lr-botao:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+.lr-botao svg{width:1.5em;height:1.5em;flex:none}
+.lr-botao--vermelho{background:#af272f;color:#ffffff;border-color:transparent}
+.lr-botao--azul{background:#005a9c;color:#ffffff;border-color:transparent}
+.lr-botao--preto{background:#111111;color:#ffffff;border-color:transparent}
+.lr-botao--branco{background:#ffffff;color:#111111;border-color:#111111}
+.lr-discreto{display:inline-flex;align-items:center;gap:.4em;min-height:24px;color:inherit;font:inherit;text-decoration:none;white-space:nowrap}
+.lr-discreto:hover,.lr-discreto:focus-visible{text-decoration:underline;text-underline-offset:.15em}
+.lr-discreto:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.lr-discreto svg{width:1.15em;height:1.15em;flex:none}
+.lr-texto{font-weight:700;color:inherit;text-decoration:underline;text-underline-offset:.15em}
+.lr-texto svg{width:1.2em;height:1.2em;vertical-align:-.2em;margin-right:.3em}
+.lr-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* /legal-comum:livro-css */
+
+/* No rodapé, o Livro é uma ligação como as vizinhas: as regras .rodape a e
+   .rodape__links a (letra, cor, 44 px de altura) valem para ele também. */
+
+/* A nota do custo da chamada junto de cada botão «Ligar» (DL 59/2021, art.
+   3.º): a mesma frase que já acompanha o número nos contactos e no rodapé,
+   agora também onde só há o botão. Numa fila de botões ocupa a linha inteira,
+   por baixo deles. */
+.nota-chamada { font-size: .78rem; color: var(--legenda); }
+.hero__acoes .nota-chamada { flex-basis: 100%; color: var(--prata); }
+.menu__acoes .nota-chamada { grid-column: 1 / -1; }
+/* Na barra de navegação o botão e a nota ficam empilhados. Só acima dos 860px:
+   abaixo, o .nav__cta está escondido (o menu de telemóvel tem o seu). */
+@media (min-width: 861px) {
+  .nav__cta { display: flex; flex-direction: column; align-items: center; gap: .2rem; }
+  .nav__cta .nota-chamada { font-size: .66rem; line-height: 1; white-space: nowrap; }
+}
+
+/* O email nos contactos só existe quando está no painel: vazio, o texto fica
+   com hidden e o item inteiro (ícone incluído) sai. */
+.contacto-item--email:has([data-site="contactos.email"][hidden]) { display: none; }
