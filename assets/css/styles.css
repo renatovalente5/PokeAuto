@@ -1238,13 +1238,20 @@ body:has(#cookies:not([hidden])) { padding-bottom: var(--cookies-alto, 0px); }
    por baixo deles. */
 .nota-chamada { font-size: .78rem; color: var(--legenda); }
 .hero__acoes .nota-chamada { flex-basis: 100%; color: var(--prata); }
-.menu__acoes .nota-chamada { grid-column: 1 / -1; }
-/* Na barra de navegação o botão e a nota ficam empilhados. Só acima dos 860px:
-   abaixo, o .nav__cta está escondido (o menu de telemóvel tem o seu). */
-@media (min-width: 861px) {
-  .nav__cta { display: flex; flex-direction: column; align-items: center; gap: .2rem; }
-  .nav__cta .nota-chamada { font-size: .66rem; line-height: 1; white-space: nowrap; }
+/* Onde só há o botão (a barra e o menu), a nota vai DENTRO dele, por baixo
+   do texto: um objecto só, alinhado, e sem uma linha cinzenta solta por cima
+   da fotografia. Branco sobre o vermelho dá 4,9:1, que chega para letra pequena. */
+.btn--com-nota { flex-direction: column; gap: .22rem; line-height: 1; }
+.btn--com-nota .nota-chamada {
+  font-family: var(--f-corpo); font-weight: 500; font-size: .7rem;
+  letter-spacing: 0; text-transform: none; color: #FFFFFF; white-space: nowrap;
 }
+/* Na barra (só acima dos 860px; abaixo, o .nav__cta está escondido e o menu
+   tem o seu): o número à vista, que num computador o tel: não liga sozinho. */
+.nav__ligar { padding: .55rem 1.05rem .5rem; }
+.nav__ligar-num { display: inline-flex; align-items: center; gap: .4em; letter-spacing: .04em; }
+.nav__ligar-num svg { width: 1em; height: 1em; }
+.nav__ligar .nota-chamada { font-size: .64rem; }
 
 /* O email nos contactos só existe quando está no painel: vazio, o texto fica
    com hidden e o item inteiro (ícone incluído) sai. */
