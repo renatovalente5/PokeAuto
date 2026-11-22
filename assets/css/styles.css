@@ -1211,7 +1211,7 @@ body:has(#cookies:not([hidden])) { padding-bottom: var(--cookies-alto, 0px); }
    das outras ligações do rodapé — sem caixa nem fundo; o ícone é o destaque.
    (As regras .lr-botao que o livroCss() também escreve não se usam.) Não
    editar à mão: é reescrito a cada publicação. */
-/* legal-comum:livro-css v1.1.0 */
+/* legal-comum:livro-css v1.1.3 */
 .lr-botao{display:inline-flex;align-items:center;gap:.5em;min-height:44px;min-width:44px;padding:.5em 1em;border:1px solid transparent;border-radius:.5em;background:#F5B921;color:#0B0B0D;font-family:inherit;font-size:max(14px,.95rem);font-weight:600;line-height:1.2;text-decoration:none;white-space:nowrap;cursor:pointer}
 .lr-botao:hover,.lr-botao:focus-visible{text-decoration:underline;text-underline-offset:.15em}
 .lr-botao:focus-visible{outline:3px solid currentColor;outline-offset:3px}
