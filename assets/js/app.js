@@ -476,26 +476,35 @@
 
   /* O aviso fica preso ao fundo do ecrã e, sem mais nada, tapava o fim da
      página — o rodapé, com o botão do Livro de Reclamações, que a lei quer
-     «visível» (DL 156/2005, art. 5.º-B). Enquanto está aberto, a página ganha
-     por baixo a altura dele (--cookies-alto, no CSS), e o rodapé sobe acima. */
-  function medirPainel() {
-    if (!painel || painel.hidden) return;
-    doc.documentElement.style.setProperty('--cookies-alto', painel.offsetHeight + 'px');
+     «visível» (DL 156/2005, art. 5.º-B). Ele e o botão do WhatsApp saem de
+     cena quando a última linha do rodapé chega até eles, e voltam ao subir: a
+     página acaba no rodapé, sem espaço vazio por baixo. */
+  var ultimaLinha = doc.querySelector('.rodape__barra');
+  var waFlutua = doc.querySelector('.wa-flutua');
+  function fimDoRodape() {
+    if (!ultimaLinha) return;
+    var r = ultimaLinha.getBoundingClientRect(), alto = window.innerHeight;
+    [painel, waFlutua].forEach(function (e) {
+      if (!e || e.hidden) return;
+      var q = e.getBoundingClientRect();
+      e.classList.toggle('no-fim', r.top < alto && r.bottom > q.top && r.left < q.right && r.right > q.left);
+    });
   }
-  window.addEventListener('resize', medirPainel);
+  window.addEventListener('scroll', fimDoRodape, { passive: true });
+  window.addEventListener('resize', fimDoRodape);
+  if ('ResizeObserver' in window) new ResizeObserver(fimDoRodape).observe(doc.body);
 
   function mostrarPainel() {
     if (!painel) return;
     focoAnterior = doc.activeElement;
     painel.hidden = false;
-    medirPainel();
+    fimDoRodape();
     var b = el('cookies-aceitar');
     if (b) b.focus({ preventScroll: true });
   }
   function fecharPainel() {
     if (!painel) return;
     painel.hidden = true;
-    doc.documentElement.style.removeProperty('--cookies-alto');
     if (focoAnterior && focoAnterior.focus) focoAnterior.focus({ preventScroll: true });
   }
   function decidir(v) {

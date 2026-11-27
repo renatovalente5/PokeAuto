@@ -869,10 +869,13 @@ body.menu-aberto .menu { display: flex; }
 body.menu-aberto .wa-flutua { display: none; }
 /* não tapar o banner de cookies enquanto ele estiver aberto */
 body:has(#cookies:not([hidden])) .wa-flutua { display: none; }
-/* e o banner não tapa o fim da página (o rodapé, com o Livro de Reclamações):
-   enquanto está aberto, a página ganha por baixo a altura dele (app.js,
-   medirPainel). */
-body:has(#cookies:not([hidden])) { padding-bottom: var(--cookies-alto, 0px); }
+/* e nem o banner nem o botão tapam o fim da página (o rodapé, com o Livro de
+   Reclamações): saem de cena quando a última linha do rodapé chega até eles, e
+   voltam ao subir (app.js, fimDoRodape). A página acaba no rodapé, sem espaço
+   vazio por baixo. */
+#cookies { transition: opacity .25s; }
+#cookies.no-fim, body .wa-flutua.no-fim { opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .25s, visibility 0s .25s; }
 
 /* ======================================================== RODAPÉ NOVO */
 .rodape__topo { display: grid; grid-template-columns: 1.35fr auto auto; gap: 2.5rem;
@@ -890,9 +893,6 @@ body:has(#cookies:not([hidden])) { padding-bottom: var(--cookies-alto, 0px); }
 /* última linha: © à esquerda, links à direita */
 .rodape__barra { display: flex; flex-wrap: wrap; align-items: center;
   justify-content: space-between; gap: .6rem 1.4rem; }
-/* No telemóvel o botão flutuante do WhatsApp ocupa o canto: os links legais
-   precisam de espaço por baixo para não ficarem tapados. */
-@media (max-width: 860px) { .rodape__barra { padding-bottom: 4.6rem; } }
 .rodape__barra .rodape__copy { margin: 0; order: 0; }
 .rodape__barra .rodape__links { margin: 0; justify-content: flex-end; }
 
