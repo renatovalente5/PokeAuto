@@ -486,8 +486,9 @@
     var r = ultimaLinha.getBoundingClientRect(), alto = window.innerHeight;
     [painel, waFlutua].forEach(function (e) {
       if (!e || e.hidden) return;
-      var q = e.getBoundingClientRect();
-      e.classList.toggle('no-fim', r.top < alto && r.bottom > q.top && r.left < q.right && r.right > q.left);
+      // onde o fixo fica quando está à vista (o botão ainda pode vir a deslizar para dentro)
+      var q = e.getBoundingClientRect(), topo = alto - e.offsetHeight - (parseFloat(getComputedStyle(e).bottom) || 0);
+      e.classList.toggle('no-fim', r.top < alto && r.bottom > topo && r.left < q.right && r.right > q.left);
     });
   }
   window.addEventListener('scroll', fimDoRodape, { passive: true });
